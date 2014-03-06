@@ -1,0 +1,11 @@
+{
+  "name": "nightcharts",
+  "version": "0.0.1",
+  "dependencies": {
+    "backbone": "",
+    "jquery": "",
+    "sinon": "",
+    "chai": "",
+    "mocha": ""
+  }
+}
