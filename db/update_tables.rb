@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require '../src/cartodb/cartodb_query.rb'
 
-class UpdateTables
+
 
 SUBJECT = ["bd", "ef"]
 TYPE_DATA = ["value", "rank"]
@@ -32,6 +32,24 @@ def self.geometry_data
   end
 end
 
+def self.lens
+  BD_LENS.each do |lens|
+    lens_insert(lens, 'bd')
+  end
+
+  EF_LENS.each do |lens|
+    lens_insert(lens, 'ef')
+  end
+end
+
+def self.lens_insert lens,subject
+  sql = <<-SQL
+    INSERT INTO macarthur_lens(name, type)
+    VALUES ('#{subject}', '#{lens}')
+  SQL
+  CartodbQuery.run(sql)
+end
+
 
 
 def self.bd
@@ -50,5 +68,14 @@ def self.bd
   end
 end
 
-geometry_data
+
+
+ARGV.each do|action|
+  if action == 'geometry_data'
+    geometry_data
+  elsif action == 'bd'
+    bd
+  elsif action == 'lens'
+    lens
+  end
 end
