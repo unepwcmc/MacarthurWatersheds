@@ -6,6 +6,8 @@
     "jquery": "",
     "sinon": "",
     "chai": "",
-    "mocha": ""
+    "mocha": "",
+    "json2": "",
+    "handlebars": ""
   }
 }

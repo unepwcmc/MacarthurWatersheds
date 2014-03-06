@@ -3,10 +3,13 @@ var gulp = require('gulp');
 var coffee = require('gulp-coffee');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-//var imagemin = require('gulp-imagemin');
+var handlebars = require('gulp-handlebars');
+var declare = require('gulp-declare');
 
 var paths = {
-  tests: 'src/tests/**/*.coffee',
+  application: 'coffee/src/**/*.coffee',
+  templates: 'coffee/src/templates/*.hbs',
+  tests: 'coffee/tests/**/*.coffee',
   images: 'client/img/**/*'
 };
 
@@ -18,6 +21,25 @@ gulp.task('tests', function() {
     .pipe(gulp.dest('js/'));
 });
 
+gulp.task('application', function() {
+  // Minify and copy all JavaScript (except vendor scripts)
+  return gulp.src(paths.application)
+    .pipe(coffee())
+    .pipe(concat('application.js'))
+    .pipe(gulp.dest('js/'));
+});
+
+gulp.task('templates', function() {
+  // Minify and copy all JavaScript (except vendor scripts)
+  return gulp.src(paths.templates)
+    .pipe(handlebars({wrapped:true}))
+    .pipe(declare({
+      namespace: 'Handlebars.templates'
+    }))
+    .pipe(concat('templates.js'))
+    .pipe(gulp.dest('js/'));
+});
+
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
@@ -25,4 +47,4 @@ gulp.task('watch', function() {
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['tests', 'watch']);
+gulp.task('default', ['application', 'templates', 'tests', 'watch']);
