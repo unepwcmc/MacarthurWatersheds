@@ -1,5 +1,4 @@
 class CartodbQuery
-  require 'net/http'
   require 'yaml'
   require 'open-uri'
 
@@ -8,9 +7,6 @@ class CartodbQuery
     api_key = cartodb_config["api_key"]
     host = cartodb_config["host"]
     encoded_url = URI::encode("#{host}/api/v2/sql?q=#{sql}&api_key=#{api_key}")
-
     result = open(encoded_url).read
   end
 end
-
-

@@ -22,24 +22,17 @@ tables_columns = {"region" => {"name" => "varchar"},
                   "lens" => {"name" => "varchar", 
                             "type" => "varchar"
                             },
-                  "watershed" => {"region_id" => "int"},
+                  "watershed" => {"region_id" => "int",
+                                  "name" => "varchar"},
                   "datapoint" => {"watershed_id" => "int",
                                   "lens_id" => "int",
                                   "type_data" => "varchar",
                                   "metric" => "varchar",
                                   "scenario" => "varchar",
-                                  "conservation" => "varchar"
+                                  "conservation" => "boolean"
                                 }
                   }
 
 ARGV.each do|table|
   change_table(table, tables_columns[table])
 end
-
-
-
-
-
-
-
-
