@@ -11,7 +11,7 @@ You will need node.js and NPM installed for the compilation and bower. Install
 libs with:
 
     npm install
-    bower.install
+    npm install -g gulp bower
 
 ## Serving files
 Althought we don't actually have a 'server' component, you still need to serve
@@ -30,7 +30,6 @@ are written in Handlebars.
 ### Compilation
 We're using gulp for compiling coffeescript and handlebars. To run this task,
 do:
-
   
   gulp
 
