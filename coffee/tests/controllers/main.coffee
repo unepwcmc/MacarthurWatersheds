@@ -1,13 +1,13 @@
 suite 'Main Controller'
 
-test('.index creates a RegionChooserView and shows it', ->
+test('.chooseRegion creates a RegionChooserView and shows it', ->
   controller = {
     mainRegion:
       showView: sinon.spy()
     changeStateOn: ->
   }
 
-  Backbone.Controllers.MainController::index.call(controller)
+  Backbone.Controllers.MainController::chooseRegion.call(controller)
 
   assert.isTrue controller.mainRegion.showView.calledOnce,
     "Expected mainRegion.showView to be called"
