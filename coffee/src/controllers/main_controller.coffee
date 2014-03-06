@@ -10,7 +10,7 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @index()
 
 
-  index: =>
+  chooseRegion: =>
     regionChooserView = new Backbone.Views.RegionChooserView()
     @mainRegion.showView(regionChooserView)
 
