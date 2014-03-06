@@ -33,3 +33,6 @@ do:
   
   gulp
 
+
+### Tests
+Tests are written in mocha with chai and sinon, and stored in coffee/tests. Run them by opening [/tests.html](http://localhost:8080/tests.html) in your browser
