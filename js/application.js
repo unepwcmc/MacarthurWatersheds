@@ -150,7 +150,7 @@
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.mainRegion = new Backbone.Diorama.ManagedRegion();
       $('body').append(this.mainRegion.$el);
-      this.index();
+      this.chooseRegion();
     }
 
     MainController.prototype.chooseRegion = function() {
