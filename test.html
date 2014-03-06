@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="lib/mocha/mocha.css">
 
     <title></title>
 
@@ -11,6 +12,34 @@
   <body>
     <div id="mocha"></div>
 
+    <script src="lib/mocha/mocha.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/chai/chai.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/sinon/lib/sinon.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="lib/json2/json2.js"></script>
+    <script src="lib/underscore/underscore.js"></script>
+    <script src="lib/backbone/backbone.js"></script>
+    <script src="lib/handlebars/handlebars.min.js"></script>
+
+    <script src="lib/diorama.js"></script>
+
+    <script src="js/templates.js"></script>
+    <script src="js/application.js"></script>
+
+    <!-- Configure mocha and chai -->
+    <script>
+      mocha.setup({
+        ui: 'qunit',
+        globals: ['$', 'jQuery*']
+      })
+      assert = chai.assert
+    </script>
+
+    <!-- Load your tests -->
+    <script src="/js/tests.js"></script>
+
+    <!-- Run those tests! -->
     <script>
       mocha.run();
     </script>
