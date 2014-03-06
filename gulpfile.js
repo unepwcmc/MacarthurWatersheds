@@ -43,7 +43,8 @@ gulp.task('templates', function() {
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-  gulp.watch(paths.scripts, ['tests']);
+  gulp.watch(paths.application, ['application']);
+  gulp.watch(paths.tests, ['tests']);
 });
 
 // The default task (called when you run `gulp` from cli)
