@@ -45,6 +45,7 @@ gulp.task('templates', function() {
 gulp.task('watch', function() {
   gulp.watch(paths.application, ['application']);
   gulp.watch(paths.tests, ['tests']);
+  gulp.watch(paths.templates, ['templates']);
 });
 
 // The default task (called when you run `gulp` from cli)
