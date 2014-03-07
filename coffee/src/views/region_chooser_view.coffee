@@ -9,6 +9,7 @@ regions = [
 
 class Backbone.Views.RegionChooserView extends Backbone.View
   template: Handlebars.templates['region_chooser']
+  className: 'modal region-chooser'
 
   events:
     "click .regions li": "triggerChooseRegion"

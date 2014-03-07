@@ -1,24 +1,42 @@
 window.Backbone ||= {}
 window.Backbone.Controllers ||= {}
 
+class ModalContainer
+  constructor: ->
+    @disabler = $('<div class="disabler"></div>')
+
+  showModal: (view) ->
+    @view = view
+    $('body').prepend(@disabler)
+    $('body').append(@view.$el)
+
+  hideModal: ->
+    $('body').find('.disabler').remove()
+    @view.close()
+
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
-    @mainRegion = new Backbone.Diorama.ManagedRegion()
-    $('body').append(@mainRegion.$el)
+
+    @modalContainer = new ModalContainer
     
     # Default state
     @chooseRegion()
 
 
+
   chooseRegion: =>
     regionChooserView = new Backbone.Views.RegionChooserView()
-    @mainRegion.showView(regionChooserView)
+    @modalContainer.showModal(regionChooserView)
 
     ###
       @changeStateOn maps events published by other objects to
       controller states
     ###
     @changeStateOn(
-    #  {event: 'someEvent', publisher: indexView, newState: @anotherState}
+      {event: 'regionChosen', publisher: regionChooserView, newState: @show}
     )
+
+
+  show: (region) =>
+    @modalContainer.hideModal()
 

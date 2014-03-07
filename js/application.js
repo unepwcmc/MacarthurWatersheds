@@ -68,6 +68,8 @@
 
     RegionChooserView.prototype.template = Handlebars.templates['region_chooser'];
 
+    RegionChooserView.prototype.className = 'modal region-chooser';
+
     RegionChooserView.prototype.events = {
       "click .regions li": "triggerChooseRegion"
     };
@@ -134,7 +136,7 @@
 }).call(this);
 
 (function() {
-  var _base,
+  var ModalContainer, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -143,26 +145,54 @@
 
   (_base = window.Backbone).Controllers || (_base.Controllers = {});
 
+  ModalContainer = (function() {
+    function ModalContainer() {
+      this.disabler = $('<div class="disabler"></div>');
+    }
+
+    ModalContainer.prototype.showModal = function(view) {
+      this.view = view;
+      $('body').prepend(this.disabler);
+      return $('body').append(this.view.$el);
+    };
+
+    ModalContainer.prototype.hideModal = function() {
+      $('body').find('.disabler').remove();
+      return this.view.close();
+    };
+
+    return ModalContainer;
+
+  })();
+
   Backbone.Controllers.MainController = (function(_super) {
     __extends(MainController, _super);
 
     function MainController() {
+      this.show = __bind(this.show, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
-      this.mainRegion = new Backbone.Diorama.ManagedRegion();
-      $('body').append(this.mainRegion.$el);
+      this.modalContainer = new ModalContainer;
       this.chooseRegion();
     }
 
     MainController.prototype.chooseRegion = function() {
       var regionChooserView;
       regionChooserView = new Backbone.Views.RegionChooserView();
-      this.mainRegion.showView(regionChooserView);
+      this.modalContainer.showModal(regionChooserView);
 
       /*
         @changeStateOn maps events published by other objects to
         controller states
        */
-      return this.changeStateOn();
+      return this.changeStateOn({
+        event: 'regionChosen',
+        publisher: regionChooserView,
+        newState: this.show
+      });
+    };
+
+    MainController.prototype.show = function(region) {
+      return this.modalContainer.hideModal();
     };
 
     return MainController;

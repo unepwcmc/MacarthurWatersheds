@@ -1,20 +1,6 @@
 (function() {
   suite('Main Controller');
 
-  test('.chooseRegion creates a RegionChooserView and shows it', function() {
-    var controller, showViewArgs;
-    controller = {
-      mainRegion: {
-        showView: sinon.spy()
-      },
-      changeStateOn: function() {}
-    };
-    Backbone.Controllers.MainController.prototype.chooseRegion.call(controller);
-    assert.isTrue(controller.mainRegion.showView.calledOnce, "Expected mainRegion.showView to be called");
-    showViewArgs = controller.mainRegion.showView.getCall(0).args;
-    return assert.strictEqual(showViewArgs[0].constructor.name, "RegionChooserView", "Expected mainRegion.showView to receive a RegionChooserView");
-  });
-
 }).call(this);
 
 (function() {
