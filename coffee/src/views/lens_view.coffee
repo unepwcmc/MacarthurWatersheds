@@ -1,8 +1,8 @@
 window.Backbone ||= {}
 window.Backbone.Views ||= {}
 
-class Backbone.Views.PerspectiveView extends Backbone.View
-  template: Handlebars.templates['perspective']
+class Backbone.Views.LensView extends Backbone.View
+  template: Handlebars.templates['lens']
 
   initialize: (options) ->
     @render()

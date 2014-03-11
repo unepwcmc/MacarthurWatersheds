@@ -30,12 +30,12 @@
 }).call(this);
 
 (function() {
-  suite('Perspective View');
+  suite('Lens View');
 
-  test("render shows the title 'perspective'", function() {
+  test("render shows the title 'Lens'", function() {
     var view;
-    view = new Backbone.Views.PerspectiveView();
-    return assert.match(view.$el.text(), new RegExp("Perspective"));
+    view = new Backbone.Views.LensView();
+    return assert.match(view.$el.text(), new RegExp("Lens"));
   });
 
 }).call(this);

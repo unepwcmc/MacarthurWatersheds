@@ -109,27 +109,27 @@
 
   (_base = window.Backbone).Views || (_base.Views = {});
 
-  Backbone.Views.PerspectiveView = (function(_super) {
-    __extends(PerspectiveView, _super);
+  Backbone.Views.LensView = (function(_super) {
+    __extends(LensView, _super);
 
-    function PerspectiveView() {
-      return PerspectiveView.__super__.constructor.apply(this, arguments);
+    function LensView() {
+      return LensView.__super__.constructor.apply(this, arguments);
     }
 
-    PerspectiveView.prototype.template = Handlebars.templates['perspective'];
+    LensView.prototype.template = Handlebars.templates['lens'];
 
-    PerspectiveView.prototype.initialize = function(options) {
+    LensView.prototype.initialize = function(options) {
       return this.render();
     };
 
-    PerspectiveView.prototype.render = function() {
+    LensView.prototype.render = function() {
       this.$el.html(this.template());
       return this;
     };
 
-    PerspectiveView.prototype.onClose = function() {};
+    LensView.prototype.onClose = function() {};
 
-    return PerspectiveView;
+    return LensView;
 
   })(Backbone.View);
 
