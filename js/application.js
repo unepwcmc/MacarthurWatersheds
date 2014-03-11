@@ -1,4 +1,24 @@
 (function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  (_base = window.Backbone).Models || (_base.Models = {});
+
+  window.Backbone.Models.Filter = (function(_super) {
+    __extends(Filter, _super);
+
+    function Filter() {
+      return Filter.__super__.constructor.apply(this, arguments);
+    }
+
+    return Filter;
+
+  })(Backbone.Model);
+
+}).call(this);
+
+(function() {
   var _base, _base1,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -153,13 +173,24 @@
 
     FilterView.prototype.template = Handlebars.templates['filter'];
 
+    FilterView.prototype.events = {
+      "click .subjects li": "setSubject"
+    };
+
     FilterView.prototype.initialize = function(options) {
+      this.filter = options.filter;
       return this.render();
     };
 
     FilterView.prototype.render = function() {
       this.$el.html(this.template());
       return this;
+    };
+
+    FilterView.prototype.setSubject = function(event) {
+      var subjectName;
+      subjectName = $(event.target).attr('data-subject');
+      return this.filter.set('subject', subjectName);
     };
 
     FilterView.prototype.onClose = function() {};
@@ -230,8 +261,12 @@
     };
 
     MainController.prototype.show = function(region) {
+      var view;
       this.modalContainer.hideModal();
-      return this.sidePanel.showView(new Backbone.Views.FilterView());
+      view = new Backbone.Views.FilterView({
+        filter: new Backbone.Models.Filter()
+      });
+      return this.sidePanel.showView(view);
     };
 
     return MainController;

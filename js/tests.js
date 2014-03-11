@@ -60,6 +60,31 @@
 }).call(this);
 
 (function() {
+  suite('Filter View');
+
+  test('presents a choice between biodiversity and ecosystem subjects', function() {
+    var view;
+    view = new Backbone.Views.FilterView({
+      filter: new Backbone.Models.Filter()
+    });
+    assert.match(view.$el.find('.subjects').text(), new RegExp('.*Biodiversity.*'));
+    return assert.match(view.$el.find('.subjects').text(), new RegExp('.*Ecosystem.*'));
+  });
+
+  test('when a subject is selected the filter object is updated', function() {
+    var filter, subjectElement, view;
+    filter = new Backbone.Models.Filter();
+    view = new Backbone.Views.FilterView({
+      filter: filter
+    });
+    subjectElement = view.$el.find('.subjects [data-subject="biodiversity"]');
+    subjectElement.trigger('click');
+    return assert.strictEqual(filter.get('subject'), 'biodiversity', 'Expected the filter model subject attribute to be biodiversity');
+  });
+
+}).call(this);
+
+(function() {
   suite('Lens View');
 
   test("render shows the title 'Lens'", function() {

@@ -4,7 +4,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<h1>Filter View</h1>\n";
+  return "<h1>Filter View</h1>\n\n<div class=\"subjects\">\n  <ul>\n    <li data-subject=\"biodiversity\">Biodiversity</li>\n    <li data-subject=\"ecosystem\">Ecosystem</li>\n  </ul>\n</div>\n";
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["lens"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];

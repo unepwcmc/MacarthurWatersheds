@@ -26,7 +26,6 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @chooseRegion()
 
 
-
   chooseRegion: =>
     regionChooserView = new Backbone.Views.RegionChooserView()
     @modalContainer.showModal(regionChooserView)
@@ -42,5 +41,8 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
 
   show: (region) =>
     @modalContainer.hideModal()
-    @sidePanel.showView(new Backbone.Views.FilterView())
+    view = new Backbone.Views.FilterView(
+      filter: new Backbone.Models.Filter()
+    )
+    @sidePanel.showView(view)
 
