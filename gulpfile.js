@@ -8,10 +8,11 @@ var declare = require('gulp-declare');
 
 var paths = {
   application: [
+    'coffee/src/filter_definitions.coffee', 
     'coffee/src/models/filter.coffee', 
     'coffee/src/collections/region_collection.coffee', 
     'coffee/src/views/region_chooser_view.coffee ',
-    'coffee/src/views/lens_view.coffee ',
+    'coffee/src/views/lens_selector_view.coffee ',
     'coffee/src/views/filter_view.coffee ',
     'coffee/src/controllers/main_controller.coffee '
   ],

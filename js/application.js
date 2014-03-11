@@ -1,4 +1,16 @@
 (function() {
+  window.MacArthur = {};
+
+  MacArthur.LENSES = {
+    lenses: {
+      biodiversity: ["All species (allsp) default", "IUCN Threatened Species (crenvu)", "Amphibians (Amphibia)", "Mammals (mammalia)", "Birds (Aves)"],
+      ecosystem: ["Total EF provision (totef) default", "Commodity provision (cultivated products) (comprov)", "Wild provision (wildprov)", "Regulating functions provision (regprov)"]
+    }
+  };
+
+}).call(this);
+
+(function() {
   var _base,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -129,27 +141,27 @@
 
   (_base = window.Backbone).Views || (_base.Views = {});
 
-  Backbone.Views.LensView = (function(_super) {
-    __extends(LensView, _super);
+  Backbone.Views.LensSelectorView = (function(_super) {
+    __extends(LensSelectorView, _super);
 
-    function LensView() {
-      return LensView.__super__.constructor.apply(this, arguments);
+    function LensSelectorView() {
+      return LensSelectorView.__super__.constructor.apply(this, arguments);
     }
 
-    LensView.prototype.template = Handlebars.templates['lens'];
+    LensSelectorView.prototype.template = Handlebars.templates['lens_selector'];
 
-    LensView.prototype.initialize = function(options) {
+    LensSelectorView.prototype.initialize = function(options) {
       return this.render();
     };
 
-    LensView.prototype.render = function() {
+    LensSelectorView.prototype.render = function() {
       this.$el.html(this.template());
       return this;
     };
 
-    LensView.prototype.onClose = function() {};
+    LensSelectorView.prototype.onClose = function() {};
 
-    return LensView;
+    return LensSelectorView;
 
   })(Backbone.View);
 
@@ -183,7 +195,11 @@
     };
 
     FilterView.prototype.render = function() {
-      this.$el.html(this.template());
+      this.$el.html(this.template({
+        thisView: this,
+        lenses: MacArthur.LENSES[this.filter.get('subject')]
+      }));
+      this.attachSubViews();
       return this;
     };
 
@@ -193,11 +209,13 @@
       return this.filter.set('subject', subjectName);
     };
 
-    FilterView.prototype.onClose = function() {};
+    FilterView.prototype.onClose = function() {
+      return this.closeSubViews();
+    };
 
     return FilterView;
 
-  })(Backbone.View);
+  })(Backbone.Diorama.NestingView);
 
 }).call(this);
 

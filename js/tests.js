@@ -82,15 +82,23 @@
     return assert.strictEqual(filter.get('subject'), 'biodiversity', 'Expected the filter model subject attribute to be biodiversity');
   });
 
-}).call(this);
-
-(function() {
-  suite('Lens View');
-
-  test("render shows the title 'Lens'", function() {
-    var view;
-    view = new Backbone.Views.LensView();
-    return assert.match(view.$el.text(), new RegExp("Lens"));
+  test('when the filter has a subject set, it renders a lens selector subView with the corresponding lenses', function() {
+    var LensSelectorConstructorSpy, biodiversityLenses, filter, filterView, lensSelectorArgs;
+    LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    filterView = new Backbone.Views.FilterView({
+      filter: filter
+    });
+    try {
+      assert.isTrue(LensSelectorConstructorSpy.calledOnce, "Expected a new LensSelectorView to be created");
+      lensSelectorArgs = LensSelectorConstructorSpy.getCall(0).args;
+      biodiversityLenses = MacArthur.LENSES.biodiversty;
+      return assert.deepEqual(lensSelectorArgs[0].lenses, biodiversityLenses, "Expected the LensSelectorView to be created with the biodiversity lenses");
+    } finally {
+      LensSelectorConstructorSpy.restore();
+    }
   });
 
 }).call(this);

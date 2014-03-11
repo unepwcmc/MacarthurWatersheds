@@ -1,18 +1,24 @@
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["filter"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
+  var buffer = "", stack1, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  return "<h1>Filter View</h1>\n\n<div class=\"subjects\">\n  <ul>\n    <li data-subject=\"biodiversity\">Biodiversity</li>\n    <li data-subject=\"ecosystem\">Ecosystem</li>\n  </ul>\n</div>\n";
+  buffer += "<h1>Filter View</h1>\n\n<div class=\"subjects\">\n  <ul>\n    <li data-subject=\"biodiversity\">Biodiversity</li>\n    <li data-subject=\"ecosystem\">Ecosystem</li>\n  </ul>\n</div>\n\n";
+  options = {hash:{
+    'lenses': ((depth0 && depth0.lenses))
+  },data:data};
+  buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "LensSelectorView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "LensSelectorView", options)))
+    + "\n";
+  return buffer;
   });
-this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["lens"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["lens_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<h1>Lens View</h1>\n";
+  return "<h1>LensSelector View</h1>\n";
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["region_chooser"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];

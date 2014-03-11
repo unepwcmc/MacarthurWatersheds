@@ -1,8 +1,8 @@
 window.Backbone ||= {}
 window.Backbone.Views ||= {}
 
-class Backbone.Views.LensView extends Backbone.View
-  template: Handlebars.templates['lens']
+class Backbone.Views.LensSelectorView extends Backbone.View
+  template: Handlebars.templates['lens_selector']
 
   initialize: (options) ->
     @render()

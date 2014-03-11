@@ -1,7 +1,7 @@
 window.Backbone ||= {}
 window.Backbone.Views ||= {}
 
-class Backbone.Views.FilterView extends Backbone.View
+class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
   template: Handlebars.templates['filter']
 
   events:
@@ -12,7 +12,11 @@ class Backbone.Views.FilterView extends Backbone.View
     @render()
 
   render: ->
-    @$el.html(@template())
+    @$el.html(@template(
+      thisView: @
+      lenses: MacArthur.LENSES[@filter.get('subject')]
+    ))
+    @attachSubViews()
     return @
 
   setSubject: (event) ->
@@ -20,4 +24,5 @@ class Backbone.Views.FilterView extends Backbone.View
     @filter.set('subject', subjectName)
 
   onClose: ->
+    @closeSubViews()
     
