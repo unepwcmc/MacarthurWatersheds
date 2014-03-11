@@ -18,6 +18,9 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
 
     @modalContainer = new ModalContainer
+    @sidePanel = new Backbone.Diorama.ManagedRegion()
+    @sidePanel.$el.attr('id', 'side-panel')
+    @sidePanel.$el.insertAfter('#map')
     
     # Default state
     @chooseRegion()
@@ -39,4 +42,5 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
 
   show: (region) =>
     @modalContainer.hideModal()
+    @sidePanel.showView(new Backbone.Views.FilterView())
 

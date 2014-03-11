@@ -10,6 +10,21 @@ test('The application starts by showing the choose region view', ->
     chooseRegionActionStub.restore()
 )
 
+test('on initialize, the controller creates a side panel after the map', ->
+  chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController::, "chooseRegion", ->)
+
+  $('body').append('<div id="map">')
+  controller = new Backbone.Controllers.MainController()
+
+  try
+    assert.lengthOf $('body').find('#side-panel'), 1,
+      "Expected to side a #side-panel"
+  finally
+    chooseRegionActionStub.restore()
+    $('body').remove('#map')
+    $('body').remove('#side-panel')
+)
+
 test('From the choose region view, if I pick a region, it transitions to the show action', ->
   showActionStub = sinon.stub(Backbone.Controllers.MainController::, 'show', ->)
   controller = new Backbone.Controllers.MainController()
@@ -28,4 +43,21 @@ test('From the choose region view, if I pick a region, it transitions to the sho
 
   finally
     showActionStub.restore()
+)
+
+test('the show action renders a filter view into the side panel', ->
+  controller =
+    modalContainer:
+      hideModal: ->
+    sidePanel:
+      showView: sinon.spy()
+
+  Backbone.Controllers.MainController::show.call(controller)
+
+  assert.isTrue controller.sidePanel.showView.calledOnce,
+    "Expected controller.sidePanel.showView to be called"
+
+  showViewArgs = controller.sidePanel.showView.getCall(0).args
+  assert.strictEqual showViewArgs[0].constructor.name, "FilterView" ,
+    "Expected sidePanel.showView to be called with a FilterView"
 )

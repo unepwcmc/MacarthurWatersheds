@@ -11,6 +11,7 @@ var paths = {
     'coffee/src/collections/region_collection.coffee', 
     'coffee/src/views/region_chooser_view.coffee ',
     'coffee/src/views/lens_view.coffee ',
+    'coffee/src/views/filter_view.coffee ',
     'coffee/src/controllers/main_controller.coffee '
   ],
   templates: 'coffee/src/templates/*.hbs',

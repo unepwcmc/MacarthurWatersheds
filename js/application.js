@@ -136,6 +136,41 @@
 }).call(this);
 
 (function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.FilterView = (function(_super) {
+    __extends(FilterView, _super);
+
+    function FilterView() {
+      return FilterView.__super__.constructor.apply(this, arguments);
+    }
+
+    FilterView.prototype.template = Handlebars.templates['filter'];
+
+    FilterView.prototype.initialize = function(options) {
+      return this.render();
+    };
+
+    FilterView.prototype.render = function() {
+      this.$el.html(this.template());
+      return this;
+    };
+
+    FilterView.prototype.onClose = function() {};
+
+    return FilterView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
   var ModalContainer, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
@@ -172,6 +207,9 @@
       this.show = __bind(this.show, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.modalContainer = new ModalContainer;
+      this.sidePanel = new Backbone.Diorama.ManagedRegion();
+      this.sidePanel.$el.attr('id', 'side-panel');
+      this.sidePanel.$el.insertAfter('#map');
       this.chooseRegion();
     }
 
@@ -192,7 +230,8 @@
     };
 
     MainController.prototype.show = function(region) {
-      return this.modalContainer.hideModal();
+      this.modalContainer.hideModal();
+      return this.sidePanel.showView(new Backbone.Views.FilterView());
     };
 
     return MainController;
