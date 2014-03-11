@@ -56,11 +56,24 @@ def self.bd
   column = ""
   TYPE_DATA.each do |td|
     METRIC.each do |met|
-      BD_LENS.each do |lens|
-        SCENARIO.each do |scen|
-          CONSERVATION.each do |cons|
-            column = "bd_#{td}_#{met}_#{lens}_#{scen}_#{cons}"
+      SCENARIO.each do |scen|
+        CONSERVATION.each do |cons|
+           BD_LENS.each do |lens|
+            column = "bd_#{td}_#{met}_#{scen}_#{cons}_#{lens}"
+            cons_boolean = cons == cons ? 'true' : 'false'
+              sql = <<-SQL
+                INSERT INTO macarthur_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value) \
+                SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision) \
+                  FROM macarthur_bd_original_data od \
+                  LEFT JOIN
+                  macarthur_watershed ws \
+                  ON od.field_name = ws.name \
+                  left join macarthur_lens ls 
+                  on ls.name = 'bd' AND type = '#{lens}'
+                SQL
             puts column
+            puts sql
+            CartodbQuery.run(sql)
           end
         end
       end
