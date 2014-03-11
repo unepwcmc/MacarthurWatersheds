@@ -1,10 +1,40 @@
 (function() {
   window.MacArthur = {};
 
-  MacArthur.LENSES = {
+  MacArthur.CONFIG = {
     lenses: {
-      biodiversity: ["All species (allsp) default", "IUCN Threatened Species (crenvu)", "Amphibians (Amphibia)", "Mammals (mammalia)", "Birds (Aves)"],
-      ecosystem: ["Total EF provision (totef) default", "Commodity provision (cultivated products) (comprov)", "Wild provision (wildprov)", "Regulating functions provision (regprov)"]
+      biodiversity: [
+        {
+          selector: "allsp",
+          name: "All species",
+          "default": true
+        }, {
+          selector: "amphibia",
+          name: "Amphibians"
+        }, {
+          selector: "mammalia",
+          name: "Mammals"
+        }, {
+          selector: "aves",
+          name: "Birds"
+        }
+      ],
+      ecosystem: [
+        {
+          selector: "totef",
+          name: "Total EF provision",
+          "default": true
+        }, {
+          selector: "comprov",
+          name: "Commodity provision (cultivated products)"
+        }, {
+          selector: "wildprov",
+          name: "Wild provision"
+        }, {
+          selector: "regprov",
+          name: "Regulating functions provision"
+        }
+      ]
     }
   };
 
@@ -151,11 +181,16 @@
     LensSelectorView.prototype.template = Handlebars.templates['lens_selector'];
 
     LensSelectorView.prototype.initialize = function(options) {
+      this.filter = options.filter;
       return this.render();
     };
 
     LensSelectorView.prototype.render = function() {
-      this.$el.html(this.template());
+      var lenses;
+      lenses = MacArthur.CONFIG.lenses[this.filter.get('subject')];
+      this.$el.html(this.template({
+        lenses: lenses
+      }));
       return this;
     };
 
@@ -191,13 +226,15 @@
 
     FilterView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.listenTo(this.filter, 'change', this.render);
       return this.render();
     };
 
     FilterView.prototype.render = function() {
       this.$el.html(this.template({
         thisView: this,
-        lenses: MacArthur.LENSES[this.filter.get('subject')]
+        showLensSelector: this.filter.get('subject') != null,
+        filter: this.filter
       }));
       this.attachSubViews();
       return this;
@@ -210,7 +247,8 @@
     };
 
     FilterView.prototype.onClose = function() {
-      return this.closeSubViews();
+      this.closeSubViews();
+      return this.stopListening();
     };
 
     return FilterView;

@@ -1,17 +1,16 @@
 window.MacArthur = {}
 
-MacArthur.LENSES = 
+MacArthur.CONFIG = 
   lenses:
     biodiversity: [
-      "All species (allsp) default",
-      "IUCN Threatened Species (crenvu)",
-      "Amphibians (Amphibia)",
-      "Mammals (mammalia)",
-      "Birds (Aves)"
+      { selector: "allsp", name: "All species", default: true },
+      { selector: "amphibia", name: "Amphibians" },
+      { selector: "mammalia", name: "Mammals" },
+      { selector: "aves", name: "Birds" },
     ]
     ecosystem: [
-      "Total EF provision (totef) default",
-      "Commodity provision (cultivated products) (comprov)",
-      "Wild provision (wildprov)",
-      "Regulating functions provision (regprov)"
+      { selector: "totef", name: "Total EF provision", default: true },
+      { selector: "comprov", name: "Commodity provision (cultivated products)" },
+      { selector: "wildprov", name: "Wild provision" },
+      { selector: "regprov", name: "Regulating functions provision" },
     ]

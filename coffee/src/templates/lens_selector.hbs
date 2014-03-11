@@ -1,1 +1,7 @@
-<h1>LensSelector View</h1>
+<h1>Lenses</h1>
+
+<ul>
+  {{#each lenses}}
+    <li data-subject="{{this.selector}}">{{this.name}}</li>
+  {{/each}}
+</ul>

@@ -82,8 +82,8 @@
     return assert.strictEqual(filter.get('subject'), 'biodiversity', 'Expected the filter model subject attribute to be biodiversity');
   });
 
-  test('when the filter has a subject set, it renders a lens selector subView with the corresponding lenses', function() {
-    var LensSelectorConstructorSpy, biodiversityLenses, filter, filterView, lensSelectorArgs;
+  test('if the filter has a subject render creates a LensSelector subview with that filter', function() {
+    var LensSelectorConstructorSpy, filter, filterView, lensSelectorArgs;
     LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity'
@@ -94,11 +94,45 @@
     try {
       assert.isTrue(LensSelectorConstructorSpy.calledOnce, "Expected a new LensSelectorView to be created");
       lensSelectorArgs = LensSelectorConstructorSpy.getCall(0).args;
-      biodiversityLenses = MacArthur.LENSES.biodiversty;
-      return assert.deepEqual(lensSelectorArgs[0].lenses, biodiversityLenses, "Expected the LensSelectorView to be created with the biodiversity lenses");
+      return assert.deepEqual(lensSelectorArgs[0].filter, filter, "Expected the LensSelectorView to be created with the biodiversity lenses");
     } finally {
       LensSelectorConstructorSpy.restore();
     }
+  });
+
+  test('if the filter does not have a subject set, no LensSelector subview is created', function() {
+    var LensSelectorConstructorSpy, filter, filterView;
+    LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
+    filter = new Backbone.Models.Filter();
+    filterView = new Backbone.Views.FilterView({
+      filter: filter
+    });
+    try {
+      return assert.strictEqual(LensSelectorConstructorSpy.callCount, 0, "Expected a new LensSelectorView not to be created");
+    } finally {
+      LensSelectorConstructorSpy.restore();
+    }
+  });
+
+}).call(this);
+
+(function() {
+  suite("LensSelector View");
+
+  test('when the filter has a subject set, it renders the corresponding lenses', function() {
+    var biodiversityLenses, dataSelectionBio, dataSelectionEco, ecosystemLenses, filter, lensSelectorView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    lensSelectorView = new Backbone.Views.LensSelectorView({
+      filter: filter
+    });
+    ecosystemLenses = MacArthur.CONFIG.lenses.ecosystem;
+    dataSelectionEco = lensSelectorView.$el.find('ul [data-subject="totef"]');
+    biodiversityLenses = MacArthur.CONFIG.lenses.biodiversity;
+    dataSelectionBio = lensSelectorView.$el.find('ul [data-subject="allsp"]');
+    assert.lengthOf(dataSelectionEco, 0, "Expected the LensSelectorView not to contain the ecosystem lenses");
+    return assert.strictEqual(dataSelectionBio.text(), 'All species', "Expected the LensSelectorView to contain the biodiversity lenses");
   });
 
 }).call(this);

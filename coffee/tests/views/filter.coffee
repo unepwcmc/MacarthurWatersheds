@@ -20,8 +20,8 @@ test('when a subject is selected the filter object is updated', ->
     'Expected the filter model subject attribute to be biodiversity'
 )
 
-test('when the filter has a subject set, it renders a lens selector
-  subView with the corresponding lenses', ->
+test('if the filter has a subject render creates a LensSelector subview
+  with that filter', ->
 
   LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView')
 
@@ -39,9 +39,27 @@ test('when the filter has a subject set, it renders a lens selector
 
     lensSelectorArgs = LensSelectorConstructorSpy.getCall(0).args
 
-    biodiversityLenses = MacArthur.LENSES.biodiversty
-    assert.deepEqual lensSelectorArgs[0].lenses, biodiversityLenses,
+    assert.deepEqual lensSelectorArgs[0].filter, filter,
       "Expected the LensSelectorView to be created with the biodiversity lenses"
+  finally
+    LensSelectorConstructorSpy.restore()
+)
+
+test('if the filter does not have a subject set,
+  no LensSelector subview is created', ->
+
+  LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView')
+
+  filter = new Backbone.Models.Filter()
+
+  filterView = new Backbone.Views.FilterView( filter: filter )
+
+  try
+    assert.strictEqual(
+      LensSelectorConstructorSpy.callCount, 0,
+      "Expected a new LensSelectorView not to be created"
+    )
+
   finally
     LensSelectorConstructorSpy.restore()
 )

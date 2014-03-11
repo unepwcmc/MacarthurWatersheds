@@ -9,12 +9,14 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   initialize: (options) ->
     @filter = options.filter
+    @listenTo(@filter, 'change', @render)
     @render()
 
   render: ->
     @$el.html(@template(
       thisView: @
-      lenses: MacArthur.LENSES[@filter.get('subject')]
+      showLensSelector: @filter.get('subject')?
+      filter: @filter
     ))
     @attachSubViews()
     return @
@@ -25,4 +27,5 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   onClose: ->
     @closeSubViews()
+    @stopListening()
     

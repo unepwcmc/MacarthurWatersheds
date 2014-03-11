@@ -1,3 +1,4 @@
+
 <h1>Filter View</h1>
 
 <div class="subjects">
@@ -7,4 +8,6 @@
   </ul>
 </div>
 
-{{addSubViewTo thisView 'LensSelectorView' lenses=lenses}}
+{{#if showLensSelector}}
+  {{addSubViewTo thisView 'LensSelectorView' filter=filter}}
+{{/if}}
