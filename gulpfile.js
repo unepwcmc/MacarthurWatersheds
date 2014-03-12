@@ -5,6 +5,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var handlebars = require('gulp-handlebars');
 var declare = require('gulp-declare');
+var plumber = require('gulp-plumber');
 
 var paths = {
   application: [
@@ -24,6 +25,7 @@ var paths = {
 gulp.task('tests', function() {
   // Minify and copy all JavaScript (except vendor scripts)
   return gulp.src(paths.tests)
+    .pipe(plumber())
     .pipe(coffee())
     .pipe(concat('tests.js'))
     .pipe(gulp.dest('js/'));
