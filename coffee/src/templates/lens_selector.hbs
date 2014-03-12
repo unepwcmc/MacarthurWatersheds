@@ -1,6 +1,6 @@
 <h1>Lenses</h1>
 
-<select name="subject-select">
+<select id="lens-select">
   {{# each lenses}}
   <option value="{{this.selector}}" {{#if this.default}}selected{{/if}}>{{this.name}}</option>
   {{/each}}

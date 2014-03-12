@@ -20,7 +20,7 @@ test('when a subject is selected the filter object is updated', ->
     'Expected the filter model subject attribute to be biodiversity'
 )
 
-test('if the filter has a subject render creates a LensSelector subview
+test('if the filter has a subject, render creates a LensSelector subview
   with that filter', ->
 
   LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView')

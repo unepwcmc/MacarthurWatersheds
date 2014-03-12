@@ -82,7 +82,7 @@
     return assert.strictEqual(filter.get('subject'), 'biodiversity', 'Expected the filter model subject attribute to be biodiversity');
   });
 
-  test('if the filter has a subject render creates a LensSelector subview with that filter', function() {
+  test('if the filter has a subject, render creates a LensSelector subview with that filter', function() {
     var LensSelectorConstructorSpy, filter, filterView, lensSelectorArgs;
     LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
     filter = new Backbone.Models.Filter({
@@ -133,6 +133,17 @@
     dataSelectionBio = lensSelectorView.$el.find('select option[value="amphibia"]');
     assert.lengthOf(dataSelectionEco, 0, "Expected the LensSelectorView not to contain the ecosystem lenses");
     return assert.lengthOf(dataSelectionBio, 1, "Expected the LensSelectorView to contain the biodiversity lenses");
+  });
+
+  test('when the lenses view is initialized the default lens is set on the filter', function() {
+    var filter, lensSelectorView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    lensSelectorView = new Backbone.Views.LensSelectorView({
+      filter: filter
+    });
+    return assert.strictEqual(filter.get('lens'), 'allsp', "Expected lens to be allsp");
   });
 
 }).call(this);

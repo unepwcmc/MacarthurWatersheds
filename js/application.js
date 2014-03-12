@@ -189,21 +189,42 @@
 
     LensSelectorView.prototype.template = Handlebars.templates['lens_selector'];
 
+    LensSelectorView.prototype.config = MacArthur.CONFIG.lenses;
+
+    LensSelectorView.prototype.events = {
+      "change #lens-select": "setLens"
+    };
+
     LensSelectorView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.filter.set('lens', this.getDefaultFilter().selector, {
+        silent: true
+      });
       return this.render();
     };
 
     LensSelectorView.prototype.render = function() {
       var lenses;
-      lenses = MacArthur.CONFIG.lenses[this.filter.get('subject')];
+      lenses = this.config[this.filter.get('subject')];
       this.$el.html(this.template({
         lenses: lenses
       }));
       return this;
     };
 
+    LensSelectorView.prototype.setLens = function(event) {
+      var lensName;
+      lensName = $(event.target).find(':selected').attr('value');
+      return this.filter.set('lens', lensName);
+    };
+
     LensSelectorView.prototype.onClose = function() {};
+
+    LensSelectorView.prototype.getDefaultFilter = function() {
+      return _.find(this.config[this.filter.get('subject')], function(obj) {
+        return obj["default"] != null;
+      });
+    };
 
     return LensSelectorView;
 
