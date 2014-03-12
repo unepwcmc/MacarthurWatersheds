@@ -9,14 +9,14 @@ test('when the filter has a subject set, it renders the corresponding lenses', -
   lensSelectorView = new Backbone.Views.LensSelectorView( filter: filter )
 
   ecosystemLenses = MacArthur.CONFIG.lenses.ecosystem
-  dataSelectionEco = lensSelectorView.$el.find('ul [data-subject="totef"]')
+  dataSelectionEco = lensSelectorView.$el.find('select option[value="comprov"]')
+
   biodiversityLenses = MacArthur.CONFIG.lenses.biodiversity
-  dataSelectionBio = lensSelectorView.$el.find('ul [data-subject="allsp"]')
+  dataSelectionBio = lensSelectorView.$el.find('select option[value="amphibia"]')
 
   assert.lengthOf dataSelectionEco, 0,
     "Expected the LensSelectorView not to contain the ecosystem lenses"
 
-  assert.strictEqual dataSelectionBio.text(),
-    'All species',
+  assert.lengthOf dataSelectionBio, 1,
     "Expected the LensSelectorView to contain the biodiversity lenses"
 )

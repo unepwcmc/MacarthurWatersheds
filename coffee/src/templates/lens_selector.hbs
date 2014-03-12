@@ -1,7 +1,7 @@
 <h1>Lenses</h1>
 
-<ul>
-  {{#each lenses}}
-    <li data-subject="{{this.selector}}">{{this.name}}</li>
+<select name="subject-select">
+  {{# each lenses}}
+  <option value="{{this.selector}}" {{#if this.default}}selected{{/if}}>{{this.name}}</option>
   {{/each}}
-</ul>
+</select>
