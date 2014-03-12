@@ -16,7 +16,7 @@ test('when the filter has a subject set, it renders the corresponding lenses', -
   assert.lengthOf dataSelectionEco, 0,
     "Expected the LensSelectorView not to contain the ecosystem lenses"
 
-  assert.strictEqual dataSelectionBio.text(), 
+  assert.strictEqual dataSelectionBio.text(),
     'All species',
     "Expected the LensSelectorView to contain the biodiversity lenses"
 )

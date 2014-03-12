@@ -3,8 +3,9 @@
 
 <div class="subjects">
   <ul>
-    <li data-subject="biodiversity">Biodiversity</li>
-    <li data-subject="ecosystem">Ecosystem</li>
+    {{# each subjects}}
+    <li data-subject="{{this.selector}}">{{this.name}}</li>
+    {{/each}}
   </ul>
 </div>
 

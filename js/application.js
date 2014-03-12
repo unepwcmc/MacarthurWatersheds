@@ -2,6 +2,15 @@
   window.MacArthur = {};
 
   MacArthur.CONFIG = {
+    subjects: [
+      {
+        selector: "biodiversity",
+        name: "Biodiversity"
+      }, {
+        selector: "ecosystem",
+        name: "Ecosystem"
+      }
+    ],
     lenses: {
       biodiversity: [
         {
@@ -233,6 +242,7 @@
     FilterView.prototype.render = function() {
       this.$el.html(this.template({
         thisView: this,
+        subjects: MacArthur.CONFIG.subjects,
         showLensSelector: this.filter.get('subject') != null,
         filter: this.filter
       }));

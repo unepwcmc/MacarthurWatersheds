@@ -1,6 +1,10 @@
 window.MacArthur = {}
 
-MacArthur.CONFIG = 
+MacArthur.CONFIG =
+  subjects: [
+    { selector: "biodiversity", name: "Biodiversity"},
+    { selector: "ecosystem", name: "Ecosystem"}
+  ],
   lenses:
     biodiversity: [
       { selector: "allsp", name: "All species", default: true },
