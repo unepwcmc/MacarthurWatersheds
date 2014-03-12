@@ -12,15 +12,18 @@ SCENARIO = ["bas", "mf2050", "secf2050", "pf2050", "susf2050"]
 CONSERVATION = ["cons", "nocons"]
 REGIONS = ["WAN", "MEK", "GLR"]
 
-
-def self.geometry_data
+def self.regions 
   REGIONS.each do |region|
     sql = <<-SQL
-      INSERT INTO macarthur_region(name)
+      INSERT INTO macarthur_region(code)
       VALUES ('#{region}')
     SQL
     puts sql
     CartodbQuery.run(sql)
+end
+
+def self.geometry_data
+  
     sql = <<-SQL 
         INSERT INTO macarthur_watershed(the_geom, name,region_id)
           SELECT ws.the_geom, ws_id, mr.cartodb_id 
@@ -90,5 +93,7 @@ ARGV.each do|action|
     bd
   elsif action == 'lens'
     lens
+  elsif action == 'regions'
+    regions
   end
 end

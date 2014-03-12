@@ -18,7 +18,7 @@ end
 
 
 
-tables_columns = {"region" => {"name" => "varchar"},
+tables_columns = {"region" => {"code" => "varchar"},
                   "lens" => {"name" => "varchar", 
                             "type" => "varchar"
                             },
@@ -29,7 +29,7 @@ tables_columns = {"region" => {"name" => "varchar"},
                                   "type_data" => "varchar",
                                   "metric" => "varchar",
                                   "scenario" => "varchar",
-                                  "value" => "doble"
+                                  "value" => "doble",
                                   "conservation" => "boolean"
                                 }
                   }
