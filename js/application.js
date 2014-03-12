@@ -2,6 +2,18 @@
   window.MacArthur = {};
 
   MacArthur.CONFIG = {
+    regions: [
+      {
+        code: "WAN",
+        name: "Andes"
+      }, {
+        code: "MEK",
+        name: "Mekong"
+      }, {
+        code: "GLR",
+        name: "African Great Lakes"
+      }
+    ],
     subjects: [
       {
         selector: "biodiversity",
@@ -107,7 +119,7 @@
 }).call(this);
 
 (function() {
-  var regions, _base,
+  var _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -115,19 +127,6 @@
   window.Backbone || (window.Backbone = {});
 
   (_base = window.Backbone).Views || (_base.Views = {});
-
-  regions = [
-    {
-      id: 1,
-      name: "Andes"
-    }, {
-      id: 2,
-      name: "African Great Lakes"
-    }, {
-      id: 3,
-      name: "Mekong"
-    }
-  ];
 
   Backbone.Views.RegionChooserView = (function(_super) {
     __extends(RegionChooserView, _super);
@@ -146,7 +145,7 @@
     };
 
     RegionChooserView.prototype.initialize = function(options) {
-      this.regions = new Backbone.Collections.RegionCollection(regions);
+      this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       return this.render();
     };
 
@@ -158,9 +157,12 @@
     };
 
     RegionChooserView.prototype.triggerChooseRegion = function(event) {
-      var regionId;
-      regionId = $(event.target).attr('data-region-id');
-      return this.trigger('regionChosen', this.regions.get(regionId));
+      var region, regionCode;
+      regionCode = $(event.target).attr('data-region-code');
+      region = this.regions.find(function(region) {
+        return region.get('code') === regionCode;
+      });
+      return this.trigger('regionChosen', region);
     };
 
     RegionChooserView.prototype.onClose = function() {};
@@ -351,7 +353,9 @@
       var view;
       this.modalContainer.hideModal();
       view = new Backbone.Views.FilterView({
-        filter: new Backbone.Models.Filter()
+        filter: new Backbone.Models.Filter({
+          region: region
+        })
       });
       return this.sidePanel.showView(view);
     };

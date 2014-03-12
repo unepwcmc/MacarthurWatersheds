@@ -16,7 +16,6 @@ class ModalContainer
 
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
-
     @modalContainer = new ModalContainer
     @sidePanel = new Backbone.Diorama.ManagedRegion()
     @sidePanel.$el.attr('id', 'side-panel')
@@ -42,7 +41,7 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   show: (region) =>
     @modalContainer.hideModal()
     view = new Backbone.Views.FilterView(
-      filter: new Backbone.Models.Filter()
+      filter: new Backbone.Models.Filter( region: region )
     )
     @sidePanel.showView(view)
 
