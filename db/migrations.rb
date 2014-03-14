@@ -11,6 +11,7 @@ def self.change_table table_name, columns
   add_column = add_column[0..-3]
 
   sql = <<-SQL
+    ALTER TABLE macarthur_#{table_name} DROP COLUMN name, description
     ALTER TABLE macarthur_#{table_name} #{add_column}
   SQL
   CartodbQuery.run(sql)
@@ -18,7 +19,7 @@ end
 
 
 
-tables_columns = {"region" => {"name" => "varchar"},
+tables_columns = {"region" => {"code" => "varchar"},
                   "lens" => {"name" => "varchar", 
                             "type" => "varchar"
                             },
