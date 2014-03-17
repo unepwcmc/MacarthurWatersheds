@@ -17,8 +17,10 @@ class Backbone.Views.MapView extends Backbone.View
 
 
   updateQueryLayer: (model, event) ->
-    query = model.get('query')
-    L.tileLayer("#{@queryUrlRoot}sql=#{query}").addTo(@map)
+    #query = model.get('query')
+    #L.tileLayer("#{@queryUrlRoot}sql=#{query}").addTo(@map)
+    omnivore.topojson('../../../../lib/cartodb/macarthur_watershed.topojson')
+      .addTo(@map);
 
   onClose: ->
     

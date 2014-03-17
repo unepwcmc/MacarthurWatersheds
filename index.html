@@ -7,6 +7,7 @@
     
     <link rel="stylesheet" type="text/css" href="lib/leaflet/leaflet.css">
 
+    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.0.1/leaflet-omnivore.min.js'></script>
     <script src="lib/jquery/dist/jquery.min.js"></script>
     <script src="lib/json2/json2.js"></script>
     <script src="lib/underscore/underscore.js"></script>
@@ -22,6 +23,22 @@
 
     <script>
       $(document).ready(function(){
+
+        L.TopoJSON = L.GeoJSON.extend({
+          addData: function(jsonData) {   
+            debugger 
+            if (jsonData.type === "Topology") {
+              for (key in jsonData.objects) {
+                geojson = topojson.feature(jsonData, jsonData.objects[key]);
+                L.GeoJSON.prototype.addData.call(this, geojson);
+              }
+            }    
+            else {
+              L.GeoJSON.prototype.addData.call(this, jsonData);
+            }
+          }  
+        });
+
         var myController = new Backbone.Controllers.MainController();
       });
     </script>

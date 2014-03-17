@@ -180,9 +180,7 @@
     };
 
     MapView.prototype.updateQueryLayer = function(model, event) {
-      var query;
-      query = model.get('query');
-      return L.tileLayer("" + this.queryUrlRoot + "sql=" + query).addTo(this.map);
+      return omnivore.topojson('../../../../lib/cartodb/macarthur_watershed.topojson').addTo(this.map);
     };
 
     MapView.prototype.onClose = function() {};
