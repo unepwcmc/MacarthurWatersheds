@@ -16,6 +16,8 @@ class ModalContainer
 
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
+    @filter = new Backbone.Models.Filter()
+    @queryBuilder = new window.MacArthur.QueryBuilder(@filter)
     @modalContainer = new ModalContainer
     @sidePanel = new Backbone.Diorama.ManagedRegion()
     @sidePanel.$el.attr('id', 'side-panel')
@@ -26,7 +28,7 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @chooseRegion()
 
   showMap: =>
-    @map = new Backbone.Views.MapView()
+    @map = new Backbone.Views.MapView {filter: @filter}
 
   chooseRegion: =>
     regionChooserView = new Backbone.Views.RegionChooserView()
@@ -42,8 +44,9 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
 
   showSidePanel: (region) =>
     @modalContainer.hideModal()
+    @filter.set(region: region)
     view = new Backbone.Views.FilterView(
-      filter: new Backbone.Models.Filter( region: region )
+      filter: @filter
     )
     @sidePanel.showView(view)
 

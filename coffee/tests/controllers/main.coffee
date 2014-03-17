@@ -58,6 +58,7 @@ test('the show action renders a filter view into the side panel', ->
       hideModal: ->
     sidePanel:
       showView: sinon.spy()
+    filter: new Backbone.Models.Filter()
 
   Backbone.Controllers.MainController::showSidePanel.call(controller)
 

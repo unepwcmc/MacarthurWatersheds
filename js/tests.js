@@ -56,7 +56,8 @@
       },
       sidePanel: {
         showView: sinon.spy()
-      }
+      },
+      filter: new Backbone.Models.Filter()
     };
     Backbone.Controllers.MainController.prototype.showSidePanel.call(controller);
     assert.isTrue(controller.sidePanel.showView.calledOnce, "Expected controller.sidePanel.showView to be called");

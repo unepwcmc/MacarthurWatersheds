@@ -95,7 +95,9 @@
       this.filter.on('change', this.updateFilterQuery);
     }
 
-    QueryBuilder.prototype.buildQuery = function() {};
+    QueryBuilder.prototype.buildQuery = function() {
+      return "SELECT watershed_id, value, w.the_geom_webmercator FROM macarthur_region r right join macarthur_watershed w on r.cartodb_id = w.region_id left join macarthur_datapoint d on d.watershed_id = w.cartodb_id left join macarthur_lens l on l.cartodb_id = d.lens_id   where r.code = 'WAN' AND l.name = 'bd' AND l.type = 'allsp' and metric = 'imp' and scenario = 'bas' and type_data = 'value'";
+    };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
       if (model.changedAttributes().query == null) {
@@ -168,10 +170,19 @@
       this.map = L.map('map', {
         scrollWheelZoom: false
       }).setView([0, 0], 2);
+      this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
       L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
         attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
       }).addTo(this.map);
-      return L.tileLayer;
+      this.css = '#macarthur_datapoint{ polygon-opacity: 0.8; line-color: #FFF; line-width: 1; line-opacity: 1macarthur_datapoint [ value <= 0.6177211398] {  polygon-fill: #005824macarthur_datapoint [ value <= 0.0007393294] {  polygon-fill: #238B45macarthur_datapoint [ value <= -0.000997682] {  polygon-fill: #41AE76macarthur_datapoint [ value <= -0.0109500099] {  polygon-fill: #66C2A4macarthur_datapoint [ value <= -0.0235889656] {  polygon-fill: #CCECE6macarthur_datapoint [ value <= -0.0845306143] {  polygon-fill: #D7FAF4macarthur_datapoint [ value <= -0.2292566377] {  polygon-fill: #EDF8FB;';
+      this.filter = options.filter;
+      return this.listenTo(this.filter, 'change', this.updateQueryLayer);
+    };
+
+    MapView.prototype.updateQueryLayer = function(model, event) {
+      var query;
+      query = model.get('query');
+      return L.tileLayer("" + this.queryUrlRoot + "sql=" + query).addTo(this.map);
     };
 
     MapView.prototype.onClose = function() {};
@@ -391,6 +402,8 @@
       this.showSidePanel = __bind(this.showSidePanel, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
+      this.filter = new Backbone.Models.Filter();
+      this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
       this.modalContainer = new ModalContainer;
       this.sidePanel = new Backbone.Diorama.ManagedRegion();
       this.sidePanel.$el.attr('id', 'side-panel');
@@ -400,7 +413,9 @@
     }
 
     MainController.prototype.showMap = function() {
-      return this.map = new Backbone.Views.MapView();
+      return this.map = new Backbone.Views.MapView({
+        filter: this.filter
+      });
     };
 
     MainController.prototype.chooseRegion = function() {
@@ -422,10 +437,11 @@
     MainController.prototype.showSidePanel = function(region) {
       var view;
       this.modalContainer.hideModal();
+      this.filter.set({
+        region: region
+      });
       view = new Backbone.Views.FilterView({
-        filter: new Backbone.Models.Filter({
-          region: region
-        })
+        filter: this.filter
       });
       return this.sidePanel.showView(view);
     };
