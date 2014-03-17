@@ -16,15 +16,17 @@ class ModalContainer
 
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
-
     @modalContainer = new ModalContainer
     @sidePanel = new Backbone.Diorama.ManagedRegion()
     @sidePanel.$el.attr('id', 'side-panel')
     @sidePanel.$el.insertAfter('#map')
     
     # Default state
+    @showMap()
     @chooseRegion()
 
+  showMap: =>
+    @map = new Backbone.Views.MapView()
 
   chooseRegion: =>
     regionChooserView = new Backbone.Views.RegionChooserView()
@@ -35,14 +37,13 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
       controller states
     ###
     @changeStateOn(
-      {event: 'regionChosen', publisher: regionChooserView, newState: @show}
+      {event: 'regionChosen', publisher: regionChooserView, newState: @showSidePanel}
     )
 
-
-  show: (region) =>
+  showSidePanel: (region) =>
     @modalContainer.hideModal()
     view = new Backbone.Views.FilterView(
-      filter: new Backbone.Models.Filter()
+      filter: new Backbone.Models.Filter( region: region )
     )
     @sidePanel.showView(view)
 

@@ -30,4 +30,3 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     _.find(@config[@filter.get('subject')], (obj) -> 
       return obj.default?
     )
-    

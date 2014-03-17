@@ -1,12 +1,6 @@
 window.Backbone ||= {}
 window.Backbone.Views ||= {}
 
-regions = [
-  {id: 1, name: "Andes"},
-  {id: 2, name: "African Great Lakes"},
-  {id: 3, name: "Mekong"}
-]
-
 class Backbone.Views.RegionChooserView extends Backbone.View
   template: Handlebars.templates['region_chooser']
   className: 'modal region-chooser'
@@ -15,7 +9,7 @@ class Backbone.Views.RegionChooserView extends Backbone.View
     "click .regions li": "triggerChooseRegion"
 
   initialize: (options) ->
-    @regions = new Backbone.Collections.RegionCollection regions
+    @regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
     @render()
 
   render: ->
@@ -25,8 +19,9 @@ class Backbone.Views.RegionChooserView extends Backbone.View
     return @
 
   triggerChooseRegion: (event) =>
-    regionId = $(event.target).attr('data-region-id')
-    @trigger('regionChosen', @regions.get(regionId) )
+    regionCode = $(event.target).attr('data-region-code')
+    region = @regions.find( (region) -> region.get('code') == regionCode )
+    @trigger('regionChosen', region)
 
   onClose: ->
     
