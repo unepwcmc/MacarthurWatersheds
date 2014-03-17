@@ -13,6 +13,47 @@ libs with:
     npm install
     npm install -g gulp bower
 
+## DB Configuration
+
+We have all the data stored in [CartoDB](https://www.cartodb.com). So you need to open an account there.
+
+You will also need to create a YAML file with the account and the api-key in config directory. You can see an exemple in config/cartodb_config_example.yml
+
+
+###Creating Tables
+
+You will need to create the tables manually as CartoDB currently does not display tables created using their API.
+The tables to create are:
+
+	macarthur_region(3 regions)
+	macarthur_watershed(watershed geometries)
+	macarthur_datapoint(watershed data)
+	macarthur_lens(name and type)
+
+You will also need to upload to cartodb the watershed raw data creating two tables:
+
+	macarthur_bd_original_data(BD columns)
+	macarthur_ef_original_data(EF columns)
+
+## Changing schema
+We have created a tool to change the schema of the above tables.
+You will need to run:
+
+	ruby migrations.rb [table_name_without_prefix]
+
+## Importing data
+We have created a script that populates the tables using the original data.
+You should run:
+
+	ruby update_tables.rb [data_to_populate]
+
+data_to_populate is:
+
+	geometry_data(regions and watersheds)
+	lens
+	bd(bd datapoint)
+
+
 ## Serving files
 Althought we don't actually have a 'server' component, you still need to serve
 files over http in development. We're using the npm lib 'serv', which you can

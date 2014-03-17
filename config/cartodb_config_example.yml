@@ -1,0 +1,2 @@
+host: 'https://{your-account}.cartodb.com'
+api_key: 'api-key-here'
