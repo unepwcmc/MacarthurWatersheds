@@ -179,8 +179,26 @@
       return this.listenTo(this.filter, 'change', this.updateQueryLayer);
     };
 
+    MapView.prototype.style = function(feature) {
+      return {
+        fillColor: '#FC4E2A',
+        weight: 0.6,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0.7
+      };
+    };
+
     MapView.prototype.updateQueryLayer = function(model, event) {
-      return omnivore.topojson('../../../../lib/cartodb/macarthur_watershed.topojson').addTo(this.map);
+      return $.getJSON('../../../../lib/cartodb/macarthur_watershed.topojson', (function(_this) {
+        return function(data) {
+          var collection;
+          collection = topojson.feature(data, data.objects.macarthur_watershed);
+          return L.geoJson(collection, {
+            style: _this.style
+          }).addTo(_this.map);
+        };
+      })(this));
     };
 
     MapView.prototype.onClose = function() {};
