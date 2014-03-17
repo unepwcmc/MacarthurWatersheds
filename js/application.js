@@ -1,5 +1,5 @@
 (function() {
-  window.MacArthur = {};
+  window.MacArthur || (window.MacArthur = {});
 
   MacArthur.CONFIG = {
     regions: [
@@ -84,6 +84,32 @@
 }).call(this);
 
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  window.MacArthur || (window.MacArthur = {});
+
+  window.MacArthur.QueryBuilder = (function() {
+    function QueryBuilder(filter) {
+      this.filter = filter;
+      this.updateFilterQuery = __bind(this.updateFilterQuery, this);
+      this.filter.on('change', this.updateFilterQuery);
+    }
+
+    QueryBuilder.prototype.buildQuery = function() {};
+
+    QueryBuilder.prototype.updateFilterQuery = function(model, event) {
+      if (model.changedAttributes().query == null) {
+        return this.filter.set('query', this.buildQuery());
+      }
+    };
+
+    return QueryBuilder;
+
+  })();
+
+}).call(this);
+
+(function() {
   var _base, _base1,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -142,9 +168,10 @@
       this.map = L.map('map', {
         scrollWheelZoom: false
       }).setView([0, 0], 2);
-      return L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+      L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
         attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
       }).addTo(this.map);
+      return L.tileLayer;
     };
 
     MapView.prototype.onClose = function() {};

@@ -1,4 +1,4 @@
-window.MacArthur = {}
+window.MacArthur ||= {}
 
 MacArthur.CONFIG =
   regions: [
