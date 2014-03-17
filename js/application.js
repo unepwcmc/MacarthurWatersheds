@@ -96,7 +96,7 @@
     }
 
     QueryBuilder.prototype.buildQuery = function() {
-      return "SELECT watershed_id, value, w.the_geom_webmercator FROM macarthur_region r right join macarthur_watershed w on r.cartodb_id = w.region_id left join macarthur_datapoint d on d.watershed_id = w.cartodb_id left join macarthur_lens l on l.cartodb_id = d.lens_id   where r.code = 'WAN' AND l.name = 'bd' AND l.type = 'allsp' and metric = 'imp' and scenario = 'bas' and type_data = 'value'";
+      return "SELECT watershed_id, value FROM macarthur_region r right join macarthur_watershed w on r.cartodb_id = w.region_id left join macarthur_datapoint d on d.watershed_id = w.cartodb_id left join macarthur_lens l on l.cartodb_id = d.lens_id   where r.code = 'WAN' AND l.name = 'bd' AND l.type = 'allsp' and metric = 'imp' and scenario = 'bas' and type_data = 'value'";
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
@@ -167,25 +167,53 @@
     MapView.prototype.template = Handlebars.templates['map'];
 
     MapView.prototype.initialize = function(options) {
-      this.map = L.map('map', {
-        scrollWheelZoom: false
-      }).setView([0, 0], 2);
-      this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
-      L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
-        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
-      }).addTo(this.map);
-      this.css = '#macarthur_datapoint{ polygon-opacity: 0.8; line-color: #FFF; line-width: 1; line-opacity: 1macarthur_datapoint [ value <= 0.6177211398] {  polygon-fill: #005824macarthur_datapoint [ value <= 0.0007393294] {  polygon-fill: #238B45macarthur_datapoint [ value <= -0.000997682] {  polygon-fill: #41AE76macarthur_datapoint [ value <= -0.0109500099] {  polygon-fill: #66C2A4macarthur_datapoint [ value <= -0.0235889656] {  polygon-fill: #CCECE6macarthur_datapoint [ value <= -0.0845306143] {  polygon-fill: #D7FAF4macarthur_datapoint [ value <= -0.2292566377] {  polygon-fill: #EDF8FB;';
       this.filter = options.filter;
-      return this.listenTo(this.filter, 'change', this.updateQueryLayer);
+      this.listenTo(this.filter, 'change', this.updateQueryLayer);
+      return this.initMap();
     };
 
     MapView.prototype.updateQueryLayer = function(model, event) {
       var query;
-      query = model.get('query');
-      return L.tileLayer("" + this.queryUrlRoot + "sql=" + query).addTo(this.map);
+      return query = model.get('query');
     };
 
-    MapView.prototype.onClose = function() {};
+    MapView.prototype.initMap = function() {
+      var g, map, svg;
+      map = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([0, 0], 2);
+      L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
+      }).addTo(map);
+      svg = d3.select(map.getPanes().overlayPane).append("svg");
+      g = svg.append("g").attr("class", "leaflet-zoom-hide");
+      return d3.json("../../../../lib/cartodb/macarthur_watershed.topojson", function(data) {
+        var collection, feature, path, projectPoint, reset, transform;
+        collection = topojson.feature(data, data.objects.macarthur_watershed);
+        console.log(collection);
+        reset = function() {
+          var bottomRight, bounds, topLeft;
+          bounds = path.bounds(collection);
+          topLeft = bounds[0];
+          bottomRight = bounds[1];
+          svg.attr("width", bottomRight[0] - topLeft[0]).attr("height", bottomRight[1] - topLeft[1]).style("left", topLeft[0] + "px").style("top", topLeft[1] + "px");
+          g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+          return feature.attr("d", path);
+        };
+        projectPoint = function(x, y) {
+          var point;
+          point = map.latLngToLayerPoint(new L.LatLng(y, x));
+          this.stream.point(point.x, point.y);
+        };
+        transform = d3.geo.transform({
+          point: projectPoint
+        });
+        path = d3.geo.path().projection(transform);
+        feature = g.selectAll("path").data([collection]).enter().append("path");
+        map.on("viewreset", reset);
+        return reset();
+      });
+    };
 
     return MapView;
 
