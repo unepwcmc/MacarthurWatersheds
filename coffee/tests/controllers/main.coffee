@@ -32,6 +32,7 @@ test('on initialize, the controller creates a side panel after the map', ->
 
 test('From the choose region view, if I pick a region, it transitions to the show action', ->
   showActionStub = sinon.stub(Backbone.Controllers.MainController::, 'showSidePanel', ->)
+  showMapActionStub = sinon.stub(Backbone.Controllers.MainController::, "showMap", ->)
   controller = new Backbone.Controllers.MainController()
 
   chooseRegionView = controller.modalContainer.view
@@ -48,6 +49,7 @@ test('From the choose region view, if I pick a region, it transitions to the sho
 
   finally
     showActionStub.restore()
+    showMapActionStub.restore()
 )
 
 test('the show action renders a filter view into the side panel', ->
