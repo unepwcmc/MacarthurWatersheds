@@ -1,26 +1,31 @@
 (function() {
   suite('Main Controller');
 
-  test('The application starts by showing the choose region view', function() {
-    var chooseRegionActionStub, controller;
+  test('The application starts by showing the choose region view and a map', function() {
+    var chooseRegionActionStub, controller, showMapActionStub;
     chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     controller = new Backbone.Controllers.MainController();
     try {
-      return assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
+      assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
+      return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
     } finally {
       chooseRegionActionStub.restore();
+      showMapActionStub.restore();
     }
   });
 
   test('on initialize, the controller creates a side panel after the map', function() {
-    var chooseRegionActionStub, controller;
+    var chooseRegionActionStub, controller, showMapActionStub;
     chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     $('body').append('<div id="map">');
     controller = new Backbone.Controllers.MainController();
     try {
       return assert.lengthOf($('body').find('#side-panel'), 1, "Expected to side a #side-panel");
     } finally {
       chooseRegionActionStub.restore();
+      showMapActionStub.restore();
       $('body').remove('#map');
       $('body').remove('#side-panel');
     }
@@ -28,7 +33,7 @@
 
   test('From the choose region view, if I pick a region, it transitions to the show action', function() {
     var chooseRegionView, controller, showActionStub;
-    showActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, 'show', function() {});
+    showActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, 'showSidePanel', function() {});
     controller = new Backbone.Controllers.MainController();
     chooseRegionView = controller.modalContainer.view;
     try {
@@ -51,7 +56,7 @@
         showView: sinon.spy()
       }
     };
-    Backbone.Controllers.MainController.prototype.show.call(controller);
+    Backbone.Controllers.MainController.prototype.showSidePanel.call(controller);
     assert.isTrue(controller.sidePanel.showView.calledOnce, "Expected controller.sidePanel.showView to be called");
     showViewArgs = controller.sidePanel.showView.getCall(0).args;
     return assert.strictEqual(showViewArgs[0].constructor.name, "FilterView", "Expected sidePanel.showView to be called with a FilterView");

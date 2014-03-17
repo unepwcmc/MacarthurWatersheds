@@ -75,6 +75,8 @@
       return Filter.__super__.constructor.apply(this, arguments);
     }
 
+    Filter.prototype.buildQuery = function() {};
+
     return Filter;
 
   })(Backbone.Model);
@@ -115,6 +117,41 @@
     return RegionCollection;
 
   })(Backbone.Collection);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.MapView = (function(_super) {
+    __extends(MapView, _super);
+
+    function MapView() {
+      return MapView.__super__.constructor.apply(this, arguments);
+    }
+
+    MapView.prototype.template = Handlebars.templates['map'];
+
+    MapView.prototype.initialize = function(options) {
+      this.map = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([0, 0], 2);
+      return L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
+      }).addTo(this.map);
+    };
+
+    MapView.prototype.onClose = function() {};
+
+    return MapView;
+
+  })(Backbone.View);
 
 }).call(this);
 
@@ -324,14 +361,20 @@
     __extends(MainController, _super);
 
     function MainController() {
-      this.show = __bind(this.show, this);
+      this.showSidePanel = __bind(this.showSidePanel, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
+      this.showMap = __bind(this.showMap, this);
       this.modalContainer = new ModalContainer;
       this.sidePanel = new Backbone.Diorama.ManagedRegion();
       this.sidePanel.$el.attr('id', 'side-panel');
       this.sidePanel.$el.insertAfter('#map');
+      this.showMap();
       this.chooseRegion();
     }
+
+    MainController.prototype.showMap = function() {
+      return this.map = new Backbone.Views.MapView();
+    };
 
     MainController.prototype.chooseRegion = function() {
       var regionChooserView;
@@ -345,11 +388,11 @@
       return this.changeStateOn({
         event: 'regionChosen',
         publisher: regionChooserView,
-        newState: this.show
+        newState: this.showSidePanel
       });
     };
 
-    MainController.prototype.show = function(region) {
+    MainController.prototype.showSidePanel = function(region) {
       var view;
       this.modalContainer.hideModal();
       view = new Backbone.Views.FilterView({
