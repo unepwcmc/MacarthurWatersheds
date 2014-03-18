@@ -1,34 +1,40 @@
 (function() {
   suite('Main Controller');
 
-  test('The application starts by showing the choose region view', function() {
-    var chooseRegionActionStub, controller;
+  test('The application starts by showing the choose region view and a map', function() {
+    var chooseRegionActionStub, controller, showMapActionStub;
     chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     controller = new Backbone.Controllers.MainController();
     try {
-      return assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
+      assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
+      return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
     } finally {
       chooseRegionActionStub.restore();
+      showMapActionStub.restore();
     }
   });
 
   test('on initialize, the controller creates a side panel after the map', function() {
-    var chooseRegionActionStub, controller;
+    var chooseRegionActionStub, controller, showMapActionStub;
     chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     $('body').append('<div id="map">');
     controller = new Backbone.Controllers.MainController();
     try {
       return assert.lengthOf($('body').find('#side-panel'), 1, "Expected to side a #side-panel");
     } finally {
       chooseRegionActionStub.restore();
+      showMapActionStub.restore();
       $('body').remove('#map');
       $('body').remove('#side-panel');
     }
   });
 
   test('From the choose region view, if I pick a region, it transitions to the show action', function() {
-    var chooseRegionView, controller, showActionStub;
-    showActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, 'show', function() {});
+    var chooseRegionView, controller, showActionStub, showMapActionStub;
+    showActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, 'showSidePanel', function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     controller = new Backbone.Controllers.MainController();
     chooseRegionView = controller.modalContainer.view;
     try {
@@ -38,6 +44,7 @@
       return controller.modalContainer.hideModal();
     } finally {
       showActionStub.restore();
+      showMapActionStub.restore();
     }
   });
 
@@ -51,10 +58,73 @@
         showView: sinon.spy()
       }
     };
-    Backbone.Controllers.MainController.prototype.show.call(controller);
+    Backbone.Controllers.MainController.prototype.showSidePanel.call(controller);
     assert.isTrue(controller.sidePanel.showView.calledOnce, "Expected controller.sidePanel.showView to be called");
     showViewArgs = controller.sidePanel.showView.getCall(0).args;
     return assert.strictEqual(showViewArgs[0].constructor.name, "FilterView", "Expected sidePanel.showView to be called with a FilterView");
+  });
+
+}).call(this);
+
+(function() {
+  suite("Query Builder integration");
+
+  test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
+    var changeQuerySpy, filter, newQuery, oldQuery, queryBuilder, updatedQuery;
+    filter = new Backbone.Models.Filter();
+    queryBuilder = new MacArthur.QueryBuilder(filter);
+    oldQuery = filter.get('query');
+    changeQuerySpy = sinon.spy();
+    filter.on('change:query', changeQuerySpy);
+    newQuery = "SELECT BLAH BLAH BVLAH";
+    sinon.stub(queryBuilder, 'buildQuery', function() {
+      return newQuery;
+    });
+    filter.set('subject', MacArthur.CONFIG.subjects[0].selector);
+    updatedQuery = filter.get('query');
+    assert.notEqual(updatedQuery, oldQuery, "Expected filter.query to be modified");
+    assert.strictEqual(updatedQuery, newQuery, "Expected filter.query set to the result of QueryBuilder.buildQuery");
+    return assert.isTrue(changeQuerySpy.calledOnce, "Expected filter to fire a change:query event once, but fired " + changeQuerySpy.callCount + " times");
+  });
+
+}).call(this);
+
+(function() {
+  suite("QueryBuilder");
+
+  test("When initialized it takes a Filter instance and stores it as an attribute", function() {
+    var filter, queryBuilder;
+    filter = new Backbone.Models.Filter();
+    queryBuilder = new window.MacArthur.QueryBuilder(filter);
+    assert.property(queryBuilder, 'filter');
+    return assert.strictEqual(queryBuilder.filter.cid, filter.cid, "Expected filter attribute to be equal to the filter passed to the constructor");
+  });
+
+  test("When the Filter changes, buildQuery is called only once", function() {
+    var buildQueryStub, count, filter, queryBuilder;
+    count = 0;
+    filter = new Backbone.Models.Filter();
+    queryBuilder = new window.MacArthur.QueryBuilder(filter);
+    buildQueryStub = sinon.stub(queryBuilder, 'buildQuery', function() {
+      if (count < 5) {
+        count += 1;
+      }
+      return 'foo';
+    });
+    filter.set('subject', 'xxx');
+    return assert.strictEqual(buildQueryStub.callCount, 1, "Expected filter attribute to be called once");
+  });
+
+  test(".updateFilterQuery updates the filter.query with the return value of buildQuery", function() {
+    var buildQueryResult, buildQueryStub, filter, queryBuilder;
+    filter = new Backbone.Models.Filter();
+    queryBuilder = new window.MacArthur.QueryBuilder(filter);
+    buildQueryResult = "FooBar";
+    buildQueryStub = sinon.stub(queryBuilder, 'buildQuery', function() {
+      return buildQueryResult;
+    });
+    filter.set('subject', 'xxx');
+    return assert.strictEqual(filter.get('query'), buildQueryResult, "Expected the filter.query attribute to be updated");
   });
 
 }).call(this);
@@ -154,9 +224,9 @@
   test('.render presents a list of the three regions', function() {
     var view;
     view = new Backbone.Views.RegionChooserView();
-    assert.strictEqual(view.$el.find(".regions li[data-region-id='1']").text(), "Andes");
-    assert.strictEqual(view.$el.find(".regions li[data-region-id='2']").text(), "African Great Lakes");
-    return assert.strictEqual(view.$el.find(".regions li[data-region-id='3']").text(), "Mekong");
+    assert.strictEqual(view.$el.find(".regions li[data-region-code='WAN']").text(), "Andes");
+    assert.strictEqual(view.$el.find(".regions li[data-region-code='GLR']").text(), "African Great Lakes");
+    return assert.strictEqual(view.$el.find(".regions li[data-region-code='MEK']").text(), "Mekong");
   });
 
   test("when a region is clicked, it triggers the 'regionChosen' event with the corresponding region model", function() {
@@ -164,7 +234,7 @@
     view = new Backbone.Views.RegionChooserView();
     spy = sinon.spy();
     view.on("regionChosen", spy);
-    view.$el.find(".regions li[data-region-id='3']").trigger('click');
+    view.$el.find(".regions li[data-region-code='MEK']").trigger('click');
     assert.isTrue(spy.calledOnce, "Expected regionChosen to be triggered");
     eventArg = spy.getCall(0).args[0];
     assert.strictEqual(eventArg.constructor.name, "Region", "Expected the event to send a Region model");

@@ -11,7 +11,9 @@ var paths = {
   application: [
     'coffee/src/filter_definitions.coffee', 
     'coffee/src/models/filter.coffee', 
+    'coffee/src/lib/query_builder.coffee',
     'coffee/src/collections/region_collection.coffee', 
+    'coffee/src/views/map_view.coffee ',
     'coffee/src/views/region_chooser_view.coffee ',
     'coffee/src/views/lens_selector_view.coffee ',
     'coffee/src/views/filter_view.coffee ',

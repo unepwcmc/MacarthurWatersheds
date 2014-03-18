@@ -1,6 +1,11 @@
-window.MacArthur = {}
+window.MacArthur ||= {}
 
 MacArthur.CONFIG =
+  regions: [
+    { code: "WAN", name: "Andes" }
+    { code: "MEK", name: "Mekong" }
+    { code: "GLR", name: "African Great Lakes" }
+  ]
   subjects: [
     { selector: "biodiversity", name: "Biodiversity"},
     { selector: "ecosystem", name: "Ecosystem"}
