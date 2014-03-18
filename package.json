@@ -13,6 +13,6 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "start": "serv --port 8080"
+    "start": "serv --port 8080 --bind 10.1.1.105"
   }
 }

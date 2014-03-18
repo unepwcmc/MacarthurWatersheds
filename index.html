@@ -9,12 +9,10 @@
 
     <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="lib/jquery/dist/jquery.min.js"></script>
-    <script src="lib/json2/json2.js"></script>
     <script src="lib/underscore/underscore.js"></script>
     <script src="lib/backbone/backbone.js"></script>
     <script src="lib/handlebars/handlebars.min.js"></script>
     <script src="lib/leaflet/leaflet.js"></script>
-    <script src="lib/cartodb/cartodb.core.js"></script>
 
     <script src="lib/diorama.js"></script>
 
@@ -23,22 +21,6 @@
 
     <script>
       $(document).ready(function(){
-
-        L.TopoJSON = L.GeoJSON.extend({
-          addData: function(jsonData) {   
-            debugger 
-            if (jsonData.type === "Topology") {
-              for (key in jsonData.objects) {
-                geojson = topojson.feature(jsonData, jsonData.objects[key]);
-                L.GeoJSON.prototype.addData.call(this, geojson);
-              }
-            }    
-            else {
-              L.GeoJSON.prototype.addData.call(this, jsonData);
-            }
-          }  
-        });
-
         var myController = new Backbone.Controllers.MainController();
       });
     </script>

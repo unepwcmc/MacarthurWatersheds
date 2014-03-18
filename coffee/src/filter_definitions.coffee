@@ -2,9 +2,9 @@ window.MacArthur ||= {}
 
 MacArthur.CONFIG =
   regions: [
-    { code: "WAN", name: "Andes" }
-    { code: "MEK", name: "Mekong" }
-    { code: "GLR", name: "African Great Lakes" }
+    { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ] }
+    { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ] }
+    { code: "GLR", name: "African Great Lakes", bounds: [ [-18,15], [26,12] ] }
   ]
   subjects: [
     { selector: "biodiversity", name: "Biodiversity"},

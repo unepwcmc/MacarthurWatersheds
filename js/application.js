@@ -5,13 +5,16 @@
     regions: [
       {
         code: "WAN",
-        name: "Andes"
+        name: "Andes",
+        bounds: [[-22, -57], [14, -83]]
       }, {
         code: "MEK",
-        name: "Mekong"
+        name: "Mekong",
+        bounds: [[6, 110], [35, 90]]
       }, {
         code: "GLR",
-        name: "African Great Lakes"
+        name: "African Great Lakes",
+        bounds: [[-18, 15], [26, 12]]
       }
     ],
     subjects: [
@@ -80,6 +83,60 @@
     return Filter;
 
   })(Backbone.Model);
+
+}).call(this);
+
+(function() {
+  window.MacArthur || (window.MacArthur = {});
+
+  window.MacArthur.MapBuilder = (function() {
+    function MapBuilder() {}
+
+    MapBuilder.prototype.initBaseLayer = function() {
+      this.map = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([0, 0], 2);
+      this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
+      return L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
+      }).addTo(this.map);
+    };
+
+    MapBuilder.prototype.initQueryLayer = function(geo, regionCode, regionBounds) {
+      this.collection = topojson.feature(geo, geo.objects[regionCode]);
+      this.interiors = topojson.mesh(geo, geo.objects[regionCode], function(a, b) {
+        return a !== b;
+      });
+      this.queryLayer = L.geoJson(this.collection, {
+        style: this.basePolyStyle
+      }).addTo(this.map);
+      this.queryLayerInteriors = L.geoJson(this.interiors, {
+        style: this.baseLineStyle
+      }).addTo(this.map);
+      return this.map.fitBounds(regionBounds);
+    };
+
+    MapBuilder.prototype.baseLineStyle = function(feature) {
+      return {
+        weight: 0.6,
+        opacity: 1,
+        color: 'black',
+        fillOpacity: 0
+      };
+    };
+
+    MapBuilder.prototype.basePolyStyle = function(feature) {
+      return {
+        weight: 0,
+        opacity: 0,
+        fillOpacity: 0.6,
+        color: 'white'
+      };
+    };
+
+    return MapBuilder;
+
+  })();
 
 }).call(this);
 
@@ -167,40 +224,10 @@
     MapView.prototype.template = Handlebars.templates['map'];
 
     MapView.prototype.initialize = function(options) {
-      this.map = L.map('map', {
-        scrollWheelZoom: false
-      }).setView([0, 0], 2);
-      this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
-      L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
-        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
-      }).addTo(this.map);
-      this.css = '#macarthur_datapoint{ polygon-opacity: 0.8; line-color: #FFF; line-width: 1; line-opacity: 1macarthur_datapoint [ value <= 0.6177211398] {  polygon-fill: #005824macarthur_datapoint [ value <= 0.0007393294] {  polygon-fill: #238B45macarthur_datapoint [ value <= -0.000997682] {  polygon-fill: #41AE76macarthur_datapoint [ value <= -0.0109500099] {  polygon-fill: #66C2A4macarthur_datapoint [ value <= -0.0235889656] {  polygon-fill: #CCECE6macarthur_datapoint [ value <= -0.0845306143] {  polygon-fill: #D7FAF4macarthur_datapoint [ value <= -0.2292566377] {  polygon-fill: #EDF8FB;';
+      this.mapBuilder = new window.MacArthur.MapBuilder();
+      this.mapBuilder.initBaseLayer();
       return this.filter = options.filter;
     };
-
-    MapView.prototype.initQueryLayer = function(geo) {
-      this.collection = topojson.feature(geo, geo.objects.macarthur_watershed);
-      this.interiors = topojson.mesh(geo, geo.objects.macarthur_watershed, function(a, b) {
-        return a !== b;
-      });
-      this.queryLayer = L.geoJson(this.collection, {
-        style: this.baseStyle
-      }).addTo(this.map);
-      return L.geoJson(this.interiors, {
-        style: this.baseStyle
-      }).addTo(this.map);
-    };
-
-    MapView.prototype.baseStyle = function(feature) {
-      return {
-        weight: 0.6,
-        opacity: 1,
-        color: 'white',
-        fillOpacity: 0
-      };
-    };
-
-    MapView.prototype.onClose = function() {};
 
     return MapView;
 
@@ -450,7 +477,10 @@
     };
 
     MainController.prototype.showSidePanel = function(region) {
-      return $.getJSON('../../../data/macarthur_watershed.topo.json', (function(_this) {
+      var regionBounds, regionCode;
+      regionCode = region.get('code');
+      regionBounds = region.get('bounds');
+      return $.getJSON("../../../data/" + regionCode + ".topo.json", (function(_this) {
         return function(geo) {
           var view;
           _this.modalContainer.hideModal();
@@ -461,7 +491,7 @@
             filter: _this.filter
           });
           _this.sidePanel.showView(view);
-          return _this.map.initQueryLayer(geo);
+          return _this.map.mapBuilder.initQueryLayer(geo, regionCode, regionBounds);
         };
       })(this));
     };
