@@ -12,25 +12,20 @@ class Backbone.Views.MapView extends Backbone.View
     }).addTo(@map)
     @css = '#macarthur_datapoint{ polygon-opacity: 0.8; line-color: #FFF; line-width: 1; line-opacity: 1macarthur_datapoint [ value <= 0.6177211398] {  polygon-fill: #005824macarthur_datapoint [ value <= 0.0007393294] {  polygon-fill: #238B45macarthur_datapoint [ value <= -0.000997682] {  polygon-fill: #41AE76macarthur_datapoint [ value <= -0.0109500099] {  polygon-fill: #66C2A4macarthur_datapoint [ value <= -0.0235889656] {  polygon-fill: #CCECE6macarthur_datapoint [ value <= -0.0845306143] {  polygon-fill: #D7FAF4macarthur_datapoint [ value <= -0.2292566377] {  polygon-fill: #EDF8FB;'
     @filter = options.filter
-    @listenTo(@filter, 'change', @updateQueryLayer)
 
-  style: (feature) ->
+  initQueryLayer: (geo) ->
+    @collection = topojson.feature(geo, geo.objects.macarthur_watershed)
+    @interiors = topojson.mesh(geo, geo.objects.macarthur_watershed, (a, b) -> a != b )
+    @queryLayer = L.geoJson(@collection, {style: @baseStyle}).addTo(@map)
+    L.geoJson(@interiors, {style: @baseStyle}).addTo(@map)
+
+  baseStyle: (feature) ->
     {
-      fillColor: '#FC4E2A',#getColor(feature.properties.density),
       weight: 0.6,
       opacity: 1,
       color: 'white',
-      #dashArray: '3',
-      fillOpacity: 0.7
+      fillOpacity: 0
     }
-
-
-  updateQueryLayer: (model, event) ->
-    $.getJSON('../../../../lib/cartodb/macarthur_watershed.topojson', (data) =>
-      collection = topojson.feature(data, data.objects.macarthur_watershed)
-      L.geoJson(collection, {style: @style}).addTo(@map);
-    )
-    
 
   onClose: ->
     

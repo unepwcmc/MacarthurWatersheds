@@ -43,10 +43,15 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     )
 
   showSidePanel: (region) =>
-    @modalContainer.hideModal()
-    @filter.set(region: region)
-    view = new Backbone.Views.FilterView(
-      filter: @filter
+    #TODO: use something like: https://github.com/superfeedr/indexeddb-backbonejs-adapter ???
+    $.getJSON('../../../data/macarthur_watershed.topo.json', (geo) =>
+      @modalContainer.hideModal()
+      @filter.set(region: region)
+      view = new Backbone.Views.FilterView(
+        filter: @filter
+      )
+      @sidePanel.showView(view)
+      @map.initQueryLayer(geo)
     )
-    @sidePanel.showView(view)
+
 
