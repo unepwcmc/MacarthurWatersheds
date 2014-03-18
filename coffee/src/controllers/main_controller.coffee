@@ -38,22 +38,28 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
       @changeStateOn maps events published by other objects to
       controller states
     ###
-    @changeStateOn(
-      {event: 'regionChosen', publisher: regionChooserView, newState: @showSidePanel}
-    )
+    @changeStateOn({
+      event: 'regionChosen', 
+      publisher: regionChooserView, 
+      newState: _.partialRight(@getGeometries, @showSidePanel)
+    })
 
-  showSidePanel: (region) =>
+  getGeometries: (region, callback) =>
     #TODO: use something like: https://github.com/superfeedr/indexeddb-backbonejs-adapter ???
     regionCode = region.get('code')
-    regionBounds = region.get('bounds')
     $.getJSON("../../../data/#{regionCode}.topo.json", (geo) =>
-      @modalContainer.hideModal()
-      @filter.set(region: region)
-      view = new Backbone.Views.FilterView(
-        filter: @filter
-      )
-      @sidePanel.showView(view)
-      @map.mapBuilder.initQueryLayer(geo, regionCode, regionBounds)
+      # Node-style
+      callback(null, geo, region)
     )
+
+  showSidePanel: (err, geo, region) =>
+    @modalContainer.hideModal()
+    @filter.set(region: region)
+    view = new Backbone.Views.FilterView(
+      filter: @filter
+    )
+    @sidePanel.showView(view)
+    @map.initQueryLayer(geo, region)
+    
 
 

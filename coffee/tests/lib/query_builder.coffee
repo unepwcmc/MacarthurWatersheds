@@ -46,3 +46,40 @@ test(".updateFilterQuery updates the filter.query with the return value of build
   assert.strictEqual filter.get('query'), buildQueryResult,
     "Expected the filter.query attribute to be updated"
 )
+
+test('.buildSubjectClause constructs an SQL clause for filter.subject', ->
+  filter = new Backbone.Models.Filter(
+    subject: MacArthur.CONFIG.subjects[0].selector
+  )
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+
+  query = queryBuiler.buildSubjectClause()
+
+  assert.strictEqual query, "lens.name = 'bd' "
+)
+
+test('.buildSubjectClause with no subject set throws an error', ->
+  filter = new Backbone.Models.Filter()
+
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+
+  assert.throws((->
+    queryBuiler.buildSubjectClause()
+  ), "Error building query, unknown subject 'undefined'")
+)
+
+test('.buildSubjectClause with unknown subject throws an error', ->
+  filter = new Backbone.Models.Filter(
+    subject: 'wofjefhsdjkgh'
+  )
+
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+
+  assert.throws((->
+    queryBuiler.buildSubjectClause()
+  ), "Error building query, unknown subject '#{filter.get('subject')}'")
+)
+
+test('.buildLensClause constructs an SQL clause for filter.lens')
+
+test('.buildLensClause when no lens is specified sets the default to all species')

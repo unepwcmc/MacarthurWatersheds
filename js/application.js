@@ -87,60 +87,6 @@
 }).call(this);
 
 (function() {
-  window.MacArthur || (window.MacArthur = {});
-
-  window.MacArthur.MapBuilder = (function() {
-    function MapBuilder() {}
-
-    MapBuilder.prototype.initBaseLayer = function() {
-      this.map = L.map('map', {
-        scrollWheelZoom: false
-      }).setView([0, 0], 2);
-      this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
-      return L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
-        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
-      }).addTo(this.map);
-    };
-
-    MapBuilder.prototype.initQueryLayer = function(geo, regionCode, regionBounds) {
-      this.collection = topojson.feature(geo, geo.objects[regionCode]);
-      this.interiors = topojson.mesh(geo, geo.objects[regionCode], function(a, b) {
-        return a !== b;
-      });
-      this.queryLayer = L.geoJson(this.collection, {
-        style: this.basePolyStyle
-      }).addTo(this.map);
-      this.queryLayerInteriors = L.geoJson(this.interiors, {
-        style: this.baseLineStyle
-      }).addTo(this.map);
-      return this.map.fitBounds(regionBounds);
-    };
-
-    MapBuilder.prototype.baseLineStyle = function(feature) {
-      return {
-        weight: 0.6,
-        opacity: 1,
-        color: 'black',
-        fillOpacity: 0
-      };
-    };
-
-    MapBuilder.prototype.basePolyStyle = function(feature) {
-      return {
-        weight: 0,
-        opacity: 0,
-        fillOpacity: 0.6,
-        color: 'white'
-      };
-    };
-
-    return MapBuilder;
-
-  })();
-
-}).call(this);
-
-(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.MacArthur || (window.MacArthur = {});
@@ -153,12 +99,32 @@
     }
 
     QueryBuilder.prototype.buildQuery = function() {
-      return "SELECT watershed_id, value, w.the_geom_webmercator FROM macarthur_region r right join macarthur_watershed w on r.cartodb_id = w.region_id left join macarthur_datapoint d on d.watershed_id = w.cartodb_id left join macarthur_lens l on l.cartodb_id = d.lens_id   where r.code = 'WAN' AND l.name = 'bd' AND l.type = 'allsp' and metric = 'imp' and scenario = 'bas' and type_data = 'value'";
+      var regionCode;
+      if (this.filter.get('subject')) {
+        regionCode = this.filter.get('region').get('code');
+        return "SELECT watershed_id, value \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND lens.type = 'allsp' \nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+      } else {
+        return this.filter.get('query');
+      }
+    };
+
+    QueryBuilder.prototype.buildSubjectClause = function() {
+      var name, subjectCode, subjectsMap;
+      subjectCode = this.filter.get('subject');
+      subjectsMap = {
+        'biodiversity': 'bd',
+        'ecosystem': 'ef'
+      };
+      name = subjectsMap[subjectCode];
+      if (name == null) {
+        throw new Error("Error building query, unknown subject '" + subjectCode + "'");
+      }
+      return "lens.name = '" + name + "' ";
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
       if (model.changedAttributes().query == null) {
-        return this.filter.set('query', this.buildQuery());
+        return this.filter.set('query', this.buildQuery(model));
       }
     };
 
@@ -207,6 +173,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -218,15 +185,121 @@
     __extends(MapView, _super);
 
     function MapView() {
+      this.queryPolyStyle = __bind(this.queryPolyStyle, this);
+      this.getColor = __bind(this.getColor, this);
+      this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
 
     MapView.prototype.template = Handlebars.templates['map'];
 
     MapView.prototype.initialize = function(options) {
-      this.mapBuilder = new window.MacArthur.MapBuilder();
-      this.mapBuilder.initBaseLayer();
-      return this.filter = options.filter;
+      this.filter = options.filter;
+      this.initBaseLayer();
+      return this.filter.on('change:query', this.updateQueryLayer);
+    };
+
+    MapView.prototype.initBaseLayer = function() {
+      this.map = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([0, 0], 2);
+      this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
+      return L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
+      }).addTo(this.map);
+    };
+
+    MapView.prototype.initQueryLayer = function(geo, region) {
+      var regionBounds, regionCode;
+      this.region = region;
+      regionCode = region.get('code');
+      regionBounds = region.get('bounds');
+      this.collection = topojson.feature(geo, geo.objects[regionCode]);
+      this.interiors = topojson.mesh(geo, geo.objects[regionCode], function(a, b) {
+        return a !== b;
+      });
+      this.queryLayer = L.geoJson(this.collection, {
+        style: this.basePolyStyle
+      }).addTo(this.map);
+      this.queryLayerInteriors = L.geoJson(this.interiors, {
+        style: this.baseLineStyle
+      }).addTo(this.map);
+      this.queryLayer;
+      return this.map.fitBounds(regionBounds);
+    };
+
+    MapView.prototype.updateQueryLayer = function() {
+      var q;
+      this.map.removeLayer(this.queryLayer);
+      q = this.filter.get('query');
+      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
+        return function(data) {
+          _this.max = 0;
+          _this.min = Infinity;
+          _this.querydata = _.object(_.map(data.rows, function(x) {
+            if (x.value > _this.max) {
+              _this.max = x.value;
+            }
+            if (x.value < _this.min) {
+              _this.min = x.value;
+            }
+            return [x.watershed_id, x.value];
+          }));
+          _this.range = (_this.max - _this.min) / 4;
+          _this.queryLayer = L.geoJson(_this.collection, {
+            style: _this.queryPolyStyle
+          }).addTo(_this.map);
+          return _this.queryLayerInteriors.bringToFront();
+        };
+      })(this));
+    };
+
+    MapView.prototype.updateCollection = function(collection, data) {};
+
+    MapView.prototype.getColor = function(feature) {
+      var d, p;
+      d = this.querydata[feature];
+      p = d - this.min;
+      if (p > this.min + this.range * 3) {
+        return '#800026';
+      }
+      if (p > this.min + this.range * 2) {
+        return '#E31A1C';
+      }
+      if (p > this.min + this.range) {
+        return '#FD8D3C';
+      }
+      if (p > this.min) {
+        return '#FED976';
+      }
+      return '#fff';
+    };
+
+    MapView.prototype.baseLineStyle = function(feature) {
+      return {
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0
+      };
+    };
+
+    MapView.prototype.basePolyStyle = function(feature) {
+      return {
+        weight: 0,
+        opacity: 0,
+        fillOpacity: 0.6,
+        color: 'white'
+      };
+    };
+
+    MapView.prototype.queryPolyStyle = function(feature) {
+      return {
+        weight: 0,
+        opacity: 0,
+        fillOpacity: 0.8,
+        fillColor: this.getColor(feature.properties.cartodb_id)
+      };
     };
 
     return MapView;
@@ -353,6 +426,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -364,6 +438,7 @@
     __extends(FilterView, _super);
 
     function FilterView() {
+      this.setSubject = __bind(this.setSubject, this);
       return FilterView.__super__.constructor.apply(this, arguments);
     }
 
@@ -442,6 +517,7 @@
 
     function MainController() {
       this.showSidePanel = __bind(this.showSidePanel, this);
+      this.getGeometries = __bind(this.getGeometries, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
       this.filter = new Backbone.Models.Filter();
@@ -472,28 +548,31 @@
       return this.changeStateOn({
         event: 'regionChosen',
         publisher: regionChooserView,
-        newState: this.showSidePanel
+        newState: _.partialRight(this.getGeometries, this.showSidePanel)
       });
     };
 
-    MainController.prototype.showSidePanel = function(region) {
-      var regionBounds, regionCode;
+    MainController.prototype.getGeometries = function(region, callback) {
+      var regionCode;
       regionCode = region.get('code');
-      regionBounds = region.get('bounds');
       return $.getJSON("../../../data/" + regionCode + ".topo.json", (function(_this) {
         return function(geo) {
-          var view;
-          _this.modalContainer.hideModal();
-          _this.filter.set({
-            region: region
-          });
-          view = new Backbone.Views.FilterView({
-            filter: _this.filter
-          });
-          _this.sidePanel.showView(view);
-          return _this.map.mapBuilder.initQueryLayer(geo, regionCode, regionBounds);
+          return callback(null, geo, region);
         };
       })(this));
+    };
+
+    MainController.prototype.showSidePanel = function(err, geo, region) {
+      var view;
+      this.modalContainer.hideModal();
+      this.filter.set({
+        region: region
+      });
+      view = new Backbone.Views.FilterView({
+        filter: this.filter
+      });
+      this.sidePanel.showView(view);
+      return this.map.initQueryLayer(geo, region);
     };
 
     return MainController;

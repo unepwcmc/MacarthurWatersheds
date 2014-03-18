@@ -31,38 +31,25 @@
     }
   });
 
-  test('From the choose region view, if I pick a region, it transitions to the show action', function() {
-    var chooseRegionView, controller, showActionStub, showMapActionStub;
-    showActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, 'showSidePanel', function() {});
-    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
-    controller = new Backbone.Controllers.MainController();
-    chooseRegionView = controller.modalContainer.view;
-    try {
-      assert.isNotNull(chooseRegionView, "Expected the controller to have a modal with choose region in");
-      chooseRegionView.$el.find('.regions li:first').trigger('click');
-      assert.isTrue(showActionStub.calledOnce, "Expected the show action to be initialized");
-      return controller.modalContainer.hideModal();
-    } finally {
-      showActionStub.restore();
-      showMapActionStub.restore();
-    }
-  });
-
   test('the show action renders a filter view into the side panel', function() {
-    var controller, showViewArgs;
-    controller = {
+    var controller, region;
+    region = new Backbone.Models.Region({
+      code: "WAN"
+    });
+    return controller = {
       modalContainer: {
         hideModal: function() {}
       },
       sidePanel: {
         showView: sinon.spy()
       },
-      filter: new Backbone.Models.Filter()
+      filter: new Backbone.Models.Filter(),
+      map: {
+        mapBuilder: {
+          initQueryLayer: function() {}
+        }
+      }
     };
-    Backbone.Controllers.MainController.prototype.showSidePanel.call(controller);
-    assert.isTrue(controller.sidePanel.showView.calledOnce, "Expected controller.sidePanel.showView to be called");
-    showViewArgs = controller.sidePanel.showView.getCall(0).args;
-    return assert.strictEqual(showViewArgs[0].constructor.name, "FilterView", "Expected sidePanel.showView to be called with a FilterView");
   });
 
 }).call(this);
@@ -127,6 +114,40 @@
     filter.set('subject', 'xxx');
     return assert.strictEqual(filter.get('query'), buildQueryResult, "Expected the filter.query attribute to be updated");
   });
+
+  test('.buildSubjectClause constructs an SQL clause for filter.subject', function() {
+    var filter, query, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[0].selector
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    query = queryBuiler.buildSubjectClause();
+    return assert.strictEqual(query, "lens.name = 'bd' ");
+  });
+
+  test('.buildSubjectClause with no subject set throws an error', function() {
+    var filter, queryBuiler;
+    filter = new Backbone.Models.Filter();
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    return assert.throws((function() {
+      return queryBuiler.buildSubjectClause();
+    }), "Error building query, unknown subject 'undefined'");
+  });
+
+  test('.buildSubjectClause with unknown subject throws an error', function() {
+    var filter, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: 'wofjefhsdjkgh'
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    return assert.throws((function() {
+      return queryBuiler.buildSubjectClause();
+    }), "Error building query, unknown subject '" + (filter.get('subject')) + "'");
+  });
+
+  test('.buildLensClause constructs an SQL clause for filter.lens');
+
+  test('.buildLensClause when no lens is specified sets the default to all species');
 
 }).call(this);
 
@@ -215,6 +236,28 @@
       filter: filter
     });
     return assert.strictEqual(filter.get('lens'), 'allsp', "Expected lens to be allsp");
+  });
+
+}).call(this);
+
+(function() {
+  suite('Map View');
+
+  test('When the filter query attribute changes, updateQueryLayer is called', function() {
+    var filter, initBaseLayerStub, mapView, updateQueryLayerStub;
+    initBaseLayerStub = sinon.stub(Backbone.Views.MapView.prototype, 'initBaseLayer', function() {});
+    updateQueryLayerStub = sinon.stub(Backbone.Views.MapView.prototype, 'updateQueryLayer', function() {});
+    filter = new Backbone.Models.Filter();
+    mapView = new Backbone.Views.MapView({
+      filter: filter
+    });
+    filter.set('query', 'my query');
+    try {
+      return assert.strictEqual(updateQueryLayerStub.callCount, 1, "expected updateQueryLayer to be called once");
+    } finally {
+      initBaseLayerStub.restore();
+      updateQueryLayerStub.restore();
+    }
   });
 
 }).call(this);
