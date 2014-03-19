@@ -41,7 +41,13 @@ class window.MacArthur.QueryBuilder
     "lens.type = '#{lensCode}' "
 
   hasRequiredFilters: ->
-    @filter.get('subject')? and @filter.get('lens')?
+    subjectCode = @filter.get('subject')
+    lensCode = @filter.get('lens')
+    if subjectCode? and lensCode?
+      return _.find(MacArthur.CONFIG.lenses[subjectCode], (lens) =>
+        lens.selector == lensCode
+      )?
+    false
 
   updateFilterQuery: (model, event) =>
     unless @filter.changedAttributes().query?

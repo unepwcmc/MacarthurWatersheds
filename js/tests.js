@@ -158,6 +158,28 @@
 
   test('.buildLensClause when no lens is specified sets the default to all species');
 
+  test('if the filter lens is set with the wrong subject, hasRequiredFilters returns false', function() {
+    var filter, query, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.biodiversity[0].selector
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    query = queryBuiler.buildLensClause();
+    return assert.isFalse(queryBuiler.hasRequiredFilters());
+  });
+
+  test('if the filter lens is set with the correct subject, hasRequiredFilters returns true', function() {
+    var filter, query, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.ecosystem[0].selector
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    query = queryBuiler.buildLensClause();
+    return assert.isTrue(queryBuiler.hasRequiredFilters());
+  });
+
 }).call(this);
 
 (function() {

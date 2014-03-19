@@ -10,9 +10,13 @@ class Backbone.Views.LensSelectorView extends Backbone.View
 
   initialize: (options) ->
     @filter = options.filter
+    @filter.on('change:subject', @setDefaultLens)
     unless @filter.get('lens')?
-      @filter.set('lens', @getDefaultFilter().selector)
+      @setDefaultLens()
     @render()
+
+  setDefaultLens: =>
+    @filter.set('lens', @getDefaultFilter().selector)
 
   render: ->
     lenses = _.map(@config[@filter.get('subject')], (lens) => 

@@ -78,8 +78,6 @@
       return Filter.__super__.constructor.apply(this, arguments);
     }
 
-    Filter.prototype.buildQuery = function() {};
-
     return Filter;
 
   })(Backbone.Model);
@@ -129,7 +127,17 @@
     };
 
     QueryBuilder.prototype.hasRequiredFilters = function() {
-      return (this.filter.get('subject') != null) && (this.filter.get('lens') != null);
+      var lensCode, subjectCode;
+      subjectCode = this.filter.get('subject');
+      lensCode = this.filter.get('lens');
+      if ((subjectCode != null) && (lensCode != null)) {
+        return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
+          return function(lens) {
+            return lens.selector === lensCode;
+          };
+        })(this)) != null;
+      }
+      return false;
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
@@ -372,6 +380,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -383,6 +392,7 @@
     __extends(LensSelectorView, _super);
 
     function LensSelectorView() {
+      this.setDefaultLens = __bind(this.setDefaultLens, this);
       return LensSelectorView.__super__.constructor.apply(this, arguments);
     }
 
@@ -396,10 +406,15 @@
 
     LensSelectorView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.filter.on('change:subject', this.setDefaultLens);
       if (this.filter.get('lens') == null) {
-        this.filter.set('lens', this.getDefaultFilter().selector);
+        this.setDefaultLens();
       }
       return this.render();
+    };
+
+    LensSelectorView.prototype.setDefaultLens = function() {
+      return this.filter.set('lens', this.getDefaultFilter().selector);
     };
 
     LensSelectorView.prototype.render = function() {
