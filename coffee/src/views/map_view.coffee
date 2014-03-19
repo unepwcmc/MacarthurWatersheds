@@ -21,7 +21,7 @@ class Backbone.Views.MapView extends Backbone.View
     regionCode = region.get('code')
     regionBounds = region.get('bounds')
     @collection = topojson.feature(geo, geo.objects[regionCode])
-    @interiors = topojson.mesh(geo, geo.objects[regionCode], (a, b) -> a != b )
+    @interiors = topojson.mesh(geo, geo.objects[regionCode])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     @queryLayer
@@ -50,15 +50,15 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     d = @querydata[feature]
     p = d - @min
-    if p > @min + @range * 3  then return '#800026'
-    if p > @min + @range * 2  then return '#E31A1C'
-    if p > @min + @range      then return '#FD8D3C'
-    if p > @min               then return '#FED976'
+    if p > @min + @range * 3  then return '#fdbe85'
+    if p > @min + @range * 2  then return '#fd8d3c'
+    if p > @min + @range      then return '#d94701'
+    if p > @min               then return '#feedde'
     '#fff'
 
   baseLineStyle: (feature) ->
     {
-      weight: 2,
+      weight: 1.5,
       opacity: 1,
       color: 'white',
       fillOpacity: 0
@@ -68,14 +68,13 @@ class Backbone.Views.MapView extends Backbone.View
     {
       weight: 0
       opacity: 0
-      fillOpacity: 0.6
-      color: 'white'
+      fillOpacity: 0
     }
 
   queryPolyStyle: (feature) =>
     {
       weight: 0
       opacity: 0
-      fillOpacity: 0.8
+      fillOpacity: 0.9
       fillColor: @getColor(feature.properties.cartodb_id)
     }

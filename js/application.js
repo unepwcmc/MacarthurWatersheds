@@ -215,9 +215,7 @@
       regionCode = region.get('code');
       regionBounds = region.get('bounds');
       this.collection = topojson.feature(geo, geo.objects[regionCode]);
-      this.interiors = topojson.mesh(geo, geo.objects[regionCode], function(a, b) {
-        return a !== b;
-      });
+      this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
       this.queryLayer = L.geoJson(this.collection, {
         style: this.basePolyStyle
       }).addTo(this.map);
@@ -261,23 +259,23 @@
       d = this.querydata[feature];
       p = d - this.min;
       if (p > this.min + this.range * 3) {
-        return '#800026';
+        return '#fdbe85';
       }
       if (p > this.min + this.range * 2) {
-        return '#E31A1C';
+        return '#fd8d3c';
       }
       if (p > this.min + this.range) {
-        return '#FD8D3C';
+        return '#d94701';
       }
       if (p > this.min) {
-        return '#FED976';
+        return '#feedde';
       }
       return '#fff';
     };
 
     MapView.prototype.baseLineStyle = function(feature) {
       return {
-        weight: 2,
+        weight: 1.5,
         opacity: 1,
         color: 'white',
         fillOpacity: 0
@@ -288,8 +286,7 @@
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: 0.6,
-        color: 'white'
+        fillOpacity: 0
       };
     };
 
@@ -297,7 +294,7 @@
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: 0.8,
+        fillOpacity: 0.9,
         fillColor: this.getColor(feature.properties.cartodb_id)
       };
     };
