@@ -288,6 +288,52 @@
 }).call(this);
 
 (function() {
+  suite("LevelSelector View");
+
+  test('when the filter has a subject set, it renders the corresponding levels', function() {
+    var dataSelectionHigh, ecosystemLenses, filter, levelSelectorView, levels;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    levelSelectorView = new Backbone.Views.LevelSelectorView({
+      filter: filter
+    });
+    ecosystemLenses = MacArthur.CONFIG.lenses.ecosystem;
+    levels = MacArthur.CONFIG.levels;
+    dataSelectionHigh = levelSelectorView.$el.find('select option[value="high"]');
+    return assert.lengthOf(dataSelectionHigh, 1, "Expected the levelSelectorView to contain the high level");
+  });
+
+  test('when the level view is initialized the default level for the filter subject is set on the filter', function() {
+    var changeSpy, filter, lensSelectorView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    changeSpy = sinon.spy();
+    filter.on('change:level', changeSpy);
+    lensSelectorView = new Backbone.Views.LevelSelectorView({
+      filter: filter
+    });
+    assert.strictEqual(filter.get('level'), 'high', "Expected level to be high");
+    return assert.strictEqual(changeSpy.callCount, 1);
+  });
+
+  test('it shows the current level selected', function() {
+    var filter, levelSelectorView, selection;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      level: 'medium'
+    });
+    levelSelectorView = new Backbone.Views.LevelSelectorView({
+      filter: filter
+    });
+    selection = levelSelectorView.$el.find('select').find(":selected").attr('value');
+    return assert.strictEqual(selection, 'medium', "Expected selection value to match the filter level attribute");
+  });
+
+}).call(this);
+
+(function() {
   suite('Map View');
 
   test('When the filter query attribute changes, updateQueryLayer is called', function() {
@@ -305,6 +351,111 @@
       initBaseLayerStub.restore();
       updateQueryLayerStub.restore();
     }
+  });
+
+}).call(this);
+
+(function() {
+  var filter, protectionOptionView, protectionSelectorView;
+
+  suite("ProtectionOption View");
+
+  filter = null;
+
+  protectionOptionView = null;
+
+  protectionSelectorView = null;
+
+  beforeEach(function() {
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    return protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
+  });
+
+  afterEach(function() {
+    filter = null;
+    protectionOptionView = null;
+    return protectionSelectorView = null;
+  });
+
+  test('when the filter has a subject set, it renders the protection option', function() {
+    var selection;
+    selection = protectionOptionView.$el.find('input:checkbox');
+    return assert.lengthOf(selection, 1, "Expected the protection checkbox button to be present");
+  });
+
+  test('when the checkbox button is checked, the protection filter is set to true', function() {
+    var protection, setProtectionSpy;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    setProtectionSpy = sinon.spy(Backbone.Views.ProtectionOptionView.prototype, 'setProtection');
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
+    protectionOptionView.$el.find("[type='checkbox']").attr('checked', true);
+    protectionOptionView.$el.find("[type='checkbox']").trigger('change');
+    protection = filter.get('protection');
+    try {
+      assert.strictEqual(setProtectionSpy.callCount, 1, "Expected setProtection to be called");
+      return assert.isTrue(protection, "Expected the protection filter attribute to be true");
+    } finally {
+      setProtectionSpy.restore();
+    }
+  });
+
+  test('when the filter has protection set to true, the protection option is checked', function() {
+    var selection;
+    filter.set('protection', true);
+    selection = protectionOptionView.$el.find('input:checkbox').val();
+    return assert.equal(selection, 'on', "Expected the protection checkbox button to be checked");
+  });
+
+  test('when the filter has protection set to true, the protection selector is visible', function() {
+    var selection;
+    filter.set('protection', true);
+    selection = protectionSelectorView.$el.find('select');
+    return assert.lengthOf(selection, 1, "Expected the protection select to be visible");
+  });
+
+}).call(this);
+
+(function() {
+  var ProtectionOptionView, filter, protectionSelectorView;
+
+  suite("ProtectionSelector View");
+
+  filter = null;
+
+  ProtectionOptionView = null;
+
+  protectionSelectorView = null;
+
+  beforeEach(function() {
+    var protectionOptionView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    return protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+  });
+
+  afterEach(function() {
+    filter = null;
+    return protectionSelectorView;
   });
 
 }).call(this);

@@ -1,0 +1,5 @@
+<h2><input type="checkbox" name="protection" {{#if protection}}checked{{/if}}>Protection</h2>
+
+{{#if protection}}
+  {{addSubViewTo thisView 'ProtectionSelectorView' filter=filter}}
+{{/if}}

@@ -17,6 +17,9 @@ var paths = {
     'coffee/src/views/map_view.coffee ',
     'coffee/src/views/region_chooser_view.coffee ',
     'coffee/src/views/lens_selector_view.coffee ',
+    'coffee/src/views/level_selector_view.coffee ',
+    'coffee/src/views/protection_option_view.coffee ',
+    'coffee/src/views/protection_selector_view.coffee ',
     'coffee/src/views/filter_view.coffee ',
     'coffee/src/controllers/main_controller.coffee '
   ],

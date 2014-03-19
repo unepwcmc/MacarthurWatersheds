@@ -59,7 +59,20 @@
           name: "Regulating functions provision"
         }
       ]
-    }
+    },
+    levels: [
+      {
+        selector: "high",
+        name: "High",
+        "default": true
+      }, {
+        selector: "medium",
+        name: "Medium"
+      }, {
+        selector: "low",
+        name: "Low"
+      }
+    ]
   };
 
 }).call(this);
@@ -100,7 +113,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT watershed_id, value \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, value, percentage \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -413,10 +426,6 @@
       return this.render();
     };
 
-    LensSelectorView.prototype.setDefaultLens = function() {
-      return this.filter.set('lens', this.getDefaultFilter().selector);
-    };
-
     LensSelectorView.prototype.render = function() {
       var lenses;
       lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
@@ -441,6 +450,10 @@
 
     LensSelectorView.prototype.onClose = function() {};
 
+    LensSelectorView.prototype.setDefaultLens = function() {
+      return this.filter.set('lens', this.getDefaultFilter().selector);
+    };
+
     LensSelectorView.prototype.getDefaultFilter = function() {
       return _.find(this.config[this.filter.get('subject')], function(obj) {
         return obj["default"] != null;
@@ -448,6 +461,168 @@
     };
 
     return LensSelectorView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.LevelSelectorView = (function(_super) {
+    __extends(LevelSelectorView, _super);
+
+    function LevelSelectorView() {
+      this.setDefaultLevel = __bind(this.setDefaultLevel, this);
+      return LevelSelectorView.__super__.constructor.apply(this, arguments);
+    }
+
+    LevelSelectorView.prototype.template = Handlebars.templates['level_selector'];
+
+    LevelSelectorView.prototype.config = MacArthur.CONFIG.levels;
+
+    LevelSelectorView.prototype.events = {
+      "change #levels-select": "setLevel"
+    };
+
+    LevelSelectorView.prototype.initialize = function(options) {
+      this.filter = options.filter;
+      if (this.filter.get('level') == null) {
+        this.setDefaultLevel();
+      }
+      return this.render();
+    };
+
+    LevelSelectorView.prototype.render = function() {
+      var levels;
+      levels = _.map(this.config, (function(_this) {
+        return function(level) {
+          if (_this.filter.get('level') === level.selector) {
+            level.selected = true;
+          }
+          return level;
+        };
+      })(this));
+      this.$el.html(this.template({
+        levels: levels
+      }));
+      return this;
+    };
+
+    LevelSelectorView.prototype.setLevel = function(event) {
+      var levelName;
+      levelName = $(event.target).find(':selected').attr('value');
+      return this.filter.set('level', levelName);
+    };
+
+    LevelSelectorView.prototype.onClose = function() {};
+
+    LevelSelectorView.prototype.setDefaultLevel = function() {
+      return this.filter.set('level', this.getDefaultFilter().selector);
+    };
+
+    LevelSelectorView.prototype.getDefaultFilter = function() {
+      return _.find(this.config, function(obj) {
+        return obj["default"] != null;
+      });
+    };
+
+    return LevelSelectorView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.ProtectionOptionView = (function(_super) {
+    __extends(ProtectionOptionView, _super);
+
+    function ProtectionOptionView() {
+      return ProtectionOptionView.__super__.constructor.apply(this, arguments);
+    }
+
+    ProtectionOptionView.prototype.template = Handlebars.templates['protection_option'];
+
+    ProtectionOptionView.prototype.events = {
+      'change [type="checkbox"]': "setProtection"
+    };
+
+    ProtectionOptionView.prototype.initialize = function(options) {
+      this.filter = options.filter;
+      this.protection = this.filter.get('protection');
+      return this.render();
+    };
+
+    ProtectionOptionView.prototype.render = function() {
+      this.$el.html(this.template({
+        thisView: this,
+        protection: !!this.protection
+      }));
+      this.attachSubViews();
+      return this;
+    };
+
+    ProtectionOptionView.prototype.setProtection = function(event) {
+      return this.filter.set('protection', $(event.target).is(':checked'));
+    };
+
+    ProtectionOptionView.prototype.onClose = function() {
+      this.closeSubViews();
+      return this.stopListening();
+    };
+
+    return ProtectionOptionView;
+
+  })(Backbone.Diorama.NestingView);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.ProtectionSelectorView = (function(_super) {
+    __extends(ProtectionSelectorView, _super);
+
+    function ProtectionSelectorView() {
+      return ProtectionSelectorView.__super__.constructor.apply(this, arguments);
+    }
+
+    ProtectionSelectorView.prototype.template = Handlebars.templates['protection_selector'];
+
+    ProtectionSelectorView.prototype.initialize = function(options) {
+      this.filter = options.filter;
+      return this.render();
+    };
+
+    ProtectionSelectorView.prototype.render = function() {
+      this.$el.html(this.template());
+      return this;
+    };
+
+    ProtectionSelectorView.prototype.onClose = function() {};
+
+    return ProtectionSelectorView;
 
   })(Backbone.View);
 

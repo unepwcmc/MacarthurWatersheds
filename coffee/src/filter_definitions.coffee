@@ -10,7 +10,7 @@ MacArthur.CONFIG =
     { selector: "biodiversity", name: "Biodiversity"},
     { selector: "ecosystem", name: "Ecosystem"}
   ],
-  lenses:
+  lenses: {
     biodiversity: [
       { selector: "allsp", name: "All species", default: true },
       { selector: "amphibia", name: "Amphibians" },
@@ -23,3 +23,9 @@ MacArthur.CONFIG =
       { selector: "wildprov", name: "Wild provision" },
       { selector: "regprov", name: "Regulating functions provision" },
     ]
+  },
+  levels: [
+    { selector: "high", name: "High", default: true },
+    { selector: "medium", name: "Medium" },
+    { selector: "low", name: "Low" }
+  ]
