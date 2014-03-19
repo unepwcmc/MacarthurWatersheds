@@ -10,11 +10,12 @@ class window.MacArthur.QueryBuilder
       regionCode = @filter.get('region').get('code')
   
       """
-        SELECT watershed_id, value 
+        SELECT d.watershed_id, value, percentage 
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
         LEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id 
         LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
+        LEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id 
         WHERE r.code = '#{regionCode}' 
         AND #{@buildSubjectClause()} 
         AND #{@buildLensClause()}
