@@ -10,11 +10,16 @@ class Backbone.Views.LensSelectorView extends Backbone.View
 
   initialize: (options) ->
     @filter = options.filter
-    @filter.set('lens', @getDefaultFilter().selector, {silent: true})
+    unless @filter.get('lens')?
+      @filter.set('lens', @getDefaultFilter().selector)
     @render()
 
   render: ->
-    lenses = @config[@filter.get('subject')]
+    lenses = _.map(@config[@filter.get('subject')], (lens) => 
+      if @filter.get('lens') is lens.selector
+        lens.selected = true
+      lens
+    )
     @$el.html(@template(
       lenses: lenses
     ))

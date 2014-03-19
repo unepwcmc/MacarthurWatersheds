@@ -21,16 +21,36 @@ test('when the filter has a subject set, it renders the corresponding lenses', -
     "Expected the LensSelectorView to contain the biodiversity lenses"
 )
 
-test('when the lenses view is initialized the default lens is set on the filter', ->
+test('when the lenses view is initialized the default lens for the filter subject
+ is set on the filter', ->
 
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
   )
 
+  changeSpy = sinon.spy()
+  filter.on('change:lens', changeSpy)
+
   lensSelectorView = new Backbone.Views.LensSelectorView( filter: filter )
 
   assert.strictEqual(
-      filter.get('lens'), 'allsp',
-      "Expected lens to be allsp"
-    )
+    filter.get('lens'), 'allsp',
+    "Expected lens to be allsp"
+  )
+
+  assert.strictEqual( changeSpy.callCount, 1 )
+)
+
+test('it shows the current lens selected', ->
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+    lens: 'amphibia'
+  )
+
+  lensSelectorView = new Backbone.Views.LensSelectorView( filter: filter )
+  selection = lensSelectorView.$el.find('select').find(":selected").attr('value')
+  assert.strictEqual(selection, 'amphibia',
+    "Expected selection value to match the filter lens attribute"
+  )
+
 )

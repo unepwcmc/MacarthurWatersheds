@@ -6,7 +6,7 @@ class window.MacArthur.QueryBuilder
     @filter.on('change', @updateFilterQuery)
 
   buildQuery: ->
-    if @filter.get('subject')
+    if @hasRequiredFilters()
       regionCode = @filter.get('region').get('code')
   
       """
@@ -17,7 +17,7 @@ class window.MacArthur.QueryBuilder
         LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
         WHERE r.code = '#{regionCode}' 
         AND #{@buildSubjectClause()} 
-        AND lens.type = 'allsp' 
+        AND #{@buildLensClause()}
         AND metric = 'imp' 
         AND scenario = 'bas' 
         AND type_data = 'value'
@@ -36,6 +36,13 @@ class window.MacArthur.QueryBuilder
       throw new Error("Error building query, unknown subject '#{subjectCode}'")
     "lens.name = '#{name}' "
 
+  buildLensClause: ->
+    lensCode = @filter.get('lens')
+    "lens.type = '#{lensCode}' "
+
+  hasRequiredFilters: ->
+    @filter.get('subject')? and @filter.get('lens')?
+
   updateFilterQuery: (model, event) =>
-    unless model.changedAttributes().query?
-      @filter.set( 'query', @buildQuery(model) )
+    unless @filter.changedAttributes().query?
+      @filter.set( 'query', @buildQuery(@filter) )

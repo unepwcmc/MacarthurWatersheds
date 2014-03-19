@@ -33,7 +33,7 @@ test('if the filter has a subject, render creates a LensSelector subview
 
   try
     assert.isTrue(
-      LensSelectorConstructorSpy.calledOnce,
+      LensSelectorConstructorSpy.callCount > 0,
       "Expected a new LensSelectorView to be created"
     )
 

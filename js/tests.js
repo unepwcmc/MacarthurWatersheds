@@ -145,7 +145,16 @@
     }), "Error building query, unknown subject '" + (filter.get('subject')) + "'");
   });
 
-  test('.buildLensClause constructs an SQL clause for filter.lens');
+  test('.buildLensClause constructs an SQL clause for filter.lens', function() {
+    var filter, query, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.ecosystem[0].selector
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    query = queryBuiler.buildLensClause();
+    return assert.strictEqual(query, "lens.type = 'totef' ");
+  });
 
   test('.buildLensClause when no lens is specified sets the default to all species');
 
@@ -184,7 +193,7 @@
       filter: filter
     });
     try {
-      assert.isTrue(LensSelectorConstructorSpy.calledOnce, "Expected a new LensSelectorView to be created");
+      assert.isTrue(LensSelectorConstructorSpy.callCount > 0, "Expected a new LensSelectorView to be created");
       lensSelectorArgs = LensSelectorConstructorSpy.getCall(0).args;
       return assert.deepEqual(lensSelectorArgs[0].filter, filter, "Expected the LensSelectorView to be created with the biodiversity lenses");
     } finally {
@@ -227,15 +236,31 @@
     return assert.lengthOf(dataSelectionBio, 1, "Expected the LensSelectorView to contain the biodiversity lenses");
   });
 
-  test('when the lenses view is initialized the default lens is set on the filter', function() {
-    var filter, lensSelectorView;
+  test('when the lenses view is initialized the default lens for the filter subject is set on the filter', function() {
+    var changeSpy, filter, lensSelectorView;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity'
+    });
+    changeSpy = sinon.spy();
+    filter.on('change:lens', changeSpy);
+    lensSelectorView = new Backbone.Views.LensSelectorView({
+      filter: filter
+    });
+    assert.strictEqual(filter.get('lens'), 'allsp', "Expected lens to be allsp");
+    return assert.strictEqual(changeSpy.callCount, 1);
+  });
+
+  test('it shows the current lens selected', function() {
+    var filter, lensSelectorView, selection;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      lens: 'amphibia'
     });
     lensSelectorView = new Backbone.Views.LensSelectorView({
       filter: filter
     });
-    return assert.strictEqual(filter.get('lens'), 'allsp', "Expected lens to be allsp");
+    selection = lensSelectorView.$el.find('select').find(":selected").attr('value');
+    return assert.strictEqual(selection, 'amphibia', "Expected selection value to match the filter lens attribute");
   });
 
 }).call(this);

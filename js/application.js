@@ -100,9 +100,9 @@
 
     QueryBuilder.prototype.buildQuery = function() {
       var regionCode;
-      if (this.filter.get('subject')) {
+      if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT watershed_id, value \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND lens.type = 'allsp' \nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+        return "SELECT watershed_id, value \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -122,9 +122,19 @@
       return "lens.name = '" + name + "' ";
     };
 
+    QueryBuilder.prototype.buildLensClause = function() {
+      var lensCode;
+      lensCode = this.filter.get('lens');
+      return "lens.type = '" + lensCode + "' ";
+    };
+
+    QueryBuilder.prototype.hasRequiredFilters = function() {
+      return (this.filter.get('subject') != null) && (this.filter.get('lens') != null);
+    };
+
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      if (model.changedAttributes().query == null) {
-        return this.filter.set('query', this.buildQuery(model));
+      if (this.filter.changedAttributes().query == null) {
+        return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
 
@@ -386,15 +396,22 @@
 
     LensSelectorView.prototype.initialize = function(options) {
       this.filter = options.filter;
-      this.filter.set('lens', this.getDefaultFilter().selector, {
-        silent: true
-      });
+      if (this.filter.get('lens') == null) {
+        this.filter.set('lens', this.getDefaultFilter().selector);
+      }
       return this.render();
     };
 
     LensSelectorView.prototype.render = function() {
       var lenses;
-      lenses = this.config[this.filter.get('subject')];
+      lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
+        return function(lens) {
+          if (_this.filter.get('lens') === lens.selector) {
+            lens.selected = true;
+          }
+          return lens;
+        };
+      })(this));
       this.$el.html(this.template({
         lenses: lenses
       }));

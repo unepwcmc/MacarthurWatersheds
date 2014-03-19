@@ -80,6 +80,16 @@ test('.buildSubjectClause with unknown subject throws an error', ->
   ), "Error building query, unknown subject '#{filter.get('subject')}'")
 )
 
-test('.buildLensClause constructs an SQL clause for filter.lens')
+test('.buildLensClause constructs an SQL clause for filter.lens', ->
+  filter = new Backbone.Models.Filter(
+    subject: MacArthur.CONFIG.subjects[1].selector
+    lens: MacArthur.CONFIG.lenses.ecosystem[0].selector
+  )
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+
+  query = queryBuiler.buildLensClause()
+
+  assert.strictEqual query, "lens.type = 'totef' "
+)
 
 test('.buildLensClause when no lens is specified sets the default to all species')
