@@ -11,7 +11,8 @@ def self.change_table table_name, columns
   add_column = add_column[0..-3]
 
   sql = <<-SQL
-    ALTER TABLE macarthur_#{table_name} DROP COLUMN name, description
+    ALTER TABLE macarthur_#{table_name} DROP COLUMN name;
+    ALTER TABLE macarthur_#{table_name} DROP COLUMN description;
     ALTER TABLE macarthur_#{table_name} #{add_column}
   SQL
   CartodbQuery.run(sql)
@@ -30,9 +31,12 @@ tables_columns = {"region" => {"code" => "varchar"},
                                   "type_data" => "varchar",
                                   "metric" => "varchar",
                                   "scenario" => "varchar",
-                                  "value" => "doble",
+                                  "value" => "double precision",
                                   "conservation" => "boolean"
-                                }
+                                  },
+                  "protection" => {"watershed_id" => "int",
+                                   "percentage" => "double precision"
+                                  }
                   }
 
 ARGV.each do|table|

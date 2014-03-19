@@ -96,6 +96,18 @@ def self.datapoint
  end
 end
 
+def protection
+    sql = <<-SQL 
+      INSERT INTO macarthur_protection(watershed_id, percentage)
+      SELECT w.cartodb_id, cast(percent_wdpa_filter as double precision)
+      FROM macarthur_original_protection p
+      LEFT JOIN macarthur_watershed w
+      ON p.field_name = w.name
+    SQL
+    puts sql
+    CartodbQuery.run(sql)
+end
+
 
 
 ARGV.each do|action|
@@ -105,5 +117,7 @@ ARGV.each do|action|
     lens
   elsif action == 'datapoint'
     datapoint
+  elsif action == 'protection'
+    protection 
   end
 end
