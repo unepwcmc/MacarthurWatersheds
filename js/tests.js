@@ -393,15 +393,8 @@
 
   test('when the checkbox button is checked, the protection filter is set to true', function() {
     var protection, setProtectionSpy;
-    filter = new Backbone.Models.Filter({
-      subject: 'biodiversity',
-      protection: false
-    });
     setProtectionSpy = sinon.spy(Backbone.Views.ProtectionOptionView.prototype, 'setProtection');
     protectionOptionView = new Backbone.Views.ProtectionOptionView({
-      filter: filter
-    });
-    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
       filter: filter
     });
     protectionOptionView.$el.find("[type='checkbox']").attr('checked', true);
@@ -422,11 +415,35 @@
     return assert.equal(selection, 'on', "Expected the protection checkbox button to be checked");
   });
 
-  test('when the filter has protection set to true, the protection selector is visible', function() {
+  test('when the filter has protection set to true, the protection selector is visible and populated with options', function() {
     var selection;
     filter.set('protection', true);
     selection = protectionSelectorView.$el.find('select');
-    return assert.lengthOf(selection, 1, "Expected the protection select to be visible");
+    assert.lengthOf(selection, 1, "Expected the protection select to be visible");
+    return assert.lengthOf(selection.find('option'), 3, "Expected the dropdown to have 3 selections: high, medium, low");
+  });
+
+  test('when the filter has protection set to true, the query on the selector object is NOT updated', function() {
+    var buildQuerySpy, queryBuilder, regions;
+    regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+    filter.set('region', regions.models[0]);
+    filter.set('lens', 'allsp');
+    buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
+    queryBuilder = new MacArthur.QueryBuilder(filter);
+    filter.set('protection', true);
+    return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery method to be called once");
+  });
+
+  test('when the filter has protection set to false, the protection_level is unset on the selector object', function() {
+    var defaultProtectionLevel;
+    defaultProtectionLevel = _.find(MacArthur.CONFIG.protectionLevels, function(pl) {
+      return pl["default"] === true;
+    }).selector;
+    filter.set('protection', true);
+    filter.set('protectionLevel', defaultProtectionLevel);
+    protectionOptionView.$el.find("[type='checkbox']").attr('checked', false);
+    protectionOptionView.$el.find("[type='checkbox']").trigger('change');
+    return assert.isUndefined(filter.get('protection_level'), "Expected the protection_level filter to be undefined");
   });
 
 }).call(this);

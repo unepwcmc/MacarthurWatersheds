@@ -10,7 +10,7 @@ class window.MacArthur.QueryBuilder
       regionCode = @filter.get('region').get('code')
   
       """
-        SELECT d.watershed_id, value, percentage 
+        SELECT d.watershed_id, value, percentage as protection_percentage 
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
         LEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id 
@@ -51,5 +51,7 @@ class window.MacArthur.QueryBuilder
     false
 
   updateFilterQuery: (model, event) =>
-    unless @filter.changedAttributes().query?
+    unless @filter.changedAttributes().query? or 
+    @filter.changedAttributes().protection? or
+    @filter.changedAttributes().protection_levels?
       @filter.set( 'query', @buildQuery(@filter) )

@@ -72,6 +72,19 @@
         selector: "low",
         name: "Low"
       }
+    ],
+    protectionLevels: [
+      {
+        selector: "high",
+        name: "Completely covered by PA’s",
+        "default": true
+      }, {
+        selector: "medium",
+        name: "Up to two thirds covered"
+      }, {
+        selector: "low",
+        name: "Up to one third covered"
+      }
     ]
   };
 
@@ -113,7 +126,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, value, percentage \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, value, percentage as protection_percentage \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -154,7 +167,7 @@
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      if (this.filter.changedAttributes().query == null) {
+      if (!((this.filter.changedAttributes().query != null) || (this.filter.changedAttributes().protection != null) || (this.filter.changedAttributes().protection_levels != null))) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
@@ -571,6 +584,7 @@
     ProtectionOptionView.prototype.render = function() {
       this.$el.html(this.template({
         thisView: this,
+        filter: this.filter,
         protection: !!this.protection
       }));
       this.attachSubViews();
@@ -578,7 +592,14 @@
     };
 
     ProtectionOptionView.prototype.setProtection = function(event) {
-      return this.filter.set('protection', $(event.target).is(':checked'));
+      this.filter.set('protection', $(event.target).is(':checked'));
+      return this.unsetProtectionLevel();
+    };
+
+    ProtectionOptionView.prototype.unsetProtectionLevel = function() {
+      if (this.filter.get('protection') === false) {
+        return this.filter.unset('protectionLevel');
+      }
     };
 
     ProtectionOptionView.prototype.onClose = function() {
@@ -594,6 +615,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -605,22 +627,58 @@
     __extends(ProtectionSelectorView, _super);
 
     function ProtectionSelectorView() {
+      this.setDefaultProtectionLevel = __bind(this.setDefaultProtectionLevel, this);
       return ProtectionSelectorView.__super__.constructor.apply(this, arguments);
     }
 
     ProtectionSelectorView.prototype.template = Handlebars.templates['protection_selector'];
 
+    ProtectionSelectorView.prototype.config = MacArthur.CONFIG.protectionLevels;
+
+    ProtectionSelectorView.prototype.events = {
+      'change #protection-select': "setProtectionLevel"
+    };
+
     ProtectionSelectorView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      if (this.filter.get('protectionLevel') == null) {
+        this.setDefaultProtectionLevel();
+      }
       return this.render();
     };
 
     ProtectionSelectorView.prototype.render = function() {
-      this.$el.html(this.template());
-      return this;
+      var protectionLevels;
+      protectionLevels = _.map(this.config, (function(_this) {
+        return function(level) {
+          if (_this.filter.get('protectionLevel') === level.selector) {
+            level.selected = true;
+          }
+          return level;
+        };
+      })(this));
+      return this.$el.html(this.template({
+        protectionLevels: protectionLevels
+      }));
+    };
+
+    ProtectionSelectorView.prototype.setProtectionLevel = function(event) {
+      var level;
+      level = $(event.target).find(':selected').attr('value');
+      return this.filter.set('protectionLevel', level);
     };
 
     ProtectionSelectorView.prototype.onClose = function() {};
+
+    ProtectionSelectorView.prototype.setDefaultProtectionLevel = function() {
+      return this.filter.set('protectionLevel', this.getDefaultFilter().selector);
+    };
+
+    ProtectionSelectorView.prototype.getDefaultFilter = function() {
+      return _.find(this.config, function(obj) {
+        return obj["default"] != null;
+      });
+    };
 
     return ProtectionSelectorView;
 

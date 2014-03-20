@@ -15,6 +15,7 @@ class Backbone.Views.ProtectionOptionView extends Backbone.Diorama.NestingView
   render: ->
     @$el.html(@template(
       thisView: @
+      filter: @filter
       protection: !!@protection
     ))
     @attachSubViews()
@@ -22,6 +23,11 @@ class Backbone.Views.ProtectionOptionView extends Backbone.Diorama.NestingView
 
   setProtection: (event) ->
     @filter.set('protection', $(event.target).is(':checked'))
+    @unsetProtectionLevel()
+
+  unsetProtectionLevel: ->
+    if @filter.get('protection') == no
+      @filter.unset('protectionLevel')
 
   onClose: ->
     @closeSubViews()
