@@ -31,7 +31,7 @@ test('when the level view is initialized the default level for the filter subjec
   lensSelectorView = new Backbone.Views.LevelSelectorView( filter: filter )
 
   assert.strictEqual(
-    filter.get('level'), 'high',
+    filter.get('level'), 'all',
     "Expected level to be high"
   )
 

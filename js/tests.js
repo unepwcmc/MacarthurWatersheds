@@ -314,7 +314,7 @@
     lensSelectorView = new Backbone.Views.LevelSelectorView({
       filter: filter
     });
-    assert.strictEqual(filter.get('level'), 'high', "Expected level to be high");
+    assert.strictEqual(filter.get('level'), 'all', "Expected level to be high");
     return assert.strictEqual(changeSpy.callCount, 1);
   });
 

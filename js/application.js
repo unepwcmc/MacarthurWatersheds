@@ -62,9 +62,12 @@
     },
     levels: [
       {
-        selector: "high",
-        name: "High",
+        selector: "all",
+        name: "All",
         "default": true
+      }, {
+        selector: "high",
+        name: "High"
       }, {
         selector: "medium",
         name: "Medium"
@@ -231,8 +234,10 @@
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
+      this.filterFeature = __bind(this.filterFeature, this);
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
+      this.passesLevelCheck = __bind(this.passesLevelCheck, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       return MapView.__super__.constructor.apply(this, arguments);
@@ -244,6 +249,7 @@
       this.filter = options.filter;
       this.initBaseLayer();
       this.filter.on('change:query', this.updateQueryLayer);
+      this.filter.on('change:level', this.updateQueryLayerStyle);
       return this.filter.on('change:protectionLevel', this.updateQueryLayerStyle);
     };
 
@@ -283,7 +289,7 @@
           _this.max = 0;
           _this.min = Infinity;
           _this.querydata = _this.buildQuerydata(data.rows);
-          _this.range = (_this.max - _this.min) / 4;
+          _this.range = (_this.max - _this.min) / 3;
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle
           }).addTo(_this.map);
@@ -311,8 +317,17 @@
       })(this)));
     };
 
+    MapView.prototype.passesLevelCheck = function() {
+      if ((this.filter.get('query') != null) && (this.filter.get('level') !== 'all' || ((this.filter.previous('level') != null) && this.filter.get('level') === 'all' && this.filter.previous('level') !== 'all'))) {
+        return true;
+      }
+      return false;
+    };
+
     MapView.prototype.updateQueryLayerStyle = function() {
-      return this.queryLayer.setStyle(this.queryPolyStyle);
+      if (this.querydata != null) {
+        return this.queryLayer.setStyle(this.queryPolyStyle);
+      }
     };
 
     MapView.prototype.updateCollection = function(collection, data) {};
@@ -321,49 +336,72 @@
       var d, p;
       d = this.querydata[feature];
       p = d.value - this.min;
-      if (p > this.min + this.range * 3) {
-        return '#fdbe85';
+      if (p >= this.min + this.range * 2) {
+        return '#e6550d';
       }
-      if (p > this.min + this.range * 2) {
-        return '#fd8d3c';
+      if (p >= this.min + this.range) {
+        return '#fdae6b';
       }
-      if (p > this.min + this.range) {
-        return '#d94701';
-      }
-      if (p > this.min) {
-        return '#feedde';
+      if (p >= this.min) {
+        return '#fee6ce';
       }
       return '#fff';
     };
 
+    MapView.prototype.filterFeature = function(feature, id) {
+      var d, level;
+      level = this.filter.get('level');
+      d = this.querydata[id];
+      if (level === 'all') {
+        return true;
+      }
+      if (level === 'high') {
+        if (d.value >= this.min + this.range * 2) {
+          return true;
+        }
+      }
+      if (level === 'medium') {
+        if (d.value >= this.min + this.range && d.value < this.min + this.range * 2) {
+          return true;
+        }
+      }
+      if (level === 'low') {
+        if (d.value >= this.min && d.value < this.min + this.range) {
+          return true;
+        }
+      }
+      return false;
+    };
+
     MapView.prototype.getFillOpacity = function(feature) {
-      var d, protectionLevel;
+      var d, op, protectionLevel;
+      op = .9;
+      d = this.querydata[feature];
       if (this.filter.get('protection') === true) {
         protectionLevel = this.filter.get('protectionLevel');
-        d = this.querydata[feature];
         if (protectionLevel === 'high') {
           if (d.protection_percentage >= 66) {
-            return 0.9;
+            return op;
           } else {
             return 0;
           }
         }
         if (protectionLevel === 'medium') {
           if (d.protection_percentage >= 33 && d.protection_percentage < 66) {
-            return 0.9;
+            return op;
           } else {
             return 0;
           }
         }
         if (protectionLevel === 'low') {
           if (d.protection_percentage < 33) {
-            return 0.9;
+            return op;
           } else {
             return 0;
           }
         }
       }
-      return 0.9;
+      return op;
     };
 
     MapView.prototype.baseLineStyle = function(feature) {
@@ -384,13 +422,20 @@
     };
 
     MapView.prototype.queryPolyStyle = function(feature) {
-      var id;
+      var fillColor, fillOpacity, id;
       id = feature.properties.cartodb_id;
+      if (this.filterFeature(feature, id)) {
+        fillOpacity = this.getFillOpacity(id);
+        fillColor = this.getColor(id);
+      } else {
+        fillOpacity = 0;
+        fillColor = 0;
+      }
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: this.getFillOpacity(id),
-        fillColor: this.getColor(id)
+        fillOpacity: fillOpacity,
+        fillColor: fillColor
       };
     };
 

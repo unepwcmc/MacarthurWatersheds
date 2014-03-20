@@ -8,6 +8,7 @@ class Backbone.Views.MapView extends Backbone.View
     @filter = options.filter
     @initBaseLayer()
     @filter.on('change:query', @updateQueryLayer)
+    @filter.on('change:level', @updateQueryLayerStyle)
     @filter.on('change:protectionLevel', @updateQueryLayerStyle)
 
   initBaseLayer: ->
@@ -35,7 +36,7 @@ class Backbone.Views.MapView extends Backbone.View
       @max = 0
       @min = Infinity
       @querydata = @buildQuerydata data.rows
-      @range = (@max - @min) / 4
+      @range = (@max - @min) / 3
       @queryLayer = L.geoJson(@collection, {style: @queryPolyStyle}).addTo(@map)
       @queryLayerInteriors.bringToFront()
     )
@@ -48,8 +49,17 @@ class Backbone.Views.MapView extends Backbone.View
         {value: x.value, protection_percentage: x.protection_percentage} ])
     )
 
+  passesLevelCheck: =>
+    if @filter.get('query')? and 
+    (@filter.get('level') != 'all' or
+    (@filter.previous('level')? and
+    @filter.get('level') == 'all' and @filter.previous('level') != 'all') )
+      return yes
+    no
+
   updateQueryLayerStyle: =>
-    @queryLayer.setStyle @queryPolyStyle
+    if @querydata?
+      @queryLayer.setStyle @queryPolyStyle
 
   updateCollection: (collection, data) ->
     #for c in collection
@@ -58,32 +68,48 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     d = @querydata[feature]
     p = d.value - @min
-    if p > @min + @range * 3  then return '#fdbe85'
-    if p > @min + @range * 2  then return '#fd8d3c'
-    if p > @min + @range      then return '#d94701'
-    if p > @min               then return '#feedde'
+    if p >= @min + @range * 2  then return '#e6550d'
+    if p >= @min + @range      then return '#fdae6b'
+    if p >= @min               then return '#fee6ce'
     '#fff'
 
+  filterFeature: (feature, id) =>
+    level = @filter.get('level')
+    d = @querydata[id]
+    if level == 'all'
+      return yes
+    if level == 'high'
+      if d.value >= @min + @range * 2
+        return yes
+    if level == 'medium'
+      if d.value >= @min + @range and d.value < @min + @range * 2
+        return yes
+    if level == 'low'
+      if d.value >= @min and d.value < @min + @range
+        return yes
+    no
+
   getFillOpacity: (feature) =>
+    op = .9
+    d = @querydata[feature]
     if @filter.get('protection') == yes
       protectionLevel = @filter.get('protectionLevel')
-      d = @querydata[feature]
       if protectionLevel == 'high'
         if d.protection_percentage >= 66
-          return 0.9 
+          return op
         else 
           return 0 
       if protectionLevel == 'medium'
         if d.protection_percentage >= 33 and d.protection_percentage < 66 
-          return 0.9 
+          return op
         else 
           return 0 
       if protectionLevel == 'low'
         if d.protection_percentage < 33 
-          return 0.9 
+          return op
         else 
-          return 0 
-    0.9
+          return 0
+    return op
 
   baseLineStyle: (feature) ->
     {
@@ -102,9 +128,15 @@ class Backbone.Views.MapView extends Backbone.View
 
   queryPolyStyle: (feature) =>
     id = feature.properties.cartodb_id
+    if @filterFeature(feature, id)
+      fillOpacity = @getFillOpacity(id)
+      fillColor = @getColor(id)
+    else
+      fillOpacity = 0
+      fillColor = 0
     {
       weight: 0
       opacity: 0
-      fillOpacity: @getFillOpacity(id)
-      fillColor: @getColor(id)
+      fillOpacity: fillOpacity
+      fillColor: fillColor
     }
