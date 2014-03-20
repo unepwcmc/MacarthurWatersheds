@@ -10,6 +10,7 @@ class Backbone.Views.MapView extends Backbone.View
     @filter.on('change:query', @updateQueryLayer)
     @filter.on('change:level', @updateQueryLayerStyle)
     @filter.on('change:protectionLevel', @updateQueryLayerStyle)
+    @filter.on('change:pressureLevel', @updateQueryLayerStyle)
 
   initBaseLayer: ->
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
@@ -45,8 +46,11 @@ class Backbone.Views.MapView extends Backbone.View
     _.object(_.map(data, (x) =>
       if x.value > @max then @max = x.value
       if x.value < @min then @min = x.value
-      [x.watershed_id, 
-        {value: x.value, protection_percentage: x.protection_percentage} ])
+      [x.watershed_id, {
+        value: x.value, 
+        protectionPercentage: x.protection_percentage,
+        pressureIndex: x.pressure_index
+      }])
     )
 
   passesLevelCheck: =>
@@ -89,26 +93,39 @@ class Backbone.Views.MapView extends Backbone.View
         return yes
     no
 
+  setProtectionFill: (op, d) =>
+    protectionLevel = @filter.get('protectionLevel')
+    if protectionLevel == 'high'
+      unless d.protectionPercentage >= 66
+        op = 0 
+    if protectionLevel == 'medium'
+      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
+        op = 0  
+    if protectionLevel == 'low'
+      unless d.protectionPercentage < 33 
+        op = 0
+    op
+
+  setPressureFill: (op, d) =>
+    pressureLevel = @filter.get('pressureLevel')
+    if pressureLevel == 'high'
+      unless d.pressureIndex >= .66
+        op = 0 
+    if pressureLevel == 'medium'
+      unless d.pressureIndex >= .33 and d.pressureIndex < .66
+        op = 0  
+    if pressureLevel == 'low'
+      unless d.pressureIndex < .33 
+        op = 0
+    op
+
   getFillOpacity: (feature) =>
     op = .9
     d = @querydata[feature]
     if @filter.get('protection') == yes
-      protectionLevel = @filter.get('protectionLevel')
-      if protectionLevel == 'high'
-        if d.protection_percentage >= 66
-          return op
-        else 
-          return 0 
-      if protectionLevel == 'medium'
-        if d.protection_percentage >= 33 and d.protection_percentage < 66 
-          return op
-        else 
-          return 0 
-      if protectionLevel == 'low'
-        if d.protection_percentage < 33 
-          return op
-        else 
-          return 0
+      op = @setProtectionFill op, d
+    if @filter.get('pressure') == yes
+      op = @setPressureFill op, d
     return op
 
   baseLineStyle: (feature) ->

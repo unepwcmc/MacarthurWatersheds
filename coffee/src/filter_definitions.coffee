@@ -34,4 +34,9 @@ MacArthur.CONFIG =
     { selector: "high", name: "Completely covered by PA’s" , default: true },
     { selector: "medium", name: "Up to two thirds covered" },
     { selector: "low", name: "Up to one third covered" }
+  ],
+  pressureLevels: [
+    { selector: "high", name: "High" , default: true },
+    { selector: "medium", name: "Medium" },
+    { selector: "low", name: "Low" }
   ]

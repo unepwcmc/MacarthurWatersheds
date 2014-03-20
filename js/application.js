@@ -88,6 +88,19 @@
         selector: "low",
         name: "Up to one third covered"
       }
+    ],
+    pressureLevels: [
+      {
+        selector: "high",
+        name: "High",
+        "default": true
+      }, {
+        selector: "medium",
+        name: "Medium"
+      }, {
+        selector: "low",
+        name: "Low"
+      }
     ]
   };
 
@@ -129,7 +142,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, value, percentage as protection_percentage \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -234,6 +247,8 @@
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
+      this.setPressureFill = __bind(this.setPressureFill, this);
+      this.setProtectionFill = __bind(this.setProtectionFill, this);
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
@@ -250,7 +265,8 @@
       this.initBaseLayer();
       this.filter.on('change:query', this.updateQueryLayer);
       this.filter.on('change:level', this.updateQueryLayerStyle);
-      return this.filter.on('change:protectionLevel', this.updateQueryLayerStyle);
+      this.filter.on('change:protectionLevel', this.updateQueryLayerStyle);
+      return this.filter.on('change:pressureLevel', this.updateQueryLayerStyle);
     };
 
     MapView.prototype.initBaseLayer = function() {
@@ -310,7 +326,8 @@
           return [
             x.watershed_id, {
               value: x.value,
-              protection_percentage: x.protection_percentage
+              protectionPercentage: x.protection_percentage,
+              pressureIndex: x.pressure_index
             }
           ];
         };
@@ -373,33 +390,57 @@
       return false;
     };
 
+    MapView.prototype.setProtectionFill = function(op, d) {
+      var protectionLevel;
+      protectionLevel = this.filter.get('protectionLevel');
+      if (protectionLevel === 'high') {
+        if (!(d.protectionPercentage >= 66)) {
+          op = 0;
+        }
+      }
+      if (protectionLevel === 'medium') {
+        if (!(d.protectionPercentage >= 33 && d.protectionPercentage < 66)) {
+          op = 0;
+        }
+      }
+      if (protectionLevel === 'low') {
+        if (!(d.protectionPercentage < 33)) {
+          op = 0;
+        }
+      }
+      return op;
+    };
+
+    MapView.prototype.setPressureFill = function(op, d) {
+      var pressureLevel;
+      pressureLevel = this.filter.get('pressureLevel');
+      if (pressureLevel === 'high') {
+        if (!(d.pressureIndex >= .66)) {
+          op = 0;
+        }
+      }
+      if (pressureLevel === 'medium') {
+        if (!(d.pressureIndex >= .33 && d.pressureIndex < .66)) {
+          op = 0;
+        }
+      }
+      if (pressureLevel === 'low') {
+        if (!(d.pressureIndex < .33)) {
+          op = 0;
+        }
+      }
+      return op;
+    };
+
     MapView.prototype.getFillOpacity = function(feature) {
-      var d, op, protectionLevel;
+      var d, op;
       op = .9;
       d = this.querydata[feature];
       if (this.filter.get('protection') === true) {
-        protectionLevel = this.filter.get('protectionLevel');
-        if (protectionLevel === 'high') {
-          if (d.protection_percentage >= 66) {
-            return op;
-          } else {
-            return 0;
-          }
-        }
-        if (protectionLevel === 'medium') {
-          if (d.protection_percentage >= 33 && d.protection_percentage < 66) {
-            return op;
-          } else {
-            return 0;
-          }
-        }
-        if (protectionLevel === 'low') {
-          if (d.protection_percentage < 33) {
-            return op;
-          } else {
-            return 0;
-          }
-        }
+        op = this.setProtectionFill(op, d);
+      }
+      if (this.filter.get('pressure') === true) {
+        op = this.setPressureFill(op, d);
       }
       return op;
     };
@@ -648,6 +689,141 @@
     };
 
     return LevelSelectorView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.PressureOptionView = (function(_super) {
+    __extends(PressureOptionView, _super);
+
+    function PressureOptionView() {
+      return PressureOptionView.__super__.constructor.apply(this, arguments);
+    }
+
+    PressureOptionView.prototype.template = Handlebars.templates['pressure_option'];
+
+    PressureOptionView.prototype.events = {
+      'change [type="checkbox"]': "setPressure"
+    };
+
+    PressureOptionView.prototype.initialize = function(options) {
+      this.filter = options.filter;
+      this.pressure = this.filter.get('pressure');
+      return this.render();
+    };
+
+    PressureOptionView.prototype.render = function() {
+      this.$el.html(this.template({
+        thisView: this,
+        filter: this.filter,
+        pressure: !!this.pressure
+      }));
+      this.attachSubViews();
+      return this;
+    };
+
+    PressureOptionView.prototype.setPressure = function(event) {
+      this.filter.set('pressure', $(event.target).is(':checked'));
+      return this.unsetPressureLevel();
+    };
+
+    PressureOptionView.prototype.unsetPressureLevel = function() {
+      if (this.filter.get('pressure') === false) {
+        return this.filter.unset('pressureLevel');
+      }
+    };
+
+    PressureOptionView.prototype.onClose = function() {
+      this.closeSubViews();
+      return this.stopListening();
+    };
+
+    return PressureOptionView;
+
+  })(Backbone.Diorama.NestingView);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.PressureSelectorView = (function(_super) {
+    __extends(PressureSelectorView, _super);
+
+    function PressureSelectorView() {
+      this.setDefaultPressureLevel = __bind(this.setDefaultPressureLevel, this);
+      return PressureSelectorView.__super__.constructor.apply(this, arguments);
+    }
+
+    PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
+
+    PressureSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.pressureLevels);
+
+    PressureSelectorView.prototype.events = {
+      'change #pressure-select': "setPressureLevel"
+    };
+
+    PressureSelectorView.prototype.initialize = function(options) {
+      this.filter = options.filter;
+      if (this.filter.get('pressureLevel') == null) {
+        this.setDefaultPressureLevel();
+      }
+      return this.render();
+    };
+
+    PressureSelectorView.prototype.render = function() {
+      var pressureLevels;
+      pressureLevels = _.map(this.config, (function(_this) {
+        return function(level) {
+          if (_this.filter.get('pressureLevel') === level.selector) {
+            level.selected = true;
+          } else {
+            level.selected = false;
+          }
+          return level;
+        };
+      })(this));
+      return this.$el.html(this.template({
+        pressureLevels: pressureLevels
+      }));
+    };
+
+    PressureSelectorView.prototype.setPressureLevel = function(event) {
+      var level;
+      level = $(event.target).find(':selected').attr('value');
+      return this.filter.set('pressureLevel', level);
+    };
+
+    PressureSelectorView.prototype.onClose = function() {};
+
+    PressureSelectorView.prototype.setDefaultPressureLevel = function() {
+      return this.filter.set('pressureLevel', this.getDefaultFilter().selector);
+    };
+
+    PressureSelectorView.prototype.getDefaultFilter = function() {
+      return _.find(this.config, function(obj) {
+        return obj["default"] != null;
+      });
+    };
+
+    return PressureSelectorView;
 
   })(Backbone.View);
 
