@@ -3,7 +3,7 @@ window.Backbone.Views ||= {}
 
 class Backbone.Views.LevelSelectorView extends Backbone.View
   template: Handlebars.templates['level_selector']
-  config: MacArthur.CONFIG.levels
+  config: _.cloneDeep(MacArthur.CONFIG.levels)
 
   events:
     "change #levels-select": "setLevel"
@@ -18,6 +18,8 @@ class Backbone.Views.LevelSelectorView extends Backbone.View
     levels = _.map(@config, (level) => 
       if @filter.get('level') is level.selector
         level.selected = true
+      else
+        level.selected = false
       level
     )
     @$el.html(@template(

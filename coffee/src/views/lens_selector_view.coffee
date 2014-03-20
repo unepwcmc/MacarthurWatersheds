@@ -3,7 +3,7 @@ window.Backbone.Views ||= {}
 
 class Backbone.Views.LensSelectorView extends Backbone.View
   template: Handlebars.templates['lens_selector']
-  config: MacArthur.CONFIG.lenses
+  config: _.cloneDeep(MacArthur.CONFIG.lenses)
 
   events:
     "change #lens-select": "setLens"
@@ -19,6 +19,8 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     lenses = _.map(@config[@filter.get('subject')], (lens) => 
       if @filter.get('lens') is lens.selector
         lens.selected = true
+      else
+        lens.selected = false
       lens
     )
     @$el.html(@template(

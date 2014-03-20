@@ -73,7 +73,7 @@ class Backbone.Views.MapView extends Backbone.View
     if p >= @min               then return '#fee6ce'
     '#fff'
 
-  filterFeature: (feature, id) =>
+  filterFeatureLevel: (id) =>
     level = @filter.get('level')
     d = @querydata[id]
     if level == 'all'
@@ -128,7 +128,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   queryPolyStyle: (feature) =>
     id = feature.properties.cartodb_id
-    if @filterFeature(feature, id)
+    if @filterFeatureLevel(id)
       fillOpacity = @getFillOpacity(id)
       fillColor = @getColor(id)
     else

@@ -234,7 +234,7 @@
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
-      this.filterFeature = __bind(this.filterFeature, this);
+      this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
       this.passesLevelCheck = __bind(this.passesLevelCheck, this);
@@ -348,7 +348,7 @@
       return '#fff';
     };
 
-    MapView.prototype.filterFeature = function(feature, id) {
+    MapView.prototype.filterFeatureLevel = function(id) {
       var d, level;
       level = this.filter.get('level');
       d = this.querydata[id];
@@ -424,7 +424,7 @@
     MapView.prototype.queryPolyStyle = function(feature) {
       var fillColor, fillOpacity, id;
       id = feature.properties.cartodb_id;
-      if (this.filterFeature(feature, id)) {
+      if (this.filterFeatureLevel(id)) {
         fillOpacity = this.getFillOpacity(id);
         fillColor = this.getColor(id);
       } else {
@@ -520,7 +520,7 @@
 
     LensSelectorView.prototype.template = Handlebars.templates['lens_selector'];
 
-    LensSelectorView.prototype.config = MacArthur.CONFIG.lenses;
+    LensSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.lenses);
 
     LensSelectorView.prototype.events = {
       "change #lens-select": "setLens"
@@ -541,6 +541,8 @@
         return function(lens) {
           if (_this.filter.get('lens') === lens.selector) {
             lens.selected = true;
+          } else {
+            lens.selected = false;
           }
           return lens;
         };
@@ -595,7 +597,7 @@
 
     LevelSelectorView.prototype.template = Handlebars.templates['level_selector'];
 
-    LevelSelectorView.prototype.config = MacArthur.CONFIG.levels;
+    LevelSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.levels);
 
     LevelSelectorView.prototype.events = {
       "change #levels-select": "setLevel"
@@ -615,6 +617,8 @@
         return function(level) {
           if (_this.filter.get('level') === level.selector) {
             level.selected = true;
+          } else {
+            level.selected = false;
           }
           return level;
         };
@@ -729,7 +733,7 @@
 
     ProtectionSelectorView.prototype.template = Handlebars.templates['protection_selector'];
 
-    ProtectionSelectorView.prototype.config = MacArthur.CONFIG.protectionLevels;
+    ProtectionSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.protectionLevels);
 
     ProtectionSelectorView.prototype.events = {
       'change #protection-select': "setProtectionLevel"
@@ -749,6 +753,8 @@
         return function(level) {
           if (_this.filter.get('protectionLevel') === level.selector) {
             level.selected = true;
+          } else {
+            level.selected = false;
           }
           return level;
         };

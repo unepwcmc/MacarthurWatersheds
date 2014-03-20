@@ -28,7 +28,7 @@ test('when the level view is initialized the default level for the filter subjec
   changeSpy = sinon.spy()
   filter.on('change:level', changeSpy)
 
-  lensSelectorView = new Backbone.Views.LevelSelectorView( filter: filter )
+  levelSelectorView = new Backbone.Views.LevelSelectorView( filter: filter )
 
   assert.strictEqual(
     filter.get('level'), 'all',
@@ -50,4 +50,25 @@ test('it shows the current level selected', ->
     "Expected selection value to match the filter level attribute"
   )
 
+)
+
+test('Level selector should show `all` selected when `all` is selected', ->
+
+  filter = new Backbone.Models.Filter(
+    level: 'low'
+  )
+
+  levelSelectorView = new Backbone.Views.LevelSelectorView( filter: filter )
+
+  levelSelectorView.$el.find("select").val('all')
+  levelSelectorView.$el.find("select").trigger('change')
+
+  assert.strictEqual filter.get('level'), 'all',
+    "Expected filter level to be equal to 'all'"
+
+  assert.strictEqual levelSelectorView.$el.find("select").val(), 'all',
+    "Expected selected option to be equal to 'all'"
+
+  assert.strictEqual levelSelectorView.$el.find('[selected]').length, 1,
+    "Expected only one <option> to have the 'selected' attribute"
 )
