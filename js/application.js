@@ -230,7 +230,10 @@
 
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
+      this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.getColor = __bind(this.getColor, this);
+      this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
+      this.buildQuerydata = __bind(this.buildQuerydata, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
@@ -240,7 +243,8 @@
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.initBaseLayer();
-      return this.filter.on('change:query', this.updateQueryLayer);
+      this.filter.on('change:query', this.updateQueryLayer);
+      return this.filter.on('change:protectionLevel', this.updateQueryLayerStyle);
     };
 
     MapView.prototype.initBaseLayer = function() {
@@ -278,15 +282,7 @@
         return function(data) {
           _this.max = 0;
           _this.min = Infinity;
-          _this.querydata = _.object(_.map(data.rows, function(x) {
-            if (x.value > _this.max) {
-              _this.max = x.value;
-            }
-            if (x.value < _this.min) {
-              _this.min = x.value;
-            }
-            return [x.watershed_id, x.value];
-          }));
+          _this.querydata = _this.buildQuerydata(data.rows);
           _this.range = (_this.max - _this.min) / 4;
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle
@@ -296,12 +292,35 @@
       })(this));
     };
 
+    MapView.prototype.buildQuerydata = function(data) {
+      return _.object(_.map(data, (function(_this) {
+        return function(x) {
+          if (x.value > _this.max) {
+            _this.max = x.value;
+          }
+          if (x.value < _this.min) {
+            _this.min = x.value;
+          }
+          return [
+            x.watershed_id, {
+              value: x.value,
+              protection_percentage: x.protection_percentage
+            }
+          ];
+        };
+      })(this)));
+    };
+
+    MapView.prototype.updateQueryLayerStyle = function() {
+      return this.queryLayer.setStyle(this.queryPolyStyle);
+    };
+
     MapView.prototype.updateCollection = function(collection, data) {};
 
     MapView.prototype.getColor = function(feature) {
       var d, p;
       d = this.querydata[feature];
-      p = d - this.min;
+      p = d.value - this.min;
       if (p > this.min + this.range * 3) {
         return '#fdbe85';
       }
@@ -317,9 +336,39 @@
       return '#fff';
     };
 
+    MapView.prototype.getFillOpacity = function(feature) {
+      var d, protectionLevel;
+      if (this.filter.get('protection') === true) {
+        protectionLevel = this.filter.get('protectionLevel');
+        d = this.querydata[feature];
+        if (protectionLevel === 'high') {
+          if (d.protection_percentage >= 66) {
+            return 0.9;
+          } else {
+            return 0;
+          }
+        }
+        if (protectionLevel === 'medium') {
+          if (d.protection_percentage >= 33 && d.protection_percentage < 66) {
+            return 0.9;
+          } else {
+            return 0;
+          }
+        }
+        if (protectionLevel === 'low') {
+          if (d.protection_percentage < 33) {
+            return 0.9;
+          } else {
+            return 0;
+          }
+        }
+      }
+      return 0.9;
+    };
+
     MapView.prototype.baseLineStyle = function(feature) {
       return {
-        weight: 1.5,
+        weight: 1.2,
         opacity: 1,
         color: 'white',
         fillOpacity: 0
@@ -335,11 +384,13 @@
     };
 
     MapView.prototype.queryPolyStyle = function(feature) {
+      var id;
+      id = feature.properties.cartodb_id;
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: 0.9,
-        fillColor: this.getColor(feature.properties.cartodb_id)
+        fillOpacity: this.getFillOpacity(id),
+        fillColor: this.getColor(id)
       };
     };
 

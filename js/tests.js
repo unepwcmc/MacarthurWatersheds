@@ -334,28 +334,6 @@
 }).call(this);
 
 (function() {
-  suite('Map View');
-
-  test('When the filter query attribute changes, updateQueryLayer is called', function() {
-    var filter, initBaseLayerStub, mapView, updateQueryLayerStub;
-    initBaseLayerStub = sinon.stub(Backbone.Views.MapView.prototype, 'initBaseLayer', function() {});
-    updateQueryLayerStub = sinon.stub(Backbone.Views.MapView.prototype, 'updateQueryLayer', function() {});
-    filter = new Backbone.Models.Filter();
-    mapView = new Backbone.Views.MapView({
-      filter: filter
-    });
-    filter.set('query', 'my query');
-    try {
-      return assert.strictEqual(updateQueryLayerStub.callCount, 1, "expected updateQueryLayer to be called once");
-    } finally {
-      initBaseLayerStub.restore();
-      updateQueryLayerStub.restore();
-    }
-  });
-
-}).call(this);
-
-(function() {
   var filter, protectionOptionView, protectionSelectorView;
 
   suite("ProtectionOption View");
