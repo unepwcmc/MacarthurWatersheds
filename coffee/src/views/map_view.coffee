@@ -53,14 +53,6 @@ class Backbone.Views.MapView extends Backbone.View
       }])
     )
 
-  passesLevelCheck: =>
-    if @filter.get('query')? and 
-    (@filter.get('level') != 'all' or
-    (@filter.previous('level')? and
-    @filter.get('level') == 'all' and @filter.previous('level') != 'all') )
-      return yes
-    no
-
   updateQueryLayerStyle: =>
     if @querydata?
       @queryLayer.setStyle @queryPolyStyle

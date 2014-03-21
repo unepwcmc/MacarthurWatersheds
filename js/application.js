@@ -252,7 +252,6 @@
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
-      this.passesLevelCheck = __bind(this.passesLevelCheck, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       return MapView.__super__.constructor.apply(this, arguments);
@@ -332,13 +331,6 @@
           ];
         };
       })(this)));
-    };
-
-    MapView.prototype.passesLevelCheck = function() {
-      if ((this.filter.get('query') != null) && (this.filter.get('level') !== 'all' || ((this.filter.previous('level') != null) && this.filter.get('level') === 'all' && this.filter.previous('level') !== 'all'))) {
-        return true;
-      }
-      return false;
     };
 
     MapView.prototype.updateQueryLayerStyle = function() {
