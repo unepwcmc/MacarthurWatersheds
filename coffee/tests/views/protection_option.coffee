@@ -1,27 +1,13 @@
 suite "ProtectionOption View"
 
-filter = null
-protectionOptionView = null
-protectionSelectorView = null
+test('when the filter has a subject set, it renders the protection option', ->
 
-beforeEach( ->
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
     protection: false
   )
-
   protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
   protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
-)
-
-afterEach( ->
-  filter = null
-  protectionOptionView = null
-  protectionSelectorView = null
-)
-
-
-test('when the filter has a subject set, it renders the protection option', ->
 
   selection = protectionOptionView.$el.find('input:checkbox')
   assert.lengthOf selection, 1,
@@ -30,6 +16,13 @@ test('when the filter has a subject set, it renders the protection option', ->
 )
 
 test('when the checkbox button is checked, the protection filter is set to true', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+    protection: false
+  )
+  protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
+  protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
 
   setProtectionSpy = sinon.spy(Backbone.Views.ProtectionOptionView::, 'setProtection')
   protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
@@ -50,6 +43,13 @@ test('when the checkbox button is checked, the protection filter is set to true'
 
 test('when the filter has protection set to true, the protection option is checked', ->
 
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+    protection: false
+  )
+  protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
+  protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
+
   filter.set('protection', true)
   selection = protectionOptionView.$el.find('input:checkbox').val()
   assert.equal selection, 'on',
@@ -59,6 +59,13 @@ test('when the filter has protection set to true, the protection option is check
 
 test('when the filter has protection set to true, the protection selector is 
 visible and populated with options', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+    protection: false
+  )
+  protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
+  protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
 
   filter.set('protection', true)
   selection = protectionSelectorView.$el.find('select')
@@ -71,6 +78,13 @@ visible and populated with options', ->
 
 test('when the filter has protection set to true, the query on the selector 
 object is NOT updated', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+    protection: false
+  )
+  protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
+  protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
 
   regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   filter.set('region', regions.models[0])
@@ -86,6 +100,13 @@ object is NOT updated', ->
 
 test('when the filter has protection set to false, the protection_level is unset 
  on the selector object', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+    protection: false
+  )
+  protectionOptionView = new Backbone.Views.ProtectionOptionView( filter: filter )
+  protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
 
   defaultProtectionLevel = _.find(MacArthur.CONFIG.protectionLevels, (pl) ->
     pl.default == yes).selector
