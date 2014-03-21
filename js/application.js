@@ -241,6 +241,67 @@
 
   (_base = window.Backbone).Views || (_base.Views = {});
 
+  Backbone.Views.BaseSelectorView = (function(_super) {
+    __extends(BaseSelectorView, _super);
+
+    function BaseSelectorView() {
+      this.setDefaultLevel = __bind(this.setDefaultLevel, this);
+      return BaseSelectorView.__super__.constructor.apply(this, arguments);
+    }
+
+    BaseSelectorView.prototype.initialize = function(options) {
+      return this.filter = options.filter;
+    };
+
+    BaseSelectorView.prototype.render = function() {
+      var levels;
+      levels = _.map(this.config, (function(_this) {
+        return function(level) {
+          if (_this.filter.get(_this.levelType) === level.selector) {
+            level.selected = true;
+          } else {
+            level.selected = false;
+          }
+          return level;
+        };
+      })(this));
+      return this.$el.html(this.template({
+        levels: levels
+      }));
+    };
+
+    BaseSelectorView.prototype.setLevel = function(event) {
+      var level;
+      level = $(event.target).find(':selected').attr('value');
+      return this.filter.set(this.levelType, level);
+    };
+
+    BaseSelectorView.prototype.setDefaultLevel = function() {
+      return this.filter.set(this.levelType, this.getDefaultFilter().selector);
+    };
+
+    BaseSelectorView.prototype.getDefaultFilter = function() {
+      return _.find(this.config, function(obj) {
+        return obj["default"] != null;
+      });
+    };
+
+    return BaseSelectorView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
   Backbone.Views.MapView = (function(_super) {
     __extends(MapView, _super);
 
@@ -274,7 +335,7 @@
         scrollWheelZoom: false
       }).setView([0, 0], 2);
       this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
-      return L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+      return L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
         attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
       }).addTo(this.map);
     };
@@ -628,7 +689,6 @@
 
 (function() {
   var _base,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -640,7 +700,6 @@
     __extends(LevelSelectorView, _super);
 
     function LevelSelectorView() {
-      this.setDefaultLevel = __bind(this.setDefaultLevel, this);
       return LevelSelectorView.__super__.constructor.apply(this, arguments);
     }
 
@@ -651,53 +710,18 @@
     };
 
     LevelSelectorView.prototype.initialize = function(options) {
+      LevelSelectorView.__super__.initialize.apply(this, arguments);
       this.config = _.cloneDeep(MacArthur.CONFIG.levels);
-      this.filter = options.filter;
+      this.levelType = 'level';
       if (this.filter.get('level') == null) {
         this.setDefaultLevel();
       }
       return this.render();
     };
 
-    LevelSelectorView.prototype.render = function() {
-      var levels;
-      levels = _.map(this.config, (function(_this) {
-        return function(level) {
-          if (_this.filter.get('level') === level.selector) {
-            level.selected = true;
-          } else {
-            level.selected = false;
-          }
-          return level;
-        };
-      })(this));
-      this.$el.html(this.template({
-        levels: levels
-      }));
-      return this;
-    };
-
-    LevelSelectorView.prototype.setLevel = function(event) {
-      var levelName;
-      levelName = $(event.target).find(':selected').attr('value');
-      return this.filter.set('level', levelName);
-    };
-
-    LevelSelectorView.prototype.onClose = function() {};
-
-    LevelSelectorView.prototype.setDefaultLevel = function() {
-      return this.filter.set('level', this.getDefaultFilter().selector);
-    };
-
-    LevelSelectorView.prototype.getDefaultFilter = function() {
-      return _.find(this.config, function(obj) {
-        return obj["default"] != null;
-      });
-    };
-
     return LevelSelectorView;
 
-  })(Backbone.View);
+  })(Backbone.Views.BaseSelectorView);
 
 }).call(this);
 
@@ -763,7 +787,6 @@
 
 (function() {
   var _base,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -775,63 +798,28 @@
     __extends(PressureSelectorView, _super);
 
     function PressureSelectorView() {
-      this.setDefaultPressureLevel = __bind(this.setDefaultPressureLevel, this);
       return PressureSelectorView.__super__.constructor.apply(this, arguments);
     }
 
     PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
 
     PressureSelectorView.prototype.events = {
-      'change #pressure-select': "setPressureLevel"
+      'change #pressure-select': "setLevel"
     };
 
     PressureSelectorView.prototype.initialize = function(options) {
+      PressureSelectorView.__super__.initialize.apply(this, arguments);
       this.config = _.cloneDeep(MacArthur.CONFIG.pressureLevels);
-      this.filter = options.filter;
-      if (this.filter.get('pressureLevel') == null) {
-        this.setDefaultPressureLevel();
+      this.levelType = 'pressureLevel';
+      if (this.filter.get(this.levelType) == null) {
+        this.setDefaultLevel();
       }
       return this.render();
     };
 
-    PressureSelectorView.prototype.render = function() {
-      var pressureLevels;
-      pressureLevels = _.map(this.config, (function(_this) {
-        return function(level) {
-          if (_this.filter.get('pressureLevel') === level.selector) {
-            level.selected = true;
-          } else {
-            level.selected = false;
-          }
-          return level;
-        };
-      })(this));
-      return this.$el.html(this.template({
-        pressureLevels: pressureLevels
-      }));
-    };
-
-    PressureSelectorView.prototype.setPressureLevel = function(event) {
-      var level;
-      level = $(event.target).find(':selected').attr('value');
-      return this.filter.set('pressureLevel', level);
-    };
-
-    PressureSelectorView.prototype.onClose = function() {};
-
-    PressureSelectorView.prototype.setDefaultPressureLevel = function() {
-      return this.filter.set('pressureLevel', this.getDefaultFilter().selector);
-    };
-
-    PressureSelectorView.prototype.getDefaultFilter = function() {
-      return _.find(this.config, function(obj) {
-        return obj["default"] != null;
-      });
-    };
-
     return PressureSelectorView;
 
-  })(Backbone.View);
+  })(Backbone.Views.BaseSelectorView);
 
 }).call(this);
 
@@ -897,7 +885,6 @@
 
 (function() {
   var _base,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -909,63 +896,28 @@
     __extends(ProtectionSelectorView, _super);
 
     function ProtectionSelectorView() {
-      this.setDefaultProtectionLevel = __bind(this.setDefaultProtectionLevel, this);
       return ProtectionSelectorView.__super__.constructor.apply(this, arguments);
     }
 
     ProtectionSelectorView.prototype.template = Handlebars.templates['protection_selector'];
 
     ProtectionSelectorView.prototype.events = {
-      'change #protection-select': "setProtectionLevel"
+      'change #protection-select': "setLevel"
     };
 
     ProtectionSelectorView.prototype.initialize = function(options) {
+      ProtectionSelectorView.__super__.initialize.apply(this, arguments);
       this.config = _.cloneDeep(MacArthur.CONFIG.protectionLevels);
-      this.filter = options.filter;
-      if (this.filter.get('protectionLevel') == null) {
-        this.setDefaultProtectionLevel();
+      this.levelType = 'protectionLevel';
+      if (this.filter.get(this.levelType) == null) {
+        this.setDefaultLevel();
       }
       return this.render();
     };
 
-    ProtectionSelectorView.prototype.render = function() {
-      var protectionLevels;
-      protectionLevels = _.map(this.config, (function(_this) {
-        return function(level) {
-          if (_this.filter.get('protectionLevel') === level.selector) {
-            level.selected = true;
-          } else {
-            level.selected = false;
-          }
-          return level;
-        };
-      })(this));
-      return this.$el.html(this.template({
-        protectionLevels: protectionLevels
-      }));
-    };
-
-    ProtectionSelectorView.prototype.setProtectionLevel = function(event) {
-      var level;
-      level = $(event.target).find(':selected').attr('value');
-      return this.filter.set('protectionLevel', level);
-    };
-
-    ProtectionSelectorView.prototype.onClose = function() {};
-
-    ProtectionSelectorView.prototype.setDefaultProtectionLevel = function() {
-      return this.filter.set('protectionLevel', this.getDefaultFilter().selector);
-    };
-
-    ProtectionSelectorView.prototype.getDefaultFilter = function() {
-      return _.find(this.config, function(obj) {
-        return obj["default"] != null;
-      });
-    };
-
     return ProtectionSelectorView;
 
-  })(Backbone.View);
+  })(Backbone.Views.BaseSelectorView);
 
 }).call(this);
 
