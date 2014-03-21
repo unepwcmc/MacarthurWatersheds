@@ -15,7 +15,7 @@ class Backbone.Views.MapView extends Backbone.View
   initBaseLayer: ->
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
-    L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+    L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
       attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
     }).addTo(@map)
 
@@ -47,14 +47,14 @@ class Backbone.Views.MapView extends Backbone.View
       if x.value > @max then @max = x.value
       if x.value < @min then @min = x.value
       [x.watershed_id, {
-        value: x.value, 
+        value: x.value,
         protectionPercentage: x.protection_percentage,
         pressureIndex: x.pressure_index
       }])
     )
 
   passesLevelCheck: =>
-    if @filter.get('query')? and 
+    if @filter.get('query')? and
     (@filter.get('level') != 'all' or
     (@filter.previous('level')? and
     @filter.get('level') == 'all' and @filter.previous('level') != 'all') )
@@ -67,7 +67,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   updateCollection: (collection, data) ->
     #for c in collection
-    #  c.value = 
+    #  c.value =
 
   getColor: (feature) =>
     d = @querydata[feature]
@@ -97,12 +97,12 @@ class Backbone.Views.MapView extends Backbone.View
     protectionLevel = @filter.get('protectionLevel')
     if protectionLevel == 'high'
       unless d.protectionPercentage >= 66
-        op = 0 
+        op = 0
     if protectionLevel == 'medium'
-      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
-        op = 0  
+      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66
+        op = 0
     if protectionLevel == 'low'
-      unless d.protectionPercentage < 33 
+      unless d.protectionPercentage < 33
         op = 0
     op
 
@@ -110,12 +110,12 @@ class Backbone.Views.MapView extends Backbone.View
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
       unless d.pressureIndex >= .66
-        op = 0 
+        op = 0
     if pressureLevel == 'medium'
       unless d.pressureIndex >= .33 and d.pressureIndex < .66
-        op = 0  
+        op = 0
     if pressureLevel == 'low'
-      unless d.pressureIndex < .33 
+      unless d.pressureIndex < .33
         op = 0
     op
 
