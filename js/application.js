@@ -318,6 +318,7 @@
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
+      this.bindPopup = __bind(this.bindPopup, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
 
@@ -359,18 +360,32 @@
       return this.map.fitBounds(regionBounds);
     };
 
+    MapView.prototype.bindPopup = function(feature, layer) {
+      var id, popupOptions, w;
+      id = layer.feature.properties.cartodb_id;
+      w = _.find(this.data.rows, function(row) {
+        return row.watershed_id === id;
+      });
+      popupOptions = {
+        maxWidth: 200
+      };
+      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + w.pressure_index + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
+    };
+
     MapView.prototype.updateQueryLayer = function() {
       var q;
       this.map.removeLayer(this.queryLayer);
       q = this.filter.get('query');
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
+          _this.data = data;
           _this.max = 0;
           _this.min = Infinity;
           _this.querydata = _this.buildQuerydata(data.rows);
           _this.range = (_this.max - _this.min) / 3;
           _this.queryLayer = L.geoJson(_this.collection, {
-            style: _this.queryPolyStyle
+            style: _this.queryPolyStyle,
+            onEachFeature: _this.bindPopup
           }).addTo(_this.map);
           return _this.queryLayerInteriors.bringToFront();
         };
