@@ -83,13 +83,10 @@ Tests are written in mocha with chai and sinon, and stored in coffee/tests. Run 
 
 The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/config, like this:
 
-Host ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
-
-User ubuntu
-
-HostName ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
-
-IdentityFile <- EC2 pem key location ->
+	Host ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
+	User ubuntu
+	HostName ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
+	IdentityFile <- EC2 pem key location ->
 
 
 Then run cap deploy.
