@@ -8,9 +8,6 @@ test('when the filter has a subject set, it renders the corresponding levels', -
 
   levelSelectorView = new Backbone.Views.LevelSelectorView( filter: filter )
 
-  ecosystemLenses = MacArthur.CONFIG.lenses.ecosystem
-  levels = MacArthur.CONFIG.levels
-
   dataSelectionHigh = levelSelectorView.$el.find('select option[value="high"]')
 
   assert.lengthOf dataSelectionHigh, 1,

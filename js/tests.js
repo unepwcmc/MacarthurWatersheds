@@ -270,15 +270,13 @@
   suite("LevelSelector View");
 
   test('when the filter has a subject set, it renders the corresponding levels', function() {
-    var dataSelectionHigh, ecosystemLenses, filter, levelSelectorView, levels;
+    var dataSelectionHigh, filter, levelSelectorView;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity'
     });
     levelSelectorView = new Backbone.Views.LevelSelectorView({
       filter: filter
     });
-    ecosystemLenses = MacArthur.CONFIG.lenses.ecosystem;
-    levels = MacArthur.CONFIG.levels;
     dataSelectionHigh = levelSelectorView.$el.find('select option[value="high"]');
     return assert.lengthOf(dataSelectionHigh, 1, "Expected the levelSelectorView to contain the high level");
   });
