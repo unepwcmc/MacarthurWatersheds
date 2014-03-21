@@ -147,5 +147,5 @@ class Backbone.Views.MapView extends Backbone.View
     }
 
   onClose: ->
-    @.revove()
+    @remove()
 
