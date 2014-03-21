@@ -262,10 +262,10 @@
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.initBaseLayer();
-      this.filter.on('change:query', this.updateQueryLayer);
-      this.filter.on('change:level', this.updateQueryLayerStyle);
-      this.filter.on('change:protectionLevel', this.updateQueryLayerStyle);
-      return this.filter.on('change:pressureLevel', this.updateQueryLayerStyle);
+      this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
+      this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
+      this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
+      return this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
     };
 
     MapView.prototype.initBaseLayer = function() {

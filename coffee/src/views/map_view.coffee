@@ -7,10 +7,10 @@ class Backbone.Views.MapView extends Backbone.View
   initialize: (options) ->
     @filter = options.filter
     @initBaseLayer()
-    @filter.on('change:query', @updateQueryLayer)
-    @filter.on('change:level', @updateQueryLayerStyle)
-    @filter.on('change:protectionLevel', @updateQueryLayerStyle)
-    @filter.on('change:pressureLevel', @updateQueryLayerStyle)
+    @listenTo(@filter, 'change:query', @updateQueryLayer)
+    @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
+    @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
+    @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
 
   initBaseLayer: ->
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
