@@ -1,0 +1,5 @@
+<select id="protection-select">
+  {{# each protectionLevels}}
+  <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+  {{/each}}
+</select>

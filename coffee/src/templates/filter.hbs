@@ -4,11 +4,14 @@
 <div class="subjects">
   <ul>
     {{# each subjects}}
-    <li data-subject="{{this.selector}}">{{this.name}}</li>
+    <li data-subject="{{selector}}">{{name}}</li>
     {{/each}}
   </ul>
 </div>
 
 {{#if showLensSelector}}
   {{addSubViewTo thisView 'LensSelectorView' filter=filter}}
+  {{addSubViewTo thisView 'LevelSelectorView' filter=filter}}
+  {{addSubViewTo thisView 'ProtectionOptionView' filter=filter}}
+  {{addSubViewTo thisView 'PressureOptionView' filter=filter}}
 {{/if}}

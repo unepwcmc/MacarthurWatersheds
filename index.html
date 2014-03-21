@@ -7,13 +7,12 @@
     
     <link rel="stylesheet" type="text/css" href="lib/leaflet/leaflet.css">
 
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="lib/jquery/dist/jquery.min.js"></script>
-    <script src="lib/json2/json2.js"></script>
-    <script src="lib/underscore/underscore.js"></script>
+    <script src="lib/lodash/dist/lodash.compat.min.js"></script>
     <script src="lib/backbone/backbone.js"></script>
     <script src="lib/handlebars/handlebars.min.js"></script>
     <script src="lib/leaflet/leaflet.js"></script>
-    <script src="lib/cartodb/cartodb.core.js"></script>
 
     <script src="lib/diorama.js"></script>
 
@@ -23,6 +22,7 @@
     <script>
       $(document).ready(function(){
         var myController = new Backbone.Controllers.MainController();
+      });
     </script>
   </head>
   <body>

@@ -8,6 +8,7 @@
     "chai": "",
     "mocha": "",
     "json2": "",
-    "handlebars": ""
+    "handlebars": "",
+    "lodash": ""
   }
 }

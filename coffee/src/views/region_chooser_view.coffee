@@ -9,7 +9,7 @@ class Backbone.Views.RegionChooserView extends Backbone.View
     "click .regions li": "triggerChooseRegion"
 
   initialize: (options) ->
-    @regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
+    @regions = options.regions
     @render()
 
   render: ->

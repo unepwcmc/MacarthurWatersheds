@@ -1,0 +1,7 @@
+<h1>Levels</h1>
+
+<select id="levels-select">
+  {{# each levels}}
+  <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+  {{/each}}
+</select>

@@ -22,7 +22,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     @attachSubViews()
     return @
 
-  setSubject: (event) ->
+  setSubject: (event) =>
     subjectName = $(event.target).attr('data-subject')
     @filter.set('subject', subjectName)
 
