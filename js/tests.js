@@ -472,7 +472,7 @@
     buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
     queryBuilder = new MacArthur.QueryBuilder(filter);
     filter.set('protection', true);
-    return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery method to be called once");
+    return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery method not to be called");
   });
 
   test('when the filter has protection set to false, the protection_level is unset on the selector object', function() {

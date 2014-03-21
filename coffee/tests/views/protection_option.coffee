@@ -94,7 +94,7 @@ object is NOT updated', ->
   filter.set('protection', true)
 
   assert.strictEqual buildQuerySpy.callCount, 0,
-    "Expected the buildQuery method to be called once"
+    "Expected the buildQuery method not to be called"
 
 )
 
