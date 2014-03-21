@@ -3,12 +3,12 @@ window.Backbone.Views ||= {}
 
 class Backbone.Views.LensSelectorView extends Backbone.View
   template: Handlebars.templates['lens_selector']
-  config: _.cloneDeep(MacArthur.CONFIG.lenses)
 
   events:
     "change #lens-select": "setLens"
 
   initialize: (options) ->
+    @config = _.cloneDeep(MacArthur.CONFIG.lenses)
     @filter = options.filter
     @filter.on('change:subject', @setDefaultLens)
     unless @filter.get('lens')?

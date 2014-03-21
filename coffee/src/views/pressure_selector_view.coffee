@@ -3,12 +3,12 @@ window.Backbone.Views ||= {}
 
 class Backbone.Views.PressureSelectorView extends Backbone.View
   template: Handlebars.templates['pressure_selector']
-  config: _.cloneDeep(MacArthur.CONFIG.pressureLevels)
 
   events:
     'change #pressure-select': "setPressureLevel"
 
   initialize: (options) ->
+    @config = _.cloneDeep(MacArthur.CONFIG.pressureLevels)
     @filter = options.filter
     unless @filter.get('pressureLevel')?
       @setDefaultPressureLevel()

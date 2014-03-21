@@ -555,13 +555,12 @@
 
     LensSelectorView.prototype.template = Handlebars.templates['lens_selector'];
 
-    LensSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.lenses);
-
     LensSelectorView.prototype.events = {
       "change #lens-select": "setLens"
     };
 
     LensSelectorView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.lenses);
       this.filter = options.filter;
       this.filter.on('change:subject', this.setDefaultLens);
       if (this.filter.get('lens') == null) {
@@ -632,13 +631,12 @@
 
     LevelSelectorView.prototype.template = Handlebars.templates['level_selector'];
 
-    LevelSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.levels);
-
     LevelSelectorView.prototype.events = {
       "change #levels-select": "setLevel"
     };
 
     LevelSelectorView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.levels);
       this.filter = options.filter;
       if (this.filter.get('level') == null) {
         this.setDefaultLevel();
@@ -768,13 +766,12 @@
 
     PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
 
-    PressureSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.pressureLevels);
-
     PressureSelectorView.prototype.events = {
       'change #pressure-select': "setPressureLevel"
     };
 
     PressureSelectorView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.pressureLevels);
       this.filter = options.filter;
       if (this.filter.get('pressureLevel') == null) {
         this.setDefaultPressureLevel();
