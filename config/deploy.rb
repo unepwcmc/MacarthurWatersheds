@@ -27,4 +27,4 @@ set :scm_username, "unepwcmc-read"
 #   end
 # end
 
-set :deploy_to, "/home/ubuntu/#{application}
+set :deploy_to, "/home/ubuntu/#{application}"
