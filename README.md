@@ -90,3 +90,6 @@ User ubuntu
 HostName ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
 
 IdentityFile <- EC2 pem key location ->
+
+
+Then run cap deploy.
