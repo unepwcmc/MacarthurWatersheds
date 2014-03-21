@@ -29,28 +29,3 @@ test('on initialize, the controller creates a side panel after the map', ->
     $('body').remove('#map')
     $('body').remove('#side-panel')
 )
-
-test('the show action renders a filter view into the side panel', ->
-  region = new Backbone.Models.Region({code: "WAN"})
-  controller =
-    modalContainer:
-      hideModal: ->
-    sidePanel:
-      showView: sinon.spy()
-    filter: new Backbone.Models.Filter()
-    map:
-      mapBuilder:
-        initQueryLayer: ->
-
-#  sinon.stub(jQuery, "getJSON")
-#  getGeometriesSpy = getGeometries(region, sinon.spy())
-#
-#  Backbone.Controllers.MainController::getGeometries.call(controller, region)
-#
-#  assert.isTrue controller.sidePanel.showView.calledOnce,
-#    "Expected controller.sidePanel.showView to be called"
-#
-#  showViewArgs = controller.sidePanel.showView.getCall(0).args
-#  assert.strictEqual showViewArgs[0].constructor.name, "FilterView" ,
-#    "Expected sidePanel.showView to be called with a FilterView"
-)

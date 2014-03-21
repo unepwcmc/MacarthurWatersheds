@@ -31,27 +31,6 @@
     }
   });
 
-  test('the show action renders a filter view into the side panel', function() {
-    var controller, region;
-    region = new Backbone.Models.Region({
-      code: "WAN"
-    });
-    return controller = {
-      modalContainer: {
-        hideModal: function() {}
-      },
-      sidePanel: {
-        showView: sinon.spy()
-      },
-      filter: new Backbone.Models.Filter(),
-      map: {
-        mapBuilder: {
-          initQueryLayer: function() {}
-        }
-      }
-    };
-  });
-
 }).call(this);
 
 (function() {
