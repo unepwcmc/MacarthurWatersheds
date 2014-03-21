@@ -374,17 +374,10 @@
 }).call(this);
 
 (function() {
-  var filter, protectionOptionView, protectionSelectorView;
-
   suite("ProtectionOption View");
 
-  filter = null;
-
-  protectionOptionView = null;
-
-  protectionSelectorView = null;
-
-  beforeEach(function() {
+  test('when the filter has a subject set, it renders the protection option', function() {
+    var filter, protectionOptionView, protectionSelectorView, selection;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity',
       protection: false
@@ -392,25 +385,25 @@
     protectionOptionView = new Backbone.Views.ProtectionOptionView({
       filter: filter
     });
-    return protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
       filter: filter
     });
-  });
-
-  afterEach(function() {
-    filter = null;
-    protectionOptionView = null;
-    return protectionSelectorView = null;
-  });
-
-  test('when the filter has a subject set, it renders the protection option', function() {
-    var selection;
     selection = protectionOptionView.$el.find('input:checkbox');
     return assert.lengthOf(selection, 1, "Expected the protection checkbox button to be present");
   });
 
   test('when the checkbox button is checked, the protection filter is set to true', function() {
-    var protection, setProtectionSpy;
+    var filter, protection, protectionOptionView, protectionSelectorView, setProtectionSpy;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
     setProtectionSpy = sinon.spy(Backbone.Views.ProtectionOptionView.prototype, 'setProtection');
     protectionOptionView = new Backbone.Views.ProtectionOptionView({
       filter: filter
@@ -427,14 +420,34 @@
   });
 
   test('when the filter has protection set to true, the protection option is checked', function() {
-    var selection;
+    var filter, protectionOptionView, protectionSelectorView, selection;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
     filter.set('protection', true);
     selection = protectionOptionView.$el.find('input:checkbox').val();
     return assert.equal(selection, 'on', "Expected the protection checkbox button to be checked");
   });
 
   test('when the filter has protection set to true, the protection selector is visible and populated with options', function() {
-    var selection;
+    var filter, protectionOptionView, protectionSelectorView, selection;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
     filter.set('protection', true);
     selection = protectionSelectorView.$el.find('select');
     assert.lengthOf(selection, 1, "Expected the protection select to be visible");
@@ -442,18 +455,38 @@
   });
 
   test('when the filter has protection set to true, the query on the selector object is NOT updated', function() {
-    var buildQuerySpy, queryBuilder, regions;
+    var buildQuerySpy, filter, protectionOptionView, protectionSelectorView, queryBuilder, regions;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
     regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
     filter.set('region', regions.models[0]);
     filter.set('lens', 'allsp');
     buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
     queryBuilder = new MacArthur.QueryBuilder(filter);
     filter.set('protection', true);
-    return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery method to be called once");
+    return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery method not to be called");
   });
 
   test('when the filter has protection set to false, the protection_level is unset on the selector object', function() {
-    var defaultProtectionLevel;
+    var defaultProtectionLevel, filter, protectionOptionView, protectionSelectorView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity',
+      protection: false
+    });
+    protectionOptionView = new Backbone.Views.ProtectionOptionView({
+      filter: filter
+    });
+    protectionSelectorView = new Backbone.Views.ProtectionSelectorView({
+      filter: filter
+    });
     defaultProtectionLevel = _.find(MacArthur.CONFIG.protectionLevels, function(pl) {
       return pl["default"] === true;
     }).selector;
@@ -462,35 +495,6 @@
     protectionOptionView.$el.find("[type='checkbox']").attr('checked', false);
     protectionOptionView.$el.find("[type='checkbox']").trigger('change');
     return assert.isUndefined(filter.get('protection_level'), "Expected the protection_level filter to be undefined");
-  });
-
-}).call(this);
-
-(function() {
-  var ProtectionOptionView, filter, protectionSelectorView;
-
-  suite("ProtectionSelector View");
-
-  filter = null;
-
-  ProtectionOptionView = null;
-
-  protectionSelectorView = null;
-
-  beforeEach(function() {
-    var protectionOptionView;
-    filter = new Backbone.Models.Filter({
-      subject: 'biodiversity',
-      protection: false
-    });
-    return protectionOptionView = new Backbone.Views.ProtectionOptionView({
-      filter: filter
-    });
-  });
-
-  afterEach(function() {
-    filter = null;
-    return protectionSelectorView;
   });
 
 }).call(this);

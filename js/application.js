@@ -532,7 +532,7 @@
     };
 
     MapView.prototype.onClose = function() {
-      return this.revove();
+      return this.remove();
     };
 
     return MapView;
