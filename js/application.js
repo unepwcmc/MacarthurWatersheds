@@ -513,7 +513,7 @@
     };
 
     RegionChooserView.prototype.initialize = function(options) {
-      this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+      this.regions = options.regions;
       return this.render();
     };
 
@@ -1060,6 +1060,7 @@
       this.getGeometries = __bind(this.getGeometries, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
+      this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.filter = new Backbone.Models.Filter();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
       this.modalContainer = new ModalContainer;
@@ -1078,7 +1079,9 @@
 
     MainController.prototype.chooseRegion = function() {
       var regionChooserView;
-      regionChooserView = new Backbone.Views.RegionChooserView();
+      regionChooserView = new Backbone.Views.RegionChooserView({
+        regions: this.regions
+      });
       this.modalContainer.showModal(regionChooserView);
 
       /*
