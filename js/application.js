@@ -14,7 +14,7 @@
       }, {
         code: "GLR",
         name: "African Great Lakes",
-        bounds: [[-18, 15], [26, 12]]
+        bounds: [[-18, 30], [10, 40]]
       }
     ],
     subjects: [
