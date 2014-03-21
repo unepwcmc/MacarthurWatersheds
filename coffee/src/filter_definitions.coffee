@@ -14,6 +14,7 @@ MacArthur.CONFIG =
   lenses: {
     biodiversity: [
       { selector: "allsp", name: "All species", default: true },
+      { selector: "crenvu", name: "All threatened" },
       { selector: "amphibia", name: "Amphibians" },
       { selector: "mammalia", name: "Mammals" },
       { selector: "aves", name: "Birds" },

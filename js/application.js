@@ -33,6 +33,9 @@
           name: "All species",
           "default": true
         }, {
+          selector: "crenvu",
+          name: "All threatened"
+        }, {
           selector: "amphibia",
           name: "Amphibians"
         }, {
