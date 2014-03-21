@@ -46,6 +46,6 @@ values as other objects with value and protection_percentage', ->
   mapView = new Backbone.Views.MapView({filter: filter})
   querydata = mapView.buildQuerydata rows
 
-  assert.strictEqual querydata[2805]protection_percentage, 59.1202577939
+  assert.strictEqual querydata[2805].protectionPercentage, 59.1202577939
 
 )
