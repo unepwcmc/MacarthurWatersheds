@@ -28,3 +28,4 @@ set :scm_username, "unepwcmc-read"
 # end
 
 set :deploy_to, "/home/ubuntu/#{application}"
+set :normalize_asset_timestamps, false
