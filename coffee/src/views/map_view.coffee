@@ -30,15 +30,32 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayer
     @map.fitBounds regionBounds
 
+  bindPopup: (feature, layer) =>
+    id = layer.feature.properties.cartodb_id
+    w = _.find(@data.rows, (row) -> row.watershed_id == id)
+    popupOptions = {maxWidth: 200}
+    layer.bindPopup(
+      """
+      Value: #{w.value.toFixed(2)} <br>
+      Pressure Index: #{w.pressure_index} <br>
+      Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
+      """,
+      popupOptions
+    );
+
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
     q = @filter.get('query')
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
+      @data = data
       @max = 0
       @min = Infinity
       @querydata = @buildQuerydata data.rows
       @range = (@max - @min) / 3
-      @queryLayer = L.geoJson(@collection, {style: @queryPolyStyle}).addTo(@map)
+      @queryLayer = L.geoJson(@collection, {
+        style: @queryPolyStyle
+        onEachFeature: @bindPopup
+      }).addTo(@map)
       @queryLayerInteriors.bringToFront()
     )
 
