@@ -23,6 +23,7 @@ class Backbone.Views.MapView extends Backbone.View
     @region = region
     regionCode = region.get('code')
     regionBounds = region.get('bounds')
+    @categories = 3
     @collection = topojson.feature(geo, geo.objects[regionCode])
     @interiors = topojson.mesh(geo, geo.objects[regionCode])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
@@ -34,18 +35,30 @@ class Backbone.Views.MapView extends Backbone.View
     @map.removeLayer @queryLayer
     q = @filter.get('query')
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
-      @max = 0
-      @min = Infinity
-      @querydata = @buildQuerydata data.rows
-      @range = (@max - @min) / 3
+      @data = data
+      @categorizeData 'rowsBound'
       @queryLayer = L.geoJson(@collection, {style: @queryPolyStyle}).addTo(@map)
       @queryLayerInteriors.bringToFront()
     )
 
-  buildQuerydata: (data) =>
+  categorizeData: (type) =>
+    if type == 'valueBound'
+      @max = 0
+      @min = Infinity
+      @querydata = @buildQuerydata @data.rows, yes
+      @range = (@max - @min) / @categories
+    else
+      @min = 0
+      @max = @data.rows.length
+      @querydata = @buildQuerydata @data.rows, no
+      @range = +(@max  / @categories)
+    @
+
+  buildQuerydata: (data, getMinMax) =>
     _.object(_.map(data, (x) =>
-      if x.value > @max then @max = x.value
-      if x.value < @min then @min = x.value
+      if getMinMax
+        if x.value > @max then @max = x.value
+        if x.value < @min then @min = x.value
       [x.watershed_id, {
         value: x.value, 
         protectionPercentage: x.protection_percentage,
@@ -60,6 +73,7 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     d = @querydata[feature]
     p = d.value - @min
+    console.log p, @min + @range * 2
     if p >= @min + @range * 2  then return '#e6550d'
     if p >= @min + @range      then return '#fdae6b'
     if p >= @min               then return '#fee6ce'

@@ -317,6 +317,7 @@
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
+      this.categorizeData = __bind(this.categorizeData, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
@@ -347,6 +348,7 @@
       this.region = region;
       regionCode = region.get('code');
       regionBounds = region.get('bounds');
+      this.categories = 3;
       this.collection = topojson.feature(geo, geo.objects[regionCode]);
       this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
       this.queryLayer = L.geoJson(this.collection, {
@@ -365,10 +367,8 @@
       q = this.filter.get('query');
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
-          _this.max = 0;
-          _this.min = Infinity;
-          _this.querydata = _this.buildQuerydata(data.rows);
-          _this.range = (_this.max - _this.min) / 3;
+          _this.data = data;
+          _this.categorizeData('rowsBound');
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle
           }).addTo(_this.map);
@@ -377,14 +377,31 @@
       })(this));
     };
 
-    MapView.prototype.buildQuerydata = function(data) {
+    MapView.prototype.categorizeData = function(type) {
+      if (type === 'valueBound') {
+        this.max = 0;
+        this.min = Infinity;
+        this.querydata = this.buildQuerydata(this.data.rows, true);
+        this.range = (this.max - this.min) / this.categories;
+      } else {
+        this.min = 0;
+        this.max = this.data.rows.length;
+        this.querydata = this.buildQuerydata(this.data.rows, false);
+        this.range = +(this.max / this.categories);
+      }
+      return this;
+    };
+
+    MapView.prototype.buildQuerydata = function(data, getMinMax) {
       return _.object(_.map(data, (function(_this) {
         return function(x) {
-          if (x.value > _this.max) {
-            _this.max = x.value;
-          }
-          if (x.value < _this.min) {
-            _this.min = x.value;
+          if (getMinMax) {
+            if (x.value > _this.max) {
+              _this.max = x.value;
+            }
+            if (x.value < _this.min) {
+              _this.min = x.value;
+            }
           }
           return [
             x.watershed_id, {
@@ -407,6 +424,7 @@
       var d, p;
       d = this.querydata[feature];
       p = d.value - this.min;
+      console.log(p, this.min + this.range * 2);
       if (p >= this.min + this.range * 2) {
         return '#e6550d';
       }
