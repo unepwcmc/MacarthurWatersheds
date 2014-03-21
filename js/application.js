@@ -513,7 +513,7 @@
     };
 
     RegionChooserView.prototype.initialize = function(options) {
-      this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+      this.regions = options.regions;
       return this.render();
     };
 
@@ -1060,6 +1060,7 @@
       this.getGeometries = __bind(this.getGeometries, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
+      this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.filter = new Backbone.Models.Filter();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
       this.modalContainer = new ModalContainer;
@@ -1068,6 +1069,10 @@
       this.sidePanel.$el.insertAfter('#map');
       this.showMap();
       this.chooseRegion();
+      this.appRouter = new Backbone.Router.AppRouter({
+        regions: this.regions
+      });
+      Backbone.history.start();
     }
 
     MainController.prototype.showMap = function() {
@@ -1078,7 +1083,9 @@
 
     MainController.prototype.chooseRegion = function() {
       var regionChooserView;
-      regionChooserView = new Backbone.Views.RegionChooserView();
+      regionChooserView = new Backbone.Views.RegionChooserView({
+        regions: this.regions
+      });
       this.modalContainer.showModal(regionChooserView);
 
       /*
@@ -1118,5 +1125,46 @@
     return MainController;
 
   })(Backbone.Diorama.Controller);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Router || (_base.Router = {});
+
+  Backbone.Router.AppRouter = (function(_super) {
+    __extends(AppRouter, _super);
+
+    function AppRouter() {
+      this.gotoRegion = __bind(this.gotoRegion, this);
+      return AppRouter.__super__.constructor.apply(this, arguments);
+    }
+
+    AppRouter.prototype.routes = {
+      ':region/': 'gotoRegion'
+    };
+
+    AppRouter.prototype.initialize = function(options) {
+      return this.regions = options.regions;
+    };
+
+    AppRouter.prototype.gotoRegion = function(region_code) {
+      var region;
+      region = this.regions.find(function(region) {
+        return region.get('code') === region_code;
+      });
+      console.log('router.gotoRegion', region);
+      return this.trigger('regionChosen', region);
+    };
+
+    return AppRouter;
+
+  })(Backbone.Router);
 
 }).call(this);

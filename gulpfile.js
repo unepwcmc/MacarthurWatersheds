@@ -9,8 +9,8 @@ var plumber = require('gulp-plumber');
 
 var paths = {
   application: [
-    'coffee/src/filter_definitions.coffee', 
-    'coffee/src/models/filter.coffee', 
+    'coffee/src/filter_definitions.coffee',
+    'coffee/src/models/filter.coffee',
     'coffee/src/lib/map_builder.coffee',
     'coffee/src/lib/query_builder.coffee',
     'coffee/src/collections/region_collection.coffee', 
@@ -23,7 +23,8 @@ var paths = {
     'coffee/src/views/protection_option_view.coffee',
     'coffee/src/views/protection_selector_view.coffee',
     'coffee/src/views/filter_view.coffee',
-    'coffee/src/controllers/main_controller.coffee'
+    'coffee/src/controllers/main_controller.coffee',
+    'coffee/src/app_router.coffee'
   ],
   templates: 'coffee/src/templates/*.hbs',
   tests: 'coffee/tests/**/*.coffee',

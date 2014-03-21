@@ -16,6 +16,7 @@ class ModalContainer
 
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
+    @regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
     @filter = new Backbone.Models.Filter()
     @queryBuilder = new window.MacArthur.QueryBuilder(@filter)
     @modalContainer = new ModalContainer
@@ -27,11 +28,15 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @showMap()
     @chooseRegion()
 
+    #routing
+    @appRouter = new Backbone.Router.AppRouter({regions: @regions})
+    Backbone.history.start()
+
   showMap: =>
     @map = new Backbone.Views.MapView {filter: @filter}
 
   chooseRegion: =>
-    regionChooserView = new Backbone.Views.RegionChooserView()
+    regionChooserView = new Backbone.Views.RegionChooserView({regions: @regions})
     @modalContainer.showModal(regionChooserView)
 
     ###
