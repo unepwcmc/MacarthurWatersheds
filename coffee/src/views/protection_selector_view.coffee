@@ -3,12 +3,12 @@ window.Backbone.Views ||= {}
 
 class Backbone.Views.ProtectionSelectorView extends Backbone.View
   template: Handlebars.templates['protection_selector']
-  config: _.cloneDeep(MacArthur.CONFIG.protectionLevels)
 
   events:
     'change #protection-select': "setProtectionLevel"
 
   initialize: (options) ->
+    @config = _.cloneDeep(MacArthur.CONFIG.protectionLevels)
     @filter = options.filter
     unless @filter.get('protectionLevel')?
       @setDefaultProtectionLevel()

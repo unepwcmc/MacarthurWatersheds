@@ -900,13 +900,12 @@
 
     ProtectionSelectorView.prototype.template = Handlebars.templates['protection_selector'];
 
-    ProtectionSelectorView.prototype.config = _.cloneDeep(MacArthur.CONFIG.protectionLevels);
-
     ProtectionSelectorView.prototype.events = {
       'change #protection-select': "setProtectionLevel"
     };
 
     ProtectionSelectorView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.protectionLevels);
       this.filter = options.filter;
       if (this.filter.get('protectionLevel') == null) {
         this.setDefaultProtectionLevel();
