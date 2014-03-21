@@ -57,10 +57,6 @@ class Backbone.Views.MapView extends Backbone.View
     if @querydata?
       @queryLayer.setStyle @queryPolyStyle
 
-  updateCollection: (collection, data) ->
-    #for c in collection
-    #  c.value = 
-
   getColor: (feature) =>
     d = @querydata[feature]
     p = d.value - @min
@@ -149,3 +145,7 @@ class Backbone.Views.MapView extends Backbone.View
       fillOpacity: fillOpacity
       fillColor: fillColor
     }
+
+  onClose: ->
+    @.revove()
+

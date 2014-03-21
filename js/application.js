@@ -339,8 +339,6 @@
       }
     };
 
-    MapView.prototype.updateCollection = function(collection, data) {};
-
     MapView.prototype.getColor = function(feature) {
       var d, p;
       d = this.querydata[feature];
@@ -470,6 +468,10 @@
         fillOpacity: fillOpacity,
         fillColor: fillColor
       };
+    };
+
+    MapView.prototype.onClose = function() {
+      return this.revove();
     };
 
     return MapView;
