@@ -500,35 +500,6 @@
 }).call(this);
 
 (function() {
-  var ProtectionOptionView, filter, protectionSelectorView;
-
-  suite("ProtectionSelector View");
-
-  filter = null;
-
-  ProtectionOptionView = null;
-
-  protectionSelectorView = null;
-
-  beforeEach(function() {
-    var protectionOptionView;
-    filter = new Backbone.Models.Filter({
-      subject: 'biodiversity',
-      protection: false
-    });
-    return protectionOptionView = new Backbone.Views.ProtectionOptionView({
-      filter: filter
-    });
-  });
-
-  afterEach(function() {
-    filter = null;
-    return protectionSelectorView;
-  });
-
-}).call(this);
-
-(function() {
   suite('Region Chooser View');
 
   test('.render presents a list of the three regions', function() {
