@@ -7,12 +7,13 @@
     "gulp-handlebars": "~1.0.2",
     "gulp-declare": "~0.1.0",
     "gulp-plumber": "~0.5.6",
+    "gulp-sass": "",
     "gulp": "",
     "bower": "",
     "serv": ""
   },
   "scripts": {
     "postinstall": "bower install",
-    "start": "serv --port 8080"
+    "start": "serv --port 8080 -b 10.1.1.105"
   }
 }
