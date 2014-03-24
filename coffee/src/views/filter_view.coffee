@@ -7,6 +7,9 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
   events:
     "click .subjects li": "setSubject"
 
+  attributes:
+    class: "filters" 
+
   initialize: (options) ->
     @filter = options.filter
     @listenTo(@filter, 'change', @render)
