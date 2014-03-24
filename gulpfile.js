@@ -6,6 +6,7 @@ var uglify = require('gulp-uglify');
 var handlebars = require('gulp-handlebars');
 var declare = require('gulp-declare');
 var plumber = require('gulp-plumber');
+var sass = require('gulp-sass');
 
 var paths = {
   application: [
@@ -28,6 +29,7 @@ var paths = {
   ],
   templates: 'coffee/src/templates/*.hbs',
   tests: 'coffee/tests/**/*.coffee',
+  sass: 'sass/**/*.sass',
   images: 'client/img/**/*'
 };
 
@@ -59,13 +61,19 @@ gulp.task('templates', function() {
     .pipe(gulp.dest('js/'));
 });
 
+gulp.task('sass', function () {
+  gulp.src(paths.sass)
+    .pipe(sass())
+    .pipe(gulp.dest('css/'));
+});
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
   gulp.watch(paths.application, ['application']);
   gulp.watch(paths.tests, ['tests']);
   gulp.watch(paths.templates, ['templates']);
+  gulp.watch(paths.sass, ['sass']);
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['application', 'templates', 'tests', 'watch']);
+gulp.task('default', ['application', 'templates', 'tests', 'watch', 'sass']);
