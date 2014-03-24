@@ -63,6 +63,21 @@
         }
       ]
     },
+    scenarios: [
+      {
+        selector: "mf2050",
+        name: "Markets first"
+      }, {
+        selector: "susf2050",
+        name: "Sustainability first"
+      }, {
+        selector: "secf2050",
+        name: "Security first"
+      }, {
+        selector: "polf2050",
+        name: "Policy first"
+      }
+    ],
     levels: [
       {
         selector: "all",
@@ -248,6 +263,68 @@
 
   (_base = window.Backbone).Views || (_base.Views = {});
 
+  Backbone.Views.TabView = (function(_super) {
+    __extends(TabView, _super);
+
+    function TabView() {
+      this.setTab = __bind(this.setTab, this);
+      return TabView.__super__.constructor.apply(this, arguments);
+    }
+
+    TabView.prototype.template = Handlebars.templates['tab'];
+
+    TabView.prototype.events = {
+      "click ul.tabs li": "setTab"
+    };
+
+    TabView.prototype.initialize = function(options) {
+      this.filter = options.filter;
+      return this.render();
+    };
+
+    TabView.prototype.render = function() {
+      this.$el.html(this.template({
+        thisView: this,
+        filter: this.filter
+      }));
+      this.attachSubViews();
+      return this;
+    };
+
+    TabView.prototype.onClose = function() {};
+
+    TabView.prototype.setTab = function(event) {
+      var tabName;
+      tabName = $(event.target).attr('data-subject');
+      if (tabName === this.filter.get('tab')) {
+        return;
+      }
+      this.resetFilters();
+      return this.filter.set('tab', tabName);
+    };
+
+    TabView.prototype.resetFilters = function() {
+      this.filter.unset('subject');
+      this.filter.unset('lens');
+      return this.filter.unset('level');
+    };
+
+    return TabView;
+
+  })(Backbone.Diorama.NestingView);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
   Backbone.Views.BaseSelectorView = (function(_super) {
     __extends(BaseSelectorView, _super);
 
@@ -388,11 +465,14 @@
     MapView.prototype.updateQueryLayer = function() {
       var q;
       this.map.removeLayer(this.queryLayer);
+      this.styleValueField = 'rank';
       q = this.filter.get('query');
+      if (q == null) {
+        return;
+      }
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
-          _this.styleValueField = 'rank';
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
@@ -637,6 +717,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -648,21 +729,30 @@
     __extends(ScenarioSelectorView, _super);
 
     function ScenarioSelectorView() {
+      this.setDefaultFilter = __bind(this.setDefaultFilter, this);
       return ScenarioSelectorView.__super__.constructor.apply(this, arguments);
     }
 
     ScenarioSelectorView.prototype.template = Handlebars.templates['scenario_selector'];
 
     ScenarioSelectorView.prototype.initialize = function(options) {
+      this.filter = options.filter;
       return this.render();
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      this.$el.html(this.template());
+      this.$el.html(this.template({
+        filter: this.filter,
+        scenarios: MacArthur.CONFIG.scenarios
+      }));
       return this;
     };
 
     ScenarioSelectorView.prototype.onClose = function() {};
+
+    ScenarioSelectorView.prototype.setDefaultFilter = function() {
+      return this.filter.set('lens', this.getDefaultFilter().selector);
+    };
 
     return ScenarioSelectorView;
 
@@ -731,7 +821,9 @@
     LensSelectorView.prototype.onClose = function() {};
 
     LensSelectorView.prototype.setDefaultLens = function() {
-      return this.filter.set('lens', this.getDefaultFilter().selector);
+      if (this.filter.get('subject') != null) {
+        return this.filter.set('lens', this.getDefaultFilter().selector);
+      }
     };
 
     LensSelectorView.prototype.getDefaultFilter = function() {
@@ -994,7 +1086,6 @@
     __extends(FilterView, _super);
 
     function FilterView() {
-      this.setTab = __bind(this.setTab, this);
       this.setSubject = __bind(this.setSubject, this);
       return FilterView.__super__.constructor.apply(this, arguments);
     }
@@ -1002,8 +1093,7 @@
     FilterView.prototype.template = Handlebars.templates['filter'];
 
     FilterView.prototype.events = {
-      "click .subjects li": "setSubject",
-      "click ul.tabs li": "setTab"
+      "click .subjects li": "setSubject"
     };
 
     FilterView.prototype.initialize = function(options) {
@@ -1028,12 +1118,6 @@
       var subjectName;
       subjectName = $(event.target).attr('data-subject');
       return this.filter.set('subject', subjectName);
-    };
-
-    FilterView.prototype.setTab = function(event) {
-      var tabName;
-      tabName = $(event.target).attr('data-subject');
-      return this.filter.set('tab', tabName);
     };
 
     FilterView.prototype.onClose = function() {
@@ -1136,7 +1220,7 @@
       this.filter.set({
         region: region
       });
-      view = new Backbone.Views.FilterView({
+      view = new Backbone.Views.TabView({
         filter: this.filter
       });
       this.sidePanel.showView(view);

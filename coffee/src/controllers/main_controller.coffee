@@ -56,7 +56,7 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   showSidePanel: (err, geo, region) =>
     @modalContainer.hideModal()
     @filter.set(region: region)
-    view = new Backbone.Views.FilterView(
+    view = new Backbone.Views.TabView(
       filter: @filter
     )
     @sidePanel.showView(view)

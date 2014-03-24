@@ -63,26 +63,3 @@ test('if the filter does not have a subject set,
   finally
     LensSelectorConstructorSpy.restore()
 )
-
-test('when the `change` tab selector has been clicked the view 
- re-renders and the scenario subview is rendered', ->
-
-  filter = new Backbone.Models.Filter(
-    subject: 'biodiversity'
-  )
-  scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView::, 'render')
-
-  filterView = new Backbone.Views.FilterView( filter: filter )
-
-  filterView.$el.find('li.change-tab').trigger('click')
-
-  try
-    assert.strictEqual(
-      scenarioRenderSpy.callCount, 1,
-      "Expected the filterView to be called once"
-    )
-
-  finally
-    scenarioRenderSpy.restore()
-
-)

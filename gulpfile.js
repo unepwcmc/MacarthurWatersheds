@@ -15,6 +15,7 @@ var paths = {
     'coffee/src/lib/map_builder.coffee',
     'coffee/src/lib/query_builder.coffee',
     'coffee/src/collections/region_collection.coffee',
+    'coffee/src/views/tab_view.coffee',
     'coffee/src/views/base_selector_view.coffee',
     'coffee/src/views/map_view.coffee',
     'coffee/src/views/region_chooser_view.coffee',

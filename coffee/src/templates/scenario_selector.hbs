@@ -1,1 +1,8 @@
-<h1>ScenarioSelector View</h1>
+<h1>Scenario of change</h1>
+
+<select id="scenario-select">
+  <option value="" disabled selected>Select a scenario</option>
+  {{# each scenarios}}
+  <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+  {{/each}}
+</select>

@@ -216,23 +216,6 @@
     }
   });
 
-  test('when the `change` tab selector has been clicked the view re-renders and the scenario subview is rendered', function() {
-    var filter, filterView, scenarioRenderSpy;
-    filter = new Backbone.Models.Filter({
-      subject: 'biodiversity'
-    });
-    scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView.prototype, 'render');
-    filterView = new Backbone.Views.FilterView({
-      filter: filter
-    });
-    filterView.$el.find('li.change-tab').trigger('click');
-    try {
-      return assert.strictEqual(scenarioRenderSpy.callCount, 1, "Expected the filterView to be called once");
-    } finally {
-      scenarioRenderSpy.restore();
-    }
-  });
-
 }).call(this);
 
 (function() {
@@ -543,6 +526,28 @@
     eventArg = spy.getCall(0).args[0];
     assert.strictEqual(eventArg.constructor.name, "Region", "Expected the event to send a Region model");
     return assert.strictEqual(eventArg.get('name'), 'Mekong', "Expected the event to be trigger with the right Region");
+  });
+
+}).call(this);
+
+(function() {
+  suite('Tab View');
+
+  test('when the `change` tab selector has been clicked the view re-renders and the scenario subview is rendered', function() {
+    var filter, scenarioRenderSpy, tabView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView.prototype, 'render');
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    tabView.$el.find('li.change-tab').trigger('click');
+    try {
+      return assert.strictEqual(scenarioRenderSpy.callCount, 1, "Expected the filterView to be called once");
+    } finally {
+      scenarioRenderSpy.restore();
+    }
   });
 
 }).call(this);
