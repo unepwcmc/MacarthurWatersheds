@@ -39,7 +39,7 @@ class Backbone.Views.MapView extends Backbone.View
   
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
-    w = _.find(@data.rows, (row) -> row.watershed_id == id)
+    w = _.find(@data, (row) -> row.watershed_id == id)
     popupOptions = {maxWidth: 200}
     layer.bindPopup(
       """
@@ -60,7 +60,10 @@ class Backbone.Views.MapView extends Backbone.View
       @filterCategory = 'sortIndex' # or sortIndex
       @setMinMax()
       @querydata = @buildQuerydata @data
-      @queryLayer = L.geoJson(@collection, {style: @queryPolyStyle}).addTo(@map)
+      @queryLayer = L.geoJson(@collection, {
+        style: @queryPolyStyle
+        onEachFeature: @bindPopup
+      }).addTo(@map)
       @queryLayerInteriors.bringToFront()
     )
 

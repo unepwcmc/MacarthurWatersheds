@@ -372,7 +372,7 @@
     MapView.prototype.bindPopup = function(feature, layer) {
       var id, popupOptions, w;
       id = layer.feature.properties.cartodb_id;
-      w = _.find(this.data.rows, function(row) {
+      w = _.find(this.data, function(row) {
         return row.watershed_id === id;
       });
       popupOptions = {
@@ -393,7 +393,8 @@
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
-            style: _this.queryPolyStyle
+            style: _this.queryPolyStyle,
+            onEachFeature: _this.bindPopup
           }).addTo(_this.map);
           return _this.queryLayerInteriors.bringToFront();
         };
