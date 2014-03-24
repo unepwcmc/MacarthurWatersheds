@@ -1,5 +1,7 @@
-
-<h1>Now</h1>
+<ul class="tabs">
+  <li data-subject="now" class="now-tab">Now</li>
+  <li data-subject="change" class="change-tab">Change</li>
+</ul>
 
 <div class="subjects">
   <ul>
@@ -8,6 +10,10 @@
     {{/each}}
   </ul>
 </div>
+
+{{#if showScenarioSelector}}
+  {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
+{{/if}}
 
 {{#if showLensSelector}}
   {{addSubViewTo thisView 'LensSelectorView' filter=filter}}

@@ -123,6 +123,10 @@
       return Filter.__super__.constructor.apply(this, arguments);
     }
 
+    Filter.prototype.defaults = {
+      tab: 'now'
+    };
+
     return Filter;
 
   })(Backbone.Model);
@@ -633,6 +637,41 @@
 
 (function() {
   var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.ScenarioSelectorView = (function(_super) {
+    __extends(ScenarioSelectorView, _super);
+
+    function ScenarioSelectorView() {
+      return ScenarioSelectorView.__super__.constructor.apply(this, arguments);
+    }
+
+    ScenarioSelectorView.prototype.template = Handlebars.templates['scenario_selector'];
+
+    ScenarioSelectorView.prototype.initialize = function(options) {
+      return this.render();
+    };
+
+    ScenarioSelectorView.prototype.render = function() {
+      this.$el.html(this.template());
+      return this;
+    };
+
+    ScenarioSelectorView.prototype.onClose = function() {};
+
+    return ScenarioSelectorView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -955,6 +994,7 @@
     __extends(FilterView, _super);
 
     function FilterView() {
+      this.setTab = __bind(this.setTab, this);
       this.setSubject = __bind(this.setSubject, this);
       return FilterView.__super__.constructor.apply(this, arguments);
     }
@@ -962,7 +1002,8 @@
     FilterView.prototype.template = Handlebars.templates['filter'];
 
     FilterView.prototype.events = {
-      "click .subjects li": "setSubject"
+      "click .subjects li": "setSubject",
+      "click ul.tabs li": "setTab"
     };
 
     FilterView.prototype.initialize = function(options) {
@@ -976,6 +1017,7 @@
         thisView: this,
         subjects: MacArthur.CONFIG.subjects,
         showLensSelector: this.filter.get('subject') != null,
+        showScenarioSelector: this.filter.get('tab') === 'change',
         filter: this.filter
       }));
       this.attachSubViews();
@@ -986,6 +1028,12 @@
       var subjectName;
       subjectName = $(event.target).attr('data-subject');
       return this.filter.set('subject', subjectName);
+    };
+
+    FilterView.prototype.setTab = function(event) {
+      var tabName;
+      tabName = $(event.target).attr('data-subject');
+      return this.filter.set('tab', tabName);
     };
 
     FilterView.prototype.onClose = function() {

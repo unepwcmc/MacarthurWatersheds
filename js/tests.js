@@ -216,6 +216,23 @@
     }
   });
 
+  test('when the `change` tab selector has been clicked the view re-renders and the scenario subview is rendered', function() {
+    var filter, filterView, scenarioRenderSpy;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView.prototype, 'render');
+    filterView = new Backbone.Views.FilterView({
+      filter: filter
+    });
+    filterView.$el.find('li.change-tab').trigger('click');
+    try {
+      return assert.strictEqual(scenarioRenderSpy.callCount, 1, "Expected the filterView to be called once");
+    } finally {
+      scenarioRenderSpy.restore();
+    }
+  });
+
 }).call(this);
 
 (function() {

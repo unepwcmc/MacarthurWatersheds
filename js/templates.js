@@ -25,6 +25,18 @@ function program3(depth0,data) {
   options = {hash:{
     'filter': ((depth0 && depth0.filter))
   },data:data};
+  buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ScenarioSelectorView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ScenarioSelectorView", options)))
+    + "\n";
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
+  var buffer = "", stack1, options;
+  buffer += "\n  ";
+  options = {hash:{
+    'filter': ((depth0 && depth0.filter))
+  },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "LensSelectorView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "LensSelectorView", options)))
     + "\n  ";
   options = {hash:{
@@ -45,11 +57,14 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "\n<h1>Now</h1>\n\n<div class=\"subjects\">\n  <ul>\n    ";
+  buffer += "<ul class=\"tabs\">\n  <li data-subject=\"now\" class=\"now-tab\">Now</li>\n  <li data-subject=\"change\" class=\"change-tab\">Change</li>\n</ul>\n\n<div class=\"subjects\">\n  <ul>\n    ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </ul>\n</div>\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n";
   return buffer;
