@@ -287,3 +287,11 @@ function program1(depth0,data) {
   buffer += "\n</ul>\n";
   return buffer;
   });
+this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scenario_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<h1>ScenarioSelector View</h1>\n";
+  });

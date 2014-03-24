@@ -336,7 +336,7 @@
 
     MapView.prototype.sortDataBy = function(data, field) {
       return _.map(_.sortBy(data, field), function(row, i) {
-        row.sortIndex = i;
+        row.rank = i;
         return row;
       });
     };
@@ -388,8 +388,7 @@
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
-          _this.styleCategory = 'sortIndex';
-          _this.filterCategory = 'sortIndex';
+          _this.styleValueField = 'rank';
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
@@ -404,11 +403,11 @@
     MapView.prototype.setMinMax = function(type) {
       this.max = {
         'value': this.data[this.data.length - 1].value,
-        'sortIndex': this.data.length
+        'rank': this.data.length
       };
       this.min = {
         'value': this.data[0].value,
-        'sortIndex': 0
+        'rank': 0
       };
       return this;
     };
@@ -418,7 +417,7 @@
         return function(x) {
           return [
             x.watershed_id, {
-              sortIndex: x.sortIndex,
+              rank: x.rank,
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index
@@ -437,15 +436,15 @@
     MapView.prototype.getColor = function(feature) {
       var d, p, range;
       d = this.querydata[feature];
-      p = d[this.styleCategory] - this.min[this.styleCategory];
-      range = (this.max[this.styleCategory] - this.min[this.styleCategory]) / this.categories;
-      if (p >= this.min[this.styleCategory] + range * 2) {
+      p = d[this.styleValueField] - this.min[this.styleValueField];
+      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
+      if (p >= this.min[this.styleValueField] + range * 2) {
         return '#e6550d';
       }
-      if (p >= this.min[this.styleCategory] + range) {
+      if (p >= this.min[this.styleValueField] + range) {
         return '#fdae6b';
       }
-      if (p >= this.min[this.styleCategory]) {
+      if (p >= this.min[this.styleValueField]) {
         return '#fee6ce';
       }
       return '#fff';
@@ -454,23 +453,23 @@
     MapView.prototype.filterFeatureLevel = function(id) {
       var d, level, range;
       level = this.filter.get('level');
-      range = (this.max[this.filterCategory] - this.min[this.filterCategory]) / this.categories;
+      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
       d = this.querydata[id];
       if (level === 'all') {
         return true;
       }
       if (level === 'high') {
-        if (d[this.filterCategory] >= this.min[this.filterCategory] + range * 2) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'medium') {
-        if (d[this.filterCategory] >= this.min[this.filterCategory] + range && d[this.filterCategory] < this.min[this.filterCategory] + range * 2) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] + range && d[this.styleValueField] < this.min[this.styleValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'low') {
-        if (d[this.filterCategory] >= this.min[this.filterCategory] && d[this.filterCategory] < this.min[this.filterCategory] + range) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] && d[this.styleValueField] < this.min[this.styleValueField] + range) {
           return true;
         }
       }

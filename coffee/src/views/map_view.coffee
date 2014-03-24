@@ -14,7 +14,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   sortDataBy: (data, field) ->
     _.map(_.sortBy(data, field), (row, i) -> 
-      row.sortIndex = i
+      row.rank = i
       row
     )
 
@@ -56,8 +56,7 @@ class Backbone.Views.MapView extends Backbone.View
     q = @filter.get('query')
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
       @data = @sortDataBy(data.rows, 'value')
-      @styleCategory = 'sortIndex'  # or value
-      @filterCategory = 'sortIndex' # or sortIndex
+      @styleValueField = 'rank'  # or value
       @setMinMax()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
@@ -70,18 +69,18 @@ class Backbone.Views.MapView extends Backbone.View
   setMinMax: (type) =>
     @max = {
       'value': @data[@data.length - 1].value
-      'sortIndex': @data.length
+      'rank': @data.length
     }
     @min = {
       'value': @data[0].value
-      'sortIndex': 0
+      'rank': 0
     }
     @
 
   buildQuerydata: (data) =>
     _.object(_.map(data, (x) =>
       [x.watershed_id, {
-        sortIndex: x.sortIndex,
+        rank: x.rank,
         value: x.value, 
         protectionPercentage: x.protection_percentage,
         pressureIndex: x.pressure_index
@@ -95,27 +94,27 @@ class Backbone.Views.MapView extends Backbone.View
 
   getColor: (feature) =>
     d = @querydata[feature]
-    p = d[@styleCategory] - @min[@styleCategory]
-    range = (@max[@styleCategory] - @min[@styleCategory]) / @categories
-    if p >= @min[@styleCategory] + range * 2  then return '#e6550d'
-    if p >= @min[@styleCategory] + range      then return '#fdae6b'
-    if p >= @min[@styleCategory]              then return '#fee6ce'
+    p = d[@styleValueField] - @min[@styleValueField]
+    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
+    if p >= @min[@styleValueField] + range * 2  then return '#e6550d'
+    if p >= @min[@styleValueField] + range      then return '#fdae6b'
+    if p >= @min[@styleValueField]              then return '#fee6ce'
     '#fff'
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
-    range = (@max[@filterCategory] - @min[@filterCategory]) / @categories
+    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
     d = @querydata[id]
     if level == 'all'
       return yes
     if level == 'high'
-      if d[@filterCategory] >= @min[@filterCategory] + range * 2
+      if d[@styleValueField] >= @min[@styleValueField] + range * 2
         return yes
     if level == 'medium'
-      if d[@filterCategory] >= @min[@filterCategory] + range and d[@filterCategory] < @min[@filterCategory] + range * 2
+      if d[@styleValueField] >= @min[@styleValueField] + range and d[@styleValueField] < @min[@styleValueField] + range * 2
         return yes
     if level == 'low'
-      if d[@filterCategory] >= @min[@filterCategory] and d[@filterCategory] < @min[@filterCategory] + range
+      if d[@styleValueField] >= @min[@styleValueField] and d[@styleValueField] < @min[@styleValueField] + range
         return yes
     no
 
