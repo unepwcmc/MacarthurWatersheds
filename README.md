@@ -53,7 +53,7 @@ data_to_populate is:
 	lens
 	bd(bd datapoint)
 
-## Exporting watershed geometries to the client
+## Exporting watershed geometries
 These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data), but if one needs to regenerate them:
 
   * export one geojson file per watershed from the [macarthur_watershed table](https://carbon-tool.cartodb.com/tables/macarthur_watershed/table) into [data/json](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data/json) and name them with the corresponding watershed code.
