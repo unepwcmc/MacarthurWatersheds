@@ -64,23 +64,15 @@ class Backbone.Views.MapView extends Backbone.View
       if x.value > @max then @max = x.value
       if x.value < @min then @min = x.value
       [x.watershed_id, {
-        value: x.value,
+        value: x.value, 
         protectionPercentage: x.protection_percentage,
         pressureIndex: x.pressure_index
       }])
     )
 
-  passesLevelCheck: =>
-    if @filter.get('query')? and
-    (@filter.get('level') != 'all' or
-    (@filter.previous('level')? and
-    @filter.get('level') == 'all' and @filter.previous('level') != 'all') )
-      return yes
-    no
-
-  updateCollection: (collection, data) ->
-    #for c in collection
-    #  c.value =
+  updateQueryLayerStyle: =>
+    if @querydata?
+      @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
     d = @querydata[feature]
@@ -110,12 +102,12 @@ class Backbone.Views.MapView extends Backbone.View
     protectionLevel = @filter.get('protectionLevel')
     if protectionLevel == 'high'
       unless d.protectionPercentage >= 66
-        op = 0
+        op = 0 
     if protectionLevel == 'medium'
-      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66
-        op = 0
+      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
+        op = 0  
     if protectionLevel == 'low'
-      unless d.protectionPercentage < 33
+      unless d.protectionPercentage < 33 
         op = 0
     op
 
@@ -123,12 +115,12 @@ class Backbone.Views.MapView extends Backbone.View
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
       unless d.pressureIndex >= .66
-        op = 0
+        op = 0 
     if pressureLevel == 'medium'
       unless d.pressureIndex >= .33 and d.pressureIndex < .66
-        op = 0
+        op = 0  
     if pressureLevel == 'low'
-      unless d.pressureIndex < .33
+      unless d.pressureIndex < .33 
         op = 0
     op
 
@@ -173,3 +165,4 @@ class Backbone.Views.MapView extends Backbone.View
 
   onClose: ->
     @remove()
+
