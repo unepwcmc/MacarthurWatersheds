@@ -1,0 +1,88 @@
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+ul {
+  -webkit-padding-start: 0px; }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0; }
+
+h1, h2, h3 {
+  font-family: 'Dosis', sans-serif;
+  font-weight: 500; }
+
+header {
+  background: #23252C;
+  padding: 15px;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-family: 'Dosis', sans-serif;
+  color: #4dc0dd; }
+
+#map {
+  width: 100%;
+  height: 700px;
+  float: left;
+  z-index: -99999; }
+
+#side-panel {
+  width: 30%;
+  float: left;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  z-index: 9999;
+  background: #fff; }
+
+.region-chooser {
+  width: 50%;
+  height: 250px;
+  color: #4dc0dd; }
+  .region-chooser h1 {
+    margin: 0;
+    text-align: center;
+    background: #1C1E23;
+    padding: 10px 0;
+    color: rgba(255, 255, 255, 0.8); }
+
+.modal {
+  z-index: 101;
+  background: #23252C;
+  position: fixed;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+
+ul.regions {
+  margin: auto;
+  padding: 5%;
+  list-style-type: none;
+  width: 100%; }
+  ul.regions li {
+    padding: 5px 10px;
+    float: left;
+    width: 30%;
+    margin-right: 5%;
+    background: #4dc0dd;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 10px; }
+    ul.regions li:last-child {
+      margin-bottom: 0;
+      margin-right: 0; }
+
+.disabler {
+  z-index: 100;
+  position: fixed;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.3; }

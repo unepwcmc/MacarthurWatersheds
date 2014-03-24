@@ -36,6 +36,19 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     @queryLayer
     @map.fitBounds regionBounds
+  
+  bindPopup: (feature, layer) =>
+    id = layer.feature.properties.cartodb_id
+    w = _.find(@data.rows, (row) -> row.watershed_id == id)
+    popupOptions = {maxWidth: 200}
+    layer.bindPopup(
+      """
+      Value: #{w.value.toFixed(2)} <br>
+      Pressure Index: #{w.pressure_index} <br>
+      Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
+      """,
+      popupOptions
+    );
 
   # This re-styles the map with new data
   updateQueryLayer: =>

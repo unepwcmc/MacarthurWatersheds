@@ -319,6 +319,7 @@
       this.buildQuerydata = __bind(this.buildQuerydata, this);
       this.setMinMax = __bind(this.setMinMax, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
+      this.bindPopup = __bind(this.bindPopup, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
 
@@ -366,6 +367,18 @@
       }).addTo(this.map);
       this.queryLayer;
       return this.map.fitBounds(regionBounds);
+    };
+
+    MapView.prototype.bindPopup = function(feature, layer) {
+      var id, popupOptions, w;
+      id = layer.feature.properties.cartodb_id;
+      w = _.find(this.data.rows, function(row) {
+        return row.watershed_id === id;
+      });
+      popupOptions = {
+        maxWidth: 200
+      };
+      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + w.pressure_index + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
