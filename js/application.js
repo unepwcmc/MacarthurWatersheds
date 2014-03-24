@@ -317,7 +317,7 @@
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
-      this.categorizeData = __bind(this.categorizeData, this);
+      this.setMinMax = __bind(this.setMinMax, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
@@ -331,6 +331,13 @@
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
       return this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
+    };
+
+    MapView.prototype.sortDataBy = function(data, field) {
+      return _.map(_.sortBy(data, field), function(row, i) {
+        row.sortIndex = i;
+        return row;
+      });
     };
 
     MapView.prototype.initBaseLayer = function() {
@@ -367,8 +374,11 @@
       q = this.filter.get('query');
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
-          _this.data = data;
-          _this.categorizeData('rowsBound');
+          _this.data = _this.sortDataBy(data.rows, 'value');
+          _this.styleCategory = 'sortIndex';
+          _this.setMinMax();
+          _this.range = (_this.max[_this.styleCategory] - _this.min[_this.styleCategory]) / _this.categories;
+          _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle
           }).addTo(_this.map);
@@ -377,34 +387,24 @@
       })(this));
     };
 
-    MapView.prototype.categorizeData = function(type) {
-      if (type === 'valueBound') {
-        this.max = 0;
-        this.min = Infinity;
-        this.querydata = this.buildQuerydata(this.data.rows, true);
-        this.range = (this.max - this.min) / this.categories;
-      } else {
-        this.min = 0;
-        this.max = this.data.rows.length;
-        this.querydata = this.buildQuerydata(this.data.rows, false);
-        this.range = +(this.max / this.categories);
-      }
+    MapView.prototype.setMinMax = function(type) {
+      this.max = {
+        'value': this.data[this.data.length - 1].value,
+        'sortIndex': this.data.length
+      };
+      this.min = {
+        'value': this.data[0].value,
+        'sortIndex': 0
+      };
       return this;
     };
 
-    MapView.prototype.buildQuerydata = function(data, getMinMax) {
+    MapView.prototype.buildQuerydata = function(data) {
       return _.object(_.map(data, (function(_this) {
         return function(x) {
-          if (getMinMax) {
-            if (x.value > _this.max) {
-              _this.max = x.value;
-            }
-            if (x.value < _this.min) {
-              _this.min = x.value;
-            }
-          }
           return [
             x.watershed_id, {
+              sortIndex: x.sortIndex,
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index
@@ -416,6 +416,8 @@
 
     MapView.prototype.updateQueryLayerStyle = function() {
       if (this.querydata != null) {
+        this.styleCategory = 'value';
+        this.range = (this.max[this.styleCategory] - this.min[this.styleCategory]) / this.categories;
         return this.queryLayer.setStyle(this.queryPolyStyle);
       }
     };
@@ -423,15 +425,14 @@
     MapView.prototype.getColor = function(feature) {
       var d, p;
       d = this.querydata[feature];
-      p = d.value - this.min;
-      console.log(p, this.min + this.range * 2);
-      if (p >= this.min + this.range * 2) {
+      p = d[this.styleCategory] - this.min[this.styleCategory];
+      if (p >= this.min[this.styleCategory] + this.range * 2) {
         return '#e6550d';
       }
-      if (p >= this.min + this.range) {
+      if (p >= this.min[this.styleCategory] + this.range) {
         return '#fdae6b';
       }
-      if (p >= this.min) {
+      if (p >= this.min[this.styleCategory]) {
         return '#fee6ce';
       }
       return '#fff';
@@ -445,17 +446,17 @@
         return true;
       }
       if (level === 'high') {
-        if (d.value >= this.min + this.range * 2) {
+        if (d.value >= this.min[this.styleCategory] + this.range * 2) {
           return true;
         }
       }
       if (level === 'medium') {
-        if (d.value >= this.min + this.range && d.value < this.min + this.range * 2) {
+        if (d.value >= this.min[this.styleCategory] + this.range && d.value < this.min[this.styleCategory] + this.range * 2) {
           return true;
         }
       }
       if (level === 'low') {
-        if (d.value >= this.min && d.value < this.min + this.range) {
+        if (d.value >= this.min[this.styleCategory] && d.value < this.min[this.styleCategory] + this.range) {
           return true;
         }
       }

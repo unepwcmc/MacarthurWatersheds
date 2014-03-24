@@ -12,6 +12,12 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
 
+  sortDataBy: (data, field) ->
+    _.map(_.sortBy(data, field), (row, i) -> 
+      row.sortIndex = i
+      row
+    )
+
   initBaseLayer: ->
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
@@ -35,31 +41,30 @@ class Backbone.Views.MapView extends Backbone.View
     @map.removeLayer @queryLayer
     q = @filter.get('query')
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
-      @data = data
-      @categorizeData 'rowsBound'
+      @data = @sortDataBy(data.rows, 'value')
+      @styleCategory = 'sortIndex' # or 'value'
+      @setMinMax()
+      @range = (@max[@styleCategory] - @min[@styleCategory]) / @categories
+      @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {style: @queryPolyStyle}).addTo(@map)
       @queryLayerInteriors.bringToFront()
     )
 
-  categorizeData: (type) =>
-    if type == 'valueBound'
-      @max = 0
-      @min = Infinity
-      @querydata = @buildQuerydata @data.rows, yes
-      @range = (@max - @min) / @categories
-    else
-      @min = 0
-      @max = @data.rows.length
-      @querydata = @buildQuerydata @data.rows, no
-      @range = +(@max  / @categories)
+  setMinMax: (type) =>
+    @max = {
+      'value': @data[@data.length - 1].value
+      'sortIndex': @data.length
+    }
+    @min = {
+      'value': @data[0].value
+      'sortIndex': 0
+    }
     @
 
-  buildQuerydata: (data, getMinMax) =>
+  buildQuerydata: (data) =>
     _.object(_.map(data, (x) =>
-      if getMinMax
-        if x.value > @max then @max = x.value
-        if x.value < @min then @min = x.value
       [x.watershed_id, {
+        sortIndex: x.sortIndex,
         value: x.value, 
         protectionPercentage: x.protection_percentage,
         pressureIndex: x.pressure_index
@@ -68,15 +73,16 @@ class Backbone.Views.MapView extends Backbone.View
 
   updateQueryLayerStyle: =>
     if @querydata?
+      @styleCategory = 'value'
+      @range = (@max[@styleCategory] - @min[@styleCategory]) / @categories
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
     d = @querydata[feature]
-    p = d.value - @min
-    console.log p, @min + @range * 2
-    if p >= @min + @range * 2  then return '#e6550d'
-    if p >= @min + @range      then return '#fdae6b'
-    if p >= @min               then return '#fee6ce'
+    p = d[@styleCategory] - @min[@styleCategory]
+    if p >= @min[@styleCategory] + @range * 2  then return '#e6550d'
+    if p >= @min[@styleCategory] + @range      then return '#fdae6b'
+    if p >= @min[@styleCategory]               then return '#fee6ce'
     '#fff'
 
   filterFeatureLevel: (id) =>
@@ -85,13 +91,13 @@ class Backbone.Views.MapView extends Backbone.View
     if level == 'all'
       return yes
     if level == 'high'
-      if d.value >= @min + @range * 2
+      if d.value >= @min[@styleCategory] + @range * 2
         return yes
     if level == 'medium'
-      if d.value >= @min + @range and d.value < @min + @range * 2
+      if d.value >= @min[@styleCategory] + @range and d.value < @min[@styleCategory] + @range * 2
         return yes
     if level == 'low'
-      if d.value >= @min and d.value < @min + @range
+      if d.value >= @min[@styleCategory] and d.value < @min[@styleCategory] + @range
         return yes
     no
 
