@@ -82,7 +82,6 @@ class Backbone.Views.MapView extends Backbone.View
     #for c in collection
     #  c.value =
 
->>>>>>> Tims-Styles
   getColor: (feature) =>
     d = @querydata[feature]
     p = d.value - @min
