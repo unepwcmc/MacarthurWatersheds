@@ -37,14 +37,15 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayer
     @map.fitBounds regionBounds
 
+  # This re-styles the map with new data
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
     q = @filter.get('query')
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
       @data = @sortDataBy(data.rows, 'value')
-      @styleCategory = 'sortIndex' # or 'value'
+      @styleCategory = 'sortIndex'  # or value
+      @filterCategory = 'sortIndex' # or sortIndex
       @setMinMax()
-      @range = (@max[@styleCategory] - @min[@styleCategory]) / @categories
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {style: @queryPolyStyle}).addTo(@map)
       @queryLayerInteriors.bringToFront()
@@ -71,33 +72,34 @@ class Backbone.Views.MapView extends Backbone.View
       }])
     )
 
+  # This show-hides watersheds, but does not re-style the map
   updateQueryLayerStyle: =>
     if @querydata?
-      @styleCategory = 'value'
-      @range = (@max[@styleCategory] - @min[@styleCategory]) / @categories
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
     d = @querydata[feature]
     p = d[@styleCategory] - @min[@styleCategory]
-    if p >= @min[@styleCategory] + @range * 2  then return '#e6550d'
-    if p >= @min[@styleCategory] + @range      then return '#fdae6b'
-    if p >= @min[@styleCategory]               then return '#fee6ce'
+    range = (@max[@styleCategory] - @min[@styleCategory]) / @categories
+    if p >= @min[@styleCategory] + range * 2  then return '#e6550d'
+    if p >= @min[@styleCategory] + range      then return '#fdae6b'
+    if p >= @min[@styleCategory]              then return '#fee6ce'
     '#fff'
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
+    range = (@max[@filterCategory] - @min[@filterCategory]) / @categories
     d = @querydata[id]
     if level == 'all'
       return yes
     if level == 'high'
-      if d.value >= @min[@styleCategory] + @range * 2
+      if d[@filterCategory] >= @min[@filterCategory] + range * 2
         return yes
     if level == 'medium'
-      if d.value >= @min[@styleCategory] + @range and d.value < @min[@styleCategory] + @range * 2
+      if d[@filterCategory] >= @min[@filterCategory] + range and d[@filterCategory] < @min[@filterCategory] + range * 2
         return yes
     if level == 'low'
-      if d.value >= @min[@styleCategory] and d.value < @min[@styleCategory] + @range
+      if d[@filterCategory] >= @min[@filterCategory] and d[@filterCategory] < @min[@filterCategory] + range
         return yes
     no
 

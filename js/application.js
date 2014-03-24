@@ -376,8 +376,8 @@
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
           _this.styleCategory = 'sortIndex';
+          _this.filterCategory = 'sortIndex';
           _this.setMinMax();
-          _this.range = (_this.max[_this.styleCategory] - _this.min[_this.styleCategory]) / _this.categories;
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle
@@ -416,20 +416,19 @@
 
     MapView.prototype.updateQueryLayerStyle = function() {
       if (this.querydata != null) {
-        this.styleCategory = 'value';
-        this.range = (this.max[this.styleCategory] - this.min[this.styleCategory]) / this.categories;
         return this.queryLayer.setStyle(this.queryPolyStyle);
       }
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, p;
+      var d, p, range;
       d = this.querydata[feature];
       p = d[this.styleCategory] - this.min[this.styleCategory];
-      if (p >= this.min[this.styleCategory] + this.range * 2) {
+      range = (this.max[this.styleCategory] - this.min[this.styleCategory]) / this.categories;
+      if (p >= this.min[this.styleCategory] + range * 2) {
         return '#e6550d';
       }
-      if (p >= this.min[this.styleCategory] + this.range) {
+      if (p >= this.min[this.styleCategory] + range) {
         return '#fdae6b';
       }
       if (p >= this.min[this.styleCategory]) {
@@ -439,24 +438,25 @@
     };
 
     MapView.prototype.filterFeatureLevel = function(id) {
-      var d, level;
+      var d, level, range;
       level = this.filter.get('level');
+      range = (this.max[this.filterCategory] - this.min[this.filterCategory]) / this.categories;
       d = this.querydata[id];
       if (level === 'all') {
         return true;
       }
       if (level === 'high') {
-        if (d.value >= this.min[this.styleCategory] + this.range * 2) {
+        if (d[this.filterCategory] >= this.min[this.filterCategory] + range * 2) {
           return true;
         }
       }
       if (level === 'medium') {
-        if (d.value >= this.min[this.styleCategory] + this.range && d.value < this.min[this.styleCategory] + this.range * 2) {
+        if (d[this.filterCategory] >= this.min[this.filterCategory] + range && d[this.filterCategory] < this.min[this.filterCategory] + range * 2) {
           return true;
         }
       }
       if (level === 'low') {
-        if (d.value >= this.min[this.styleCategory] && d.value < this.min[this.styleCategory] + this.range) {
+        if (d[this.filterCategory] >= this.min[this.filterCategory] && d[this.filterCategory] < this.min[this.filterCategory] + range) {
           return true;
         }
       }
