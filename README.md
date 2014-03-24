@@ -53,6 +53,19 @@ data_to_populate is:
 	lens
 	bd(bd datapoint)
 
+## Exporting watershed geometries to the client
+
+  * export one geojson file per watershed from the [macarthur_watershed table](https://carbon-tool.cartodb.com/tables/macarthur_watershed/table) and name them with the corresponding watershed code. These are currently saved in [data/json](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data/json)
+  * if not installed: `npm install -g topojson`
+  * from within the `data` directory:
+  ```sh
+  topojson -o GLR.topo.json -p -q 20000 -- json/GLR.geojson
+
+  topojson -o MEK.topo.json -p -q 20000 -- json/MEK.geojson 
+  
+  topojson -o WAN.topo.json -p -q 20000 -- json/WAN.geojson 
+  ```
+
 
 ## Serving files
 Althought we don't actually have a 'server' component, you still need to serve
