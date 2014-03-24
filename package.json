@@ -14,5 +14,8 @@
   "scripts": {
     "postinstall": "bower install",
     "start": "serv --port 8080"
+  },
+  "dependencies": {
+    "gulp-sass": "^0.7.1"
   }
 }
