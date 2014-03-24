@@ -317,6 +317,7 @@
       this.getColor = __bind(this.getColor, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
+      this.setMinMax = __bind(this.setMinMax, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       this.bindPopup = __bind(this.bindPopup, this);
       return MapView.__super__.constructor.apply(this, arguments);
@@ -331,6 +332,13 @@
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
       return this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
+    };
+
+    MapView.prototype.sortDataBy = function(data, field) {
+      return _.map(_.sortBy(data, field), function(row, i) {
+        row.rank = i;
+        return row;
+      });
     };
 
     MapView.prototype.initBaseLayer = function() {
@@ -348,6 +356,7 @@
       this.region = region;
       regionCode = region.get('code');
       regionBounds = region.get('bounds');
+      this.categories = 3;
       this.collection = topojson.feature(geo, geo.objects[regionCode]);
       this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
       this.queryLayer = L.geoJson(this.collection, {
@@ -363,7 +372,7 @@
     MapView.prototype.bindPopup = function(feature, layer) {
       var id, popupOptions, w;
       id = layer.feature.properties.cartodb_id;
-      w = _.find(this.data.rows, function(row) {
+      w = _.find(this.data, function(row) {
         return row.watershed_id === id;
       });
       popupOptions = {
@@ -378,11 +387,10 @@
       q = this.filter.get('query');
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
-          _this.data = data;
-          _this.max = 0;
-          _this.min = Infinity;
-          _this.querydata = _this.buildQuerydata(data.rows);
-          _this.range = (_this.max - _this.min) / 3;
+          _this.data = _this.sortDataBy(data.rows, 'value');
+          _this.styleValueField = 'rank';
+          _this.setMinMax();
+          _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
@@ -392,17 +400,24 @@
       })(this));
     };
 
+    MapView.prototype.setMinMax = function(type) {
+      this.max = {
+        'value': this.data[this.data.length - 1].value,
+        'rank': this.data.length
+      };
+      this.min = {
+        'value': this.data[0].value,
+        'rank': 0
+      };
+      return this;
+    };
+
     MapView.prototype.buildQuerydata = function(data) {
       return _.object(_.map(data, (function(_this) {
         return function(x) {
-          if (x.value > _this.max) {
-            _this.max = x.value;
-          }
-          if (x.value < _this.min) {
-            _this.min = x.value;
-          }
           return [
             x.watershed_id, {
+              rank: x.rank,
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index
@@ -419,40 +434,42 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, p;
+      var d, p, range;
       d = this.querydata[feature];
-      p = d.value - this.min;
-      if (p >= this.min + this.range * 2) {
+      p = d[this.styleValueField] - this.min[this.styleValueField];
+      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
+      if (p >= this.min[this.styleValueField] + range * 2) {
         return '#e6550d';
       }
-      if (p >= this.min + this.range) {
+      if (p >= this.min[this.styleValueField] + range) {
         return '#fdae6b';
       }
-      if (p >= this.min) {
+      if (p >= this.min[this.styleValueField]) {
         return '#fee6ce';
       }
       return '#fff';
     };
 
     MapView.prototype.filterFeatureLevel = function(id) {
-      var d, level;
+      var d, level, range;
       level = this.filter.get('level');
+      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
       d = this.querydata[id];
       if (level === 'all') {
         return true;
       }
       if (level === 'high') {
-        if (d.value >= this.min + this.range * 2) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'medium') {
-        if (d.value >= this.min + this.range && d.value < this.min + this.range * 2) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] + range && d[this.styleValueField] < this.min[this.styleValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'low') {
-        if (d.value >= this.min && d.value < this.min + this.range) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] && d[this.styleValueField] < this.min[this.styleValueField] + range) {
           return true;
         }
       }
