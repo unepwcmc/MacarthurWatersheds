@@ -930,6 +930,10 @@
       "click .subjects li": "setSubject"
     };
 
+    FilterView.prototype.attributes = {
+      "class": "filters"
+    };
+
     FilterView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.listenTo(this.filter, 'change', this.render);
