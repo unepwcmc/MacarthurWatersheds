@@ -14,6 +14,6 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "start": "serv --port 8080 -b 10.1.1.105"
+    "start": "serv --port 8080"
   }
 }

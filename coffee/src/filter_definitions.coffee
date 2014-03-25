@@ -1,6 +1,10 @@
 window.MacArthur ||= {}
 
 MacArthur.CONFIG =
+  tabs: [
+    { selector: "now", name: "Now"}
+    { selector: "change", name: "Change"}
+  ],
   # latLngBounds(southWest, northEast)
   regions: [
     { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ] }
@@ -26,6 +30,12 @@ MacArthur.CONFIG =
       { selector: "regprov", name: "Regulating functions provision" },
     ]
   },
+  scenarios: [
+    { selector: "mf2050", name: "Markets first" },
+    { selector: "susf2050", name: "Sustainability first" },
+    { selector: "secf2050", name: "Security first" },
+    { selector: "polf2050", name: "Policy first" }
+  ],
   levels: [
     { selector: "all", name: "All", default: true },
     { selector: "high", name: "High" },

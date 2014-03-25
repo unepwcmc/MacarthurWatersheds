@@ -159,6 +159,34 @@
     return assert.isTrue(queryBuiler.hasRequiredFilters());
   });
 
+  test('if the tab is set to `change` and the filter lens is set, but the scenario is not, hasRequiredFilters still returns true', function() {
+    var filter, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.ecosystem[0].selector,
+      tab: 'change'
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    return assert.isTrue(queryBuiler.hasRequiredFilters());
+  });
+
+  test('if the tab is set to `change` and the filter lens is set, but the scenario is not, `buildQuery` should not be called', function() {
+    var buildQuerySpy, filter, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.ecosystem[0].selector,
+      tab: 'change'
+    });
+    buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    queryBuiler.updateFilterQuery();
+    try {
+      return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery not to be called");
+    } finally {
+      buildQuerySpy.restore();
+    }
+  });
+
 }).call(this);
 
 (function() {
@@ -526,6 +554,44 @@
     eventArg = spy.getCall(0).args[0];
     assert.strictEqual(eventArg.constructor.name, "Region", "Expected the event to send a Region model");
     return assert.strictEqual(eventArg.get('name'), 'Mekong', "Expected the event to be trigger with the right Region");
+  });
+
+}).call(this);
+
+(function() {
+  suite('Tab View');
+
+  test('when the `change` tab selector has been clicked the view re-renders and the scenario subview is rendered', function() {
+    var filter, scenarioRenderSpy, tabView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView.prototype, 'render');
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    tabView.$el.find('li.change-tab').trigger('click');
+    try {
+      return assert.strictEqual(scenarioRenderSpy.callCount, 2, "Expected the filterView to be called twice");
+    } finally {
+      scenarioRenderSpy.restore();
+    }
+  });
+
+  test('when the `change` tab selector has been clicked an `active` class is set on it and removed from all other siblings', function() {
+    var activeTab, filter, tabView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    activeTab = tabView.$el.find('ul.tabs li.active');
+    assert.strictEqual(activeTab.attr('data-subject'), 'now', "Expected the `now` tab to be active");
+    tabView.$el.find('li.change-tab').trigger('click');
+    activeTab = tabView.$el.find('ul.tabs li.active');
+    assert.strictEqual(activeTab.attr('data-subject'), 'change', "Expected the `change` tab to be active");
+    return assert.isFalse(activeTab.siblings().hasClass('active'), "Expected other tabs NOT to be active");
   });
 
 }).call(this);

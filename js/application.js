@@ -2,6 +2,15 @@
   window.MacArthur || (window.MacArthur = {});
 
   MacArthur.CONFIG = {
+    tabs: [
+      {
+        selector: "now",
+        name: "Now"
+      }, {
+        selector: "change",
+        name: "Change"
+      }
+    ],
     regions: [
       {
         code: "WAN",
@@ -63,6 +72,21 @@
         }
       ]
     },
+    scenarios: [
+      {
+        selector: "mf2050",
+        name: "Markets first"
+      }, {
+        selector: "susf2050",
+        name: "Sustainability first"
+      }, {
+        selector: "secf2050",
+        name: "Security first"
+      }, {
+        selector: "polf2050",
+        name: "Policy first"
+      }
+    ],
     levels: [
       {
         selector: "all",
@@ -123,6 +147,10 @@
       return Filter.__super__.constructor.apply(this, arguments);
     }
 
+    Filter.prototype.defaults = {
+      tab: 'now'
+    };
+
     return Filter;
 
   })(Backbone.Model);
@@ -145,7 +173,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -165,10 +193,28 @@
       return "lens.name = '" + name + "' ";
     };
 
+    QueryBuilder.prototype.buildScenarioClause = function() {
+      var scenario;
+      scenario = this.filter.get('scenario');
+      if (scenario != null) {
+        return "scenario = '" + scenario + "' ";
+      } else {
+        return "scenario = 'bas' ";
+      }
+    };
+
     QueryBuilder.prototype.buildLensClause = function() {
       var lensCode;
       lensCode = this.filter.get('lens');
       return "lens.type = '" + lensCode + "' ";
+    };
+
+    QueryBuilder.prototype.hasLens = function(subjectCode, lensCode) {
+      return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
+        return function(lens) {
+          return lens.selector === lensCode;
+        };
+      })(this)) != null;
     };
 
     QueryBuilder.prototype.hasRequiredFilters = function() {
@@ -176,17 +222,36 @@
       subjectCode = this.filter.get('subject');
       lensCode = this.filter.get('lens');
       if ((subjectCode != null) && (lensCode != null)) {
-        return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
-          return function(lens) {
-            return lens.selector === lensCode;
-          };
-        })(this)) != null;
+        return this.hasLens(subjectCode, lensCode);
       }
       return false;
     };
 
+    QueryBuilder.prototype.isFromProtection = function() {
+      return (this.filter.changedAttributes().protection != null) || (this.filter.changedAttributes().protection_levels != null);
+    };
+
+    QueryBuilder.prototype.isFromPressure = function() {
+      return (this.filter.changedAttributes().pressure != null) || (this.filter.changedAttributes().pressure_levels != null);
+    };
+
+    QueryBuilder.prototype.tabHasSelections = function() {
+      var lensCode, scenarioCode, subjectCode, tab;
+      tab = this.filter.get('tab');
+      if (tab !== 'change') {
+        return false;
+      }
+      scenarioCode = this.filter.get('scenario');
+      subjectCode = this.filter.get('subject');
+      lensCode = this.filter.get('lens');
+      if ((subjectCode != null) && (lensCode != null) && (scenarioCode != null)) {
+        return false;
+      }
+      return true;
+    };
+
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      if (!((this.filter.changedAttributes().query != null) || (this.filter.changedAttributes().protection != null) || (this.filter.changedAttributes().protection_levels != null))) {
+      if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabHasSelections())) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
@@ -231,6 +296,82 @@
     return RegionCollection;
 
   })(Backbone.Collection);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.TabView = (function(_super) {
+    __extends(TabView, _super);
+
+    function TabView() {
+      this.setTab = __bind(this.setTab, this);
+      return TabView.__super__.constructor.apply(this, arguments);
+    }
+
+    TabView.prototype.template = Handlebars.templates['tab'];
+
+    TabView.prototype.events = {
+      "click ul.tabs li": "setTab"
+    };
+
+    TabView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.tabs);
+      this.filter = options.filter;
+      return this.render();
+    };
+
+    TabView.prototype.render = function() {
+      var tabs;
+      tabs = _.map(this.config, (function(_this) {
+        return function(tab) {
+          if (_this.filter.get('tab') === tab.selector) {
+            tab.active = true;
+          } else {
+            tab.active = false;
+          }
+          return tab;
+        };
+      })(this));
+      this.$el.html(this.template({
+        thisView: this,
+        filter: this.filter,
+        tabs: tabs
+      }));
+      this.attachSubViews();
+      return this;
+    };
+
+    TabView.prototype.onClose = function() {};
+
+    TabView.prototype.setTab = function(event) {
+      var tabName;
+      tabName = $(event.target).attr('data-subject');
+      if (tabName === this.filter.get('tab')) {
+        return;
+      }
+      this.resetFilters();
+      this.filter.set('tab', tabName);
+      return this.render();
+    };
+
+    TabView.prototype.resetFilters = function() {
+      this.filter.unset('subject');
+      this.filter.unset('lens');
+      return this.filter.unset('level');
+    };
+
+    return TabView;
+
+  })(Backbone.Diorama.NestingView);
 
 }).call(this);
 
@@ -384,11 +525,14 @@
     MapView.prototype.updateQueryLayer = function() {
       var q;
       this.map.removeLayer(this.queryLayer);
+      this.styleValueField = 'rank';
       q = this.filter.get('query');
+      if (q == null) {
+        return;
+      }
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
-          _this.styleValueField = 'rank';
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
@@ -633,6 +777,67 @@
 
 (function() {
   var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.ScenarioSelectorView = (function(_super) {
+    __extends(ScenarioSelectorView, _super);
+
+    function ScenarioSelectorView() {
+      return ScenarioSelectorView.__super__.constructor.apply(this, arguments);
+    }
+
+    ScenarioSelectorView.prototype.template = Handlebars.templates['scenario_selector'];
+
+    ScenarioSelectorView.prototype.events = {
+      "change #scenario-select": "setScenario"
+    };
+
+    ScenarioSelectorView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.scenarios);
+      this.filter = options.filter;
+      return this.render();
+    };
+
+    ScenarioSelectorView.prototype.render = function() {
+      var scenarios;
+      scenarios = _.map(this.config, (function(_this) {
+        return function(scenario) {
+          if (_this.filter.get('scenario') === scenario.selector) {
+            scenario.selected = true;
+          } else {
+            scenario.selected = false;
+          }
+          return scenario;
+        };
+      })(this));
+      this.$el.html(this.template({
+        filter: this.filter,
+        scenarios: scenarios
+      }));
+      return this;
+    };
+
+    ScenarioSelectorView.prototype.onClose = function() {};
+
+    ScenarioSelectorView.prototype.setScenario = function() {
+      var scenarioName;
+      scenarioName = $(event.target).find(':selected').attr('value');
+      return this.filter.set('scenario', scenarioName);
+    };
+
+    return ScenarioSelectorView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -692,7 +897,9 @@
     LensSelectorView.prototype.onClose = function() {};
 
     LensSelectorView.prototype.setDefaultLens = function() {
-      return this.filter.set('lens', this.getDefaultFilter().selector);
+      if (this.filter.get('subject') != null) {
+        return this.filter.set('lens', this.getDefaultFilter().selector);
+      }
     };
 
     LensSelectorView.prototype.getDefaultFilter = function() {
@@ -976,6 +1183,7 @@
         thisView: this,
         subjects: MacArthur.CONFIG.subjects,
         showLensSelector: this.filter.get('subject') != null,
+        showScenarioSelector: this.filter.get('tab') === 'change',
         filter: this.filter
       }));
       this.attachSubViews();
@@ -1088,7 +1296,7 @@
       this.filter.set({
         region: region
       });
-      view = new Backbone.Views.FilterView({
+      view = new Backbone.Views.TabView({
         filter: this.filter
       });
       this.sidePanel.showView(view);
