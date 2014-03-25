@@ -159,6 +159,34 @@
     return assert.isTrue(queryBuiler.hasRequiredFilters());
   });
 
+  test('if the tab is set to `change` and the filter lens is set, but the scenario is not, hasRequiredFilters still returns true', function() {
+    var filter, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.ecosystem[0].selector,
+      tab: 'change'
+    });
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    return assert.isTrue(queryBuiler.hasRequiredFilters());
+  });
+
+  test('if the tab is set to `change` and the filter lens is set, but the scenario is not, `buildQuery` should not be called', function() {
+    var buildQuerySpy, filter, queryBuiler;
+    filter = new Backbone.Models.Filter({
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      lens: MacArthur.CONFIG.lenses.ecosystem[0].selector,
+      tab: 'change'
+    });
+    buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    queryBuiler.updateFilterQuery();
+    try {
+      return assert.strictEqual(buildQuerySpy.callCount, 0, "Expected the buildQuery not to be called");
+    } finally {
+      buildQuerySpy.restore();
+    }
+  });
+
 }).call(this);
 
 (function() {

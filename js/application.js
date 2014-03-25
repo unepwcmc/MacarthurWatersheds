@@ -164,7 +164,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND scenario = 'bas' \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -184,10 +184,28 @@
       return "lens.name = '" + name + "' ";
     };
 
+    QueryBuilder.prototype.buildScenarioClause = function() {
+      var scenario;
+      scenario = this.filter.get('scenario');
+      if (scenario != null) {
+        return "scenario = '" + scenario + "' ";
+      } else {
+        return "scenario = 'bas' ";
+      }
+    };
+
     QueryBuilder.prototype.buildLensClause = function() {
       var lensCode;
       lensCode = this.filter.get('lens');
       return "lens.type = '" + lensCode + "' ";
+    };
+
+    QueryBuilder.prototype.hasLens = function(subjectCode, lensCode) {
+      return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
+        return function(lens) {
+          return lens.selector === lensCode;
+        };
+      })(this)) != null;
     };
 
     QueryBuilder.prototype.hasRequiredFilters = function() {
@@ -195,17 +213,36 @@
       subjectCode = this.filter.get('subject');
       lensCode = this.filter.get('lens');
       if ((subjectCode != null) && (lensCode != null)) {
-        return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
-          return function(lens) {
-            return lens.selector === lensCode;
-          };
-        })(this)) != null;
+        return this.hasLens(subjectCode, lensCode);
       }
       return false;
     };
 
+    QueryBuilder.prototype.isFromProtection = function() {
+      return (this.filter.changedAttributes().protection != null) || (this.filter.changedAttributes().protection_levels != null);
+    };
+
+    QueryBuilder.prototype.isFromPressure = function() {
+      return (this.filter.changedAttributes().pressure != null) || (this.filter.changedAttributes().pressure_levels != null);
+    };
+
+    QueryBuilder.prototype.tabHasSelections = function() {
+      var lensCode, scenarioCode, subjectCode, tab;
+      tab = this.filter.get('tab');
+      if (tab !== 'change') {
+        return false;
+      }
+      scenarioCode = this.filter.get('scenario');
+      subjectCode = this.filter.get('subject');
+      lensCode = this.filter.get('lens');
+      if ((subjectCode != null) && (lensCode != null) && (scenarioCode != null)) {
+        return false;
+      }
+      return true;
+    };
+
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      if (!((this.filter.changedAttributes().query != null) || (this.filter.changedAttributes().protection != null) || (this.filter.changedAttributes().protection_levels != null))) {
+      if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabHasSelections())) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
@@ -735,20 +772,42 @@
 
     ScenarioSelectorView.prototype.template = Handlebars.templates['scenario_selector'];
 
+    ScenarioSelectorView.prototype.events = {
+      "change #scenario-select": "setScenario"
+    };
+
     ScenarioSelectorView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.scenarios);
       this.filter = options.filter;
       return this.render();
     };
 
     ScenarioSelectorView.prototype.render = function() {
+      var scenarios;
+      scenarios = _.map(this.config, (function(_this) {
+        return function(scenario) {
+          if (_this.filter.get('scenario') === scenario.selector) {
+            scenario.selected = true;
+          } else {
+            scenario.selected = false;
+          }
+          return scenario;
+        };
+      })(this));
       this.$el.html(this.template({
         filter: this.filter,
-        scenarios: MacArthur.CONFIG.scenarios
+        scenarios: scenarios
       }));
       return this;
     };
 
     ScenarioSelectorView.prototype.onClose = function() {};
+
+    ScenarioSelectorView.prototype.setScenario = function() {
+      var scenarioName;
+      scenarioName = $(event.target).find(':selected').attr('value');
+      return this.filter.set('scenario', scenarioName);
+    };
 
     ScenarioSelectorView.prototype.setDefaultFilter = function() {
       return this.filter.set('lens', this.getDefaultFilter().selector);
