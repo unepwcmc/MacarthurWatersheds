@@ -1,2 +1,3 @@
 node_modules/
 config/cartodb_config.yml
+.DS_Store

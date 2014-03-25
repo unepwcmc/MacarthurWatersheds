@@ -17,6 +17,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       thisView: @
       subjects: MacArthur.CONFIG.subjects
       showLensSelector: @filter.get('subject')?
+      showScenarioSelector: @filter.get('tab') is 'change'
       filter: @filter
     ))
     @attachSubViews()
