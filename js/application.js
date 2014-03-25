@@ -333,7 +333,6 @@
       var tabs;
       tabs = _.map(this.config, (function(_this) {
         return function(tab) {
-          console.log(_this.filter.get('tab'), tab.selector);
           if (_this.filter.get('tab') === tab.selector) {
             tab.active = true;
           } else {
