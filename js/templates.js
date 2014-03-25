@@ -190,7 +190,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<select id=\"pressure-select\">\n  ";
+  buffer += "<select id=\"pressure-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";
@@ -255,7 +255,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<select id=\"protection-select\">\n  ";
+  buffer += "<select id=\"protection-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";

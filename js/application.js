@@ -257,7 +257,7 @@
     };
 
     BaseSelectorView.prototype.render = function() {
-      var levels;
+      var levels, theSelect;
       levels = _.map(this.config, (function(_this) {
         return function(level) {
           if (_this.filter.get(_this.levelType) === level.selector) {
@@ -268,9 +268,13 @@
           return level;
         };
       })(this));
-      return this.$el.html(this.template({
+      this.$el.html(this.template({
         levels: levels
       }));
+      theSelect = this.$el.find('.select-box');
+      return setTimeout(function() {
+        return theSelect.customSelect();
+      }, 100);
     };
 
     BaseSelectorView.prototype.setLevel = function(event) {
