@@ -666,7 +666,7 @@
     };
 
     LensSelectorView.prototype.render = function() {
-      var lenses;
+      var lenses, theSelect;
       lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
         return function(lens) {
           if (_this.filter.get('lens') === lens.selector) {
@@ -680,6 +680,10 @@
       this.$el.html(this.template({
         lenses: lenses
       }));
+      theSelect = this.$el.find('.select-box');
+      setTimeout(function() {
+        return theSelect.customSelect();
+      }, 100);
       return this;
     };
 

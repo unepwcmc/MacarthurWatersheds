@@ -26,6 +26,14 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     @$el.html(@template(
       lenses: lenses
     ))
+
+    # SORRY
+    theSelect = @$el.find('.select-box')
+    setTimeout(->
+      theSelect.customSelect()
+    , 100)
+    # /SORRY
+    
     return @
 
   setLens: (event) ->

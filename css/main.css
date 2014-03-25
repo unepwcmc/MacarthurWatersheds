@@ -132,13 +132,6 @@ ul.regions {
   background-color: #000;
   opacity: 0.3; }
 
-select {
-  -webkit-appearance: menulist-button;
-  width: 420px;
-  position: absolute;
-  opacity: 0;
-  height: 50px;
-  font-size: 17px; }
 
 .customSelect {
   /* This is the default class that is used */

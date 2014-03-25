@@ -82,10 +82,10 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Lenses</h1>\n\n<select id=\"lens-select\">\n  ";
+  buffer += "<h1>Lenses</h1>\n\n<select id=\"lens-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.lenses), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</select>\n<span class=\"customSelect customSelectChanged customSelectOpen\">\n	<span class=\"customSelectInner\"></span>\n</span>";
+  buffer += "\n</select>";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["level_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
