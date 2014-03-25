@@ -572,7 +572,7 @@
     });
     tabView.$el.find('li.change-tab').trigger('click');
     try {
-      return assert.strictEqual(scenarioRenderSpy.callCount, 2, "Expected the filterView to be called once");
+      return assert.strictEqual(scenarioRenderSpy.callCount, 2, "Expected the filterView to be called twice");
     } finally {
       scenarioRenderSpy.restore();
     }

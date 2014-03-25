@@ -15,7 +15,7 @@ test('when the `change` tab selector has been clicked the view
   try
     assert.strictEqual(
       scenarioRenderSpy.callCount, 2,
-      "Expected the filterView to be called once"
+      "Expected the filterView to be called twice"
     )
 
   finally
