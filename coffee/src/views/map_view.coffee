@@ -12,6 +12,12 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
 
+  sortDataBy: (data, field) ->
+    _.map(_.sortBy(data, field), (row, i) -> 
+      row.rank = i
+      row
+    )
+
   initBaseLayer: ->
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
@@ -23,16 +29,17 @@ class Backbone.Views.MapView extends Backbone.View
     @region = region
     regionCode = region.get('code')
     regionBounds = region.get('bounds')
+    @categories = 3
     @collection = topojson.feature(geo, geo.objects[regionCode])
     @interiors = topojson.mesh(geo, geo.objects[regionCode])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     @queryLayer
     @map.fitBounds regionBounds
-
+  
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
-    w = _.find(@data.rows, (row) -> row.watershed_id == id)
+    w = _.find(@data, (row) -> row.watershed_id == id)
     popupOptions = {maxWidth: 200}
     layer.bindPopup(
       """
@@ -43,15 +50,15 @@ class Backbone.Views.MapView extends Backbone.View
       popupOptions
     );
 
+  # This re-styles the map with new data
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
     q = @filter.get('query')
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
-      @data = data
-      @max = 0
-      @min = Infinity
-      @querydata = @buildQuerydata data.rows
-      @range = (@max - @min) / 3
+      @data = @sortDataBy(data.rows, 'value')
+      @styleValueField = 'rank'  # or value
+      @setMinMax()
+      @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
@@ -59,42 +66,55 @@ class Backbone.Views.MapView extends Backbone.View
       @queryLayerInteriors.bringToFront()
     )
 
+  setMinMax: (type) =>
+    @max = {
+      'value': @data[@data.length - 1].value
+      'rank': @data.length
+    }
+    @min = {
+      'value': @data[0].value
+      'rank': 0
+    }
+    @
+
   buildQuerydata: (data) =>
     _.object(_.map(data, (x) =>
-      if x.value > @max then @max = x.value
-      if x.value < @min then @min = x.value
       [x.watershed_id, {
+        rank: x.rank,
         value: x.value, 
         protectionPercentage: x.protection_percentage,
         pressureIndex: x.pressure_index
       }])
     )
 
+  # This show-hides watersheds, but does not re-style the map
   updateQueryLayerStyle: =>
     if @querydata?
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
     d = @querydata[feature]
-    p = d.value - @min
-    if p >= @min + @range * 2  then return '#e6550d'
-    if p >= @min + @range      then return '#fdae6b'
-    if p >= @min               then return '#fee6ce'
+    p = d[@styleValueField] - @min[@styleValueField]
+    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
+    if p >= @min[@styleValueField] + range * 2  then return '#e6550d'
+    if p >= @min[@styleValueField] + range      then return '#fdae6b'
+    if p >= @min[@styleValueField]              then return '#fee6ce'
     '#fff'
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
+    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
     d = @querydata[id]
     if level == 'all'
       return yes
     if level == 'high'
-      if d.value >= @min + @range * 2
+      if d[@styleValueField] >= @min[@styleValueField] + range * 2
         return yes
     if level == 'medium'
-      if d.value >= @min + @range and d.value < @min + @range * 2
+      if d[@styleValueField] >= @min[@styleValueField] + range and d[@styleValueField] < @min[@styleValueField] + range * 2
         return yes
     if level == 'low'
-      if d.value >= @min and d.value < @min + @range
+      if d[@styleValueField] >= @min[@styleValueField] and d[@styleValueField] < @min[@styleValueField] + range
         return yes
     no
 
