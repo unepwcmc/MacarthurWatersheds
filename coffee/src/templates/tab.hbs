@@ -1,6 +1,7 @@
 <ul class="tabs">
-  <li data-subject="now" class="now-tab">Now</li>
-  <li data-subject="change" class="change-tab">Change</li>
+  {{# each tabs}}
+  <li data-subject="{{selector}}" class="{{selector}}-tab {{#if active}}active{{/if}}">{{name}}</li>
+  {{/each}}
 </ul>
 
 {{addSubViewTo thisView 'FilterView' filter=filter}}

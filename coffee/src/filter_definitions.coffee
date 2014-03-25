@@ -1,6 +1,10 @@
 window.MacArthur ||= {}
 
 MacArthur.CONFIG =
+  tabs: [
+    { selector: "now", name: "Now"}
+    { selector: "change", name: "Change"}
+  ],
   # latLngBounds(southWest, northEast)
   regions: [
     { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ] }

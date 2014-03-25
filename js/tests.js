@@ -572,10 +572,26 @@
     });
     tabView.$el.find('li.change-tab').trigger('click');
     try {
-      return assert.strictEqual(scenarioRenderSpy.callCount, 1, "Expected the filterView to be called once");
+      return assert.strictEqual(scenarioRenderSpy.callCount, 2, "Expected the filterView to be called once");
     } finally {
       scenarioRenderSpy.restore();
     }
+  });
+
+  test('when the `change` tab selector has been clicked an `active` class is set on it and removed from all other siblings', function() {
+    var activeTab, filter, tabView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    activeTab = tabView.$el.find('ul.tabs li.active');
+    assert.strictEqual(activeTab.attr('data-subject'), 'now', "Expected the `now` tab to be active");
+    tabView.$el.find('li.change-tab').trigger('click');
+    activeTab = tabView.$el.find('ul.tabs li.active');
+    assert.strictEqual(activeTab.attr('data-subject'), 'change', "Expected the `change` tab to be active");
+    return assert.isFalse(activeTab.siblings().hasClass('active'), "Expected other tabs NOT to be active");
   });
 
 }).call(this);

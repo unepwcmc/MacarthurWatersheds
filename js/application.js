@@ -2,6 +2,15 @@
   window.MacArthur || (window.MacArthur = {});
 
   MacArthur.CONFIG = {
+    tabs: [
+      {
+        selector: "now",
+        name: "Now"
+      }, {
+        selector: "change",
+        name: "Change"
+      }
+    ],
     regions: [
       {
         code: "WAN",
@@ -315,14 +324,28 @@
     };
 
     TabView.prototype.initialize = function(options) {
+      this.config = _.cloneDeep(MacArthur.CONFIG.tabs);
       this.filter = options.filter;
       return this.render();
     };
 
     TabView.prototype.render = function() {
+      var tabs;
+      tabs = _.map(this.config, (function(_this) {
+        return function(tab) {
+          console.log(_this.filter.get('tab'), tab.selector);
+          if (_this.filter.get('tab') === tab.selector) {
+            tab.active = true;
+          } else {
+            tab.active = false;
+          }
+          return tab;
+        };
+      })(this));
       this.$el.html(this.template({
         thisView: this,
-        filter: this.filter
+        filter: this.filter,
+        tabs: tabs
       }));
       this.attachSubViews();
       return this;
@@ -337,7 +360,8 @@
         return;
       }
       this.resetFilters();
-      return this.filter.set('tab', tabName);
+      this.filter.set('tab', tabName);
+      return this.render();
     };
 
     TabView.prototype.resetFilters = function() {
@@ -754,7 +778,6 @@
 
 (function() {
   var _base,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -766,7 +789,6 @@
     __extends(ScenarioSelectorView, _super);
 
     function ScenarioSelectorView() {
-      this.setDefaultFilter = __bind(this.setDefaultFilter, this);
       return ScenarioSelectorView.__super__.constructor.apply(this, arguments);
     }
 
@@ -807,10 +829,6 @@
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
       return this.filter.set('scenario', scenarioName);
-    };
-
-    ScenarioSelectorView.prototype.setDefaultFilter = function() {
-      return this.filter.set('lens', this.getDefaultFilter().selector);
     };
 
     return ScenarioSelectorView;
