@@ -18,6 +18,5 @@
   },
   "dependencies": {
     "gulp-sass": "^0.7.1"
-    "start": "serv --port 8080 -b 10.1.1.105"
   }
 }

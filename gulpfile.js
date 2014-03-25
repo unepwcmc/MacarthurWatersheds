@@ -63,6 +63,7 @@ gulp.task('templates', function() {
 
 gulp.task('sass', function () {
   gulp.src(paths.sass)
+    .pipe(plumber())
     .pipe(sass())
     .pipe(gulp.dest('css/'));
 });
