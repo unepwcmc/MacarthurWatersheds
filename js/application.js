@@ -808,7 +808,7 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var scenarios;
+      var scenarios, theSelect;
       scenarios = _.map(this.config, (function(_this) {
         return function(scenario) {
           if (_this.filter.get('scenario') === scenario.selector) {
@@ -823,6 +823,10 @@
         filter: this.filter,
         scenarios: scenarios
       }));
+      theSelect = this.$el.find('.select-box');
+      setTimeout(function() {
+        return theSelect.customSelect();
+      }, 100);
       return this;
     };
 
