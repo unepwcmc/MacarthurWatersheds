@@ -116,7 +116,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Levels</h1>\n\n<select id=\"levels-select\">\n  ";
+  buffer += "<h1>Levels</h1>\n\n<select id=\"levels-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";
