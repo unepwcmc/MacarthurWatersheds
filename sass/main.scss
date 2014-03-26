@@ -99,7 +99,8 @@ div.subjects {
   	text-align: center;
   	background: $dark-grey;
   	padding: 10px 0;
-  	color: rgba(255,255,255,0.8);
+  	color: #fff;
+    opacity: 0.8;
   }
 }
 
@@ -169,26 +170,36 @@ select {
 .customSelect { 
 /* This is the default class that is used */
 /* Put whatever custom styles you want here */
-  border: 3px solid #5d5074;
-  background: #fff;
+  background: $blue;
   display: inline-block;
   width: 100%;
-  height: 30px;
+  padding: 5px 10px;
+  background-color: $blue;
+  background-image: url(/imgs/icon_macarthur.png);
+  background-position-x: 361px;
+  background-repeat: no-repeat;
+  background-position-y: 15px;
+  background-size: 5%;
+  @include border-radius(5px);
 }
 .customSelect.customSelectHover {
 /* Styles for when the select box is hovered */
+  background-color: $hover;
 }
 .customSelect.customSelectOpen {
 /* Styles for when the select box is open */
+  background-color: $hover;
 }
 .customSelect.customSelectFocus {
 /* Styles for when the select box is in focus */
+  background-color: $hover;
 }
 .customSelectInner {
 /* You can style the inner box too */
   display: inline-block;
   width: 100%;
   height: 30px;
+  color: #fff;
 }
 
 //.selector {

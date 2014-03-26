@@ -79,7 +79,8 @@ div.subjects h1 {
     text-align: center;
     background: #1C1E23;
     padding: 10px 0;
-    color: rgba(255, 255, 255, 0.8); }
+    color: #fff;
+    opacity: 0.8; }
 
 .modal {
   z-index: 101;
@@ -136,17 +137,36 @@ ul.regions {
 .customSelect {
   /* This is the default class that is used */
   /* Put whatever custom styles you want here */
-  border: 3px solid #5d5074;
-  background: #fff;
+  background: #4dc0dd;
   display: inline-block;
   width: 100%;
-  height: 30px; }
+  padding: 5px 10px;
+  background-color: #4dc0dd;
+  background-image: url(/imgs/icon_macarthur.png);
+  background-position-x: 361px;
+  background-repeat: no-repeat;
+  background-position-y: 15px;
+  background-size: 5%;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px; }
 
+.customSelect.customSelectHover {
+  /* Styles for when the select box is hovered */
+  background-color: #359CBB; }
 
+.customSelect.customSelectOpen {
+  /* Styles for when the select box is open */
+  background-color: #359CBB; }
 
+.customSelect.customSelectFocus {
+  /* Styles for when the select box is in focus */
+  background-color: #359CBB; }
 
 .customSelectInner {
   /* You can style the inner box too */
   display: inline-block;
   width: 100%;
-  height: 30px; }
+  height: 30px;
+  color: #fff; }
