@@ -398,7 +398,7 @@
     };
 
     BaseSelectorView.prototype.render = function() {
-      var levels;
+      var levels, theSelect;
       levels = _.map(this.config, (function(_this) {
         return function(level) {
           if (_this.filter.get(_this.levelType) === level.selector) {
@@ -409,9 +409,13 @@
           return level;
         };
       })(this));
-      return this.$el.html(this.template({
+      this.$el.html(this.template({
         levels: levels
       }));
+      theSelect = this.$el.find('.select-box');
+      return setTimeout(function() {
+        return theSelect.customSelect();
+      }, 100);
     };
 
     BaseSelectorView.prototype.setLevel = function(event) {
@@ -804,7 +808,7 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var scenarios;
+      var scenarios, theSelect;
       scenarios = _.map(this.config, (function(_this) {
         return function(scenario) {
           if (_this.filter.get('scenario') === scenario.selector) {
@@ -819,6 +823,10 @@
         filter: this.filter,
         scenarios: scenarios
       }));
+      theSelect = this.$el.find('.select-box');
+      setTimeout(function() {
+        return theSelect.customSelect();
+      }, 100);
       return this;
     };
 
@@ -871,7 +879,7 @@
     };
 
     LensSelectorView.prototype.render = function() {
-      var lenses;
+      var lenses, theSelect;
       lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
         return function(lens) {
           if (_this.filter.get('lens') === lens.selector) {
@@ -885,6 +893,10 @@
       this.$el.html(this.template({
         lenses: lenses
       }));
+      theSelect = this.$el.find('.select-box');
+      setTimeout(function() {
+        return theSelect.customSelect();
+      }, 100);
       return this;
     };
 
@@ -1170,6 +1182,10 @@
 
     FilterView.prototype.events = {
       "click .subjects li": "setSubject"
+    };
+
+    FilterView.prototype.attributes = {
+      "class": "filters"
     };
 
     FilterView.prototype.initialize = function(options) {

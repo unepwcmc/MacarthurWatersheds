@@ -31,7 +31,7 @@ var paths = {
   ],
   templates: 'coffee/src/templates/*.hbs',
   tests: 'coffee/tests/**/*.coffee',
-  sass: 'sass/**/*.sass',
+  sass: 'sass/**/*.scss',
   images: 'client/img/**/*'
 };
 
@@ -65,6 +65,7 @@ gulp.task('templates', function() {
 
 gulp.task('sass', function () {
   gulp.src(paths.sass)
+    .pipe(plumber())
     .pipe(sass())
     .pipe(gulp.dest('css/'));
 });

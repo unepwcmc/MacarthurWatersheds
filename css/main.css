@@ -3,9 +3,6 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
-ul {
-  -webkit-padding-start: 0px; }
-
 body {
   font-family: 'Open Sans', sans-serif;
   margin: 0; }
@@ -37,6 +34,42 @@ header {
   z-index: 9999;
   background: #fff; }
 
+div.filters {
+  padding: 20px;
+  background: #1C1E23;
+  color: #fff; }
+  div.filters h1 {
+    margin-top: 0; }
+
+div.subjects ul {
+  margin: 0;
+  list-style-type: none;
+  padding-left: 0; }
+  div.subjects ul li {
+    padding: 5px 10px;
+    width: 100%;
+    background: #4dc0dd;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px; }
+    div.subjects ul li:last-child {
+      margin-bottom: 0; }
+    div.subjects ul li:hover, div.subjects ul li:active {
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -ms-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+      background: #359CBB; }
+div.subjects h1 {
+  text-transform: uppercase;
+  font-size: 1em; }
+
 .region-chooser {
   width: 50%;
   height: 250px;
@@ -46,7 +79,8 @@ header {
     text-align: center;
     background: #1C1E23;
     padding: 10px 0;
-    color: rgba(255, 255, 255, 0.8); }
+    color: #fff;
+    opacity: 0.8; }
 
 .modal {
   z-index: 101;
@@ -71,10 +105,22 @@ ul.regions {
     background: #4dc0dd;
     color: #fff;
     text-align: center;
-    margin-bottom: 10px; }
+    margin-bottom: 10px;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px; }
     ul.regions li:last-child {
       margin-bottom: 0;
       margin-right: 0; }
+    ul.regions li:hover, ul.regions li:active {
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -ms-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+      background: #359CBB; }
 
 .disabler {
   z-index: 100;
@@ -85,4 +131,42 @@ ul.regions {
   left: 0;
   right: 0;
   background-color: #000;
-  opacity: 0.3; }
+  opacity: 0.1; }
+
+
+.customSelect {
+  /* This is the default class that is used */
+  /* Put whatever custom styles you want here */
+  background: #4dc0dd;
+  display: inline-block;
+  width: 100%;
+  padding: 5px 10px;
+  background-color: #4dc0dd;
+  background-image: url(/imgs/icon_macarthur.png);
+  background-position-x: 361px;
+  background-repeat: no-repeat;
+  background-position-y: 15px;
+  background-size: 5%;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px; }
+
+.customSelect.customSelectHover {
+  /* Styles for when the select box is hovered */
+  background-color: #359CBB; }
+
+.customSelect.customSelectOpen {
+  /* Styles for when the select box is open */
+  background-color: #359CBB; }
+
+.customSelect.customSelectFocus {
+  /* Styles for when the select box is in focus */
+  background-color: #359CBB; }
+
+.customSelectInner {
+  /* You can style the inner box too */
+  display: inline-block;
+  width: 100%;
+  height: 30px;
+  color: #fff; }
