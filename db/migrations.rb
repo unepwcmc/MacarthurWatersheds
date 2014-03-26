@@ -36,8 +36,11 @@ tables_columns = {"region" => {"code" => "varchar"},
                                   },
                   "protection" => {"watershed_id" => "int",
                                    "percentage" => "double precision"
-                                  }
+                                  },
+                  "pressure" => {"watershed_id" => "int",
+                                  "value" => "double precision"
                   }
+                }
 
 ARGV.each do|table|
   change_table(table, tables_columns[table])
