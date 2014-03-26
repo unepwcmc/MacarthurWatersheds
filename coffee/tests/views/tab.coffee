@@ -50,5 +50,36 @@ test('when the `change` tab selector has been clicked an `active` class
     "Expected other tabs NOT to be active"
   )
 
+)
+
+test('when the `Future Threats` tab selector is clicked,
+  the LensSelectorView is not rendered,
+  the LevelSelectorAgrCommDevView is rendered', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+  )
+  lensSelectorRenderSpy = sinon.spy(
+    Backbone.Views.LensSelectorView::, 'render')
+  levelSelectorAgrCommDevRenderSpy = sinon.spy(
+    Backbone.Views.LevelSelectorAgrCommDevView::, 'render')
+
+  tabView = new Backbone.Views.TabView( filter: filter )
+
+  tabView.$el.find('li.future_threats-tab').trigger('click')
+
+  try
+    assert.strictEqual(
+      lensSelectorRenderSpy.callCount, 1,
+      "Expected the lensSelectorView to be called once"
+    )
+    assert.strictEqual(
+      levelSelectorAgrCommDevRenderSpy.callCount, 1,
+      "Expected the levelSelectorAgrCommDevView to be called once"
+    )
+
+  finally
+    lensSelectorRenderSpy.restore()
+    levelSelectorAgrCommDevRenderSpy.restore()
 
 )

@@ -9,6 +9,9 @@
       }, {
         selector: "change",
         name: "Change"
+      }, {
+        selector: "future_threats",
+        name: "Future Threats"
       }
     ],
     regions: [
@@ -128,6 +131,22 @@
         selector: "low",
         name: "Low"
       }
+    ],
+    agrCommDevLevels: [
+      {
+        selector: "high",
+        name: "High",
+        "default": true
+      }, {
+        selector: "medium",
+        name: "Medium"
+      }, {
+        selector: "low",
+        name: "Low"
+      }, {
+        selector: "negative",
+        name: "Decrease"
+      }
     ]
   };
 
@@ -173,7 +192,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -872,6 +891,7 @@
 
     LensSelectorView.prototype.render = function() {
       var lenses;
+      console.log('######################');
       lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
         return function(lens) {
           if (_this.filter.get('lens') === lens.selector) {
@@ -911,6 +931,44 @@
     return LensSelectorView;
 
   })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.LevelSelectorAgrCommDevView = (function(_super) {
+    __extends(LevelSelectorAgrCommDevView, _super);
+
+    function LevelSelectorAgrCommDevView() {
+      return LevelSelectorAgrCommDevView.__super__.constructor.apply(this, arguments);
+    }
+
+    LevelSelectorAgrCommDevView.prototype.template = Handlebars.templates['level_selector_agr_comm_dev'];
+
+    LevelSelectorAgrCommDevView.prototype.events = {
+      'change #agr-comm-select': "setLevel"
+    };
+
+    LevelSelectorAgrCommDevView.prototype.initialize = function(options) {
+      LevelSelectorAgrCommDevView.__super__.initialize.apply(this, arguments);
+      this.config = _.cloneDeep(MacArthur.CONFIG.protectionLevels);
+      this.levelType = 'agrCommLevel';
+      if (this.filter.get(this.levelType) == null) {
+        this.setDefaultLevel();
+      }
+      return this.render();
+    };
+
+    return LevelSelectorAgrCommDevView;
+
+  })(Backbone.Views.BaseSelectorView);
 
 }).call(this);
 
@@ -1193,6 +1251,7 @@
     FilterView.prototype.setSubject = function(event) {
       var subjectName;
       subjectName = $(event.target).attr('data-subject');
+      console.log('ZZZZZZZZZZZZZZZZZZz');
       return this.filter.set('subject', subjectName);
     };
 

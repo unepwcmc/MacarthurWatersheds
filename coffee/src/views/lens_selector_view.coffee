@@ -16,6 +16,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     @render()
 
   render: ->
+    console.log '######################'
     lenses = _.map(@config[@filter.get('subject')], (lens) => 
       if @filter.get('lens') is lens.selector
         lens.selected = true

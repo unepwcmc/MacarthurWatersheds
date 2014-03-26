@@ -594,4 +594,24 @@
     return assert.isFalse(activeTab.siblings().hasClass('active'), "Expected other tabs NOT to be active");
   });
 
+  test('when the `Future Threats` tab selector is clicked, the LensSelectorView is not rendered, the LevelSelectorAgrCommDevView is rendered', function() {
+    var filter, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderSpy, tabView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    lensSelectorRenderSpy = sinon.spy(Backbone.Views.LensSelectorView.prototype, 'render');
+    levelSelectorAgrCommDevRenderSpy = sinon.spy(Backbone.Views.LevelSelectorAgrCommDevView.prototype, 'render');
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    tabView.$el.find('li.future_threats-tab').trigger('click');
+    try {
+      assert.strictEqual(lensSelectorRenderSpy.callCount, 1, "Expected the lensSelectorView to be called once");
+      return assert.strictEqual(levelSelectorAgrCommDevRenderSpy.callCount, 1, "Expected the levelSelectorAgrCommDevView to be called once");
+    } finally {
+      lensSelectorRenderSpy.restore();
+      levelSelectorAgrCommDevRenderSpy.restore();
+    }
+  });
+
 }).call(this);

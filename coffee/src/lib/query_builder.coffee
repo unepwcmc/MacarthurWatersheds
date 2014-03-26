@@ -10,7 +10,7 @@ class window.MacArthur.QueryBuilder
       regionCode = @filter.get('region').get('code')
   
       """
-        SELECT d.watershed_id, d.value, percentage as protection_percentage, 
+        SELECT d.watershed_id, d.value, percentage as protection_percentage,
         pressure.value as pressure_index 
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 

@@ -31,5 +31,4 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
   setScenario: ->
     scenarioName = $(event.target).find(':selected').attr('value')
     @filter.set('scenario', scenarioName)
-
     
