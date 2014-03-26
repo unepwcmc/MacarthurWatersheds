@@ -1,6 +1,3 @@
-
-<h1>Now</h1>
-
 <div class="subjects">
   <ul>
     {{# each subjects}}
@@ -8,6 +5,10 @@
     {{/each}}
   </ul>
 </div>
+
+{{#if showScenarioSelector}}
+  {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
+{{/if}}
 
 {{#if showLensSelector}}
   {{addSubViewTo thisView 'LensSelectorView' filter=filter}}

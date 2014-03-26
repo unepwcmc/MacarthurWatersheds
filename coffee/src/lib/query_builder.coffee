@@ -22,7 +22,7 @@ class window.MacArthur.QueryBuilder
         AND #{@buildSubjectClause()} 
         AND #{@buildLensClause()}
         AND metric = 'imp' 
-        AND scenario = 'bas' 
+        AND #{@buildScenarioClause()} 
         AND type_data = 'value'
       """
     else
@@ -39,21 +39,49 @@ class window.MacArthur.QueryBuilder
       throw new Error("Error building query, unknown subject '#{subjectCode}'")
     "lens.name = '#{name}' "
 
+  buildScenarioClause: ->
+    scenario = @filter.get('scenario')
+    if scenario?
+      return "scenario = '#{scenario}' "
+    else 
+      return "scenario = 'bas' "
+
   buildLensClause: ->
     lensCode = @filter.get('lens')
     "lens.type = '#{lensCode}' "
 
+  hasLens: (subjectCode, lensCode) ->
+    _.find(MacArthur.CONFIG.lenses[subjectCode], (lens) =>
+      lens.selector == lensCode
+    )?
+
+  # This is to guard against unset variables in the query.
   hasRequiredFilters: ->
     subjectCode = @filter.get('subject')
     lensCode = @filter.get('lens')
     if subjectCode? and lensCode?
-      return _.find(MacArthur.CONFIG.lenses[subjectCode], (lens) =>
-        lens.selector == lensCode
-      )?
+      return @hasLens(subjectCode, lensCode)
     false
+
+  isFromProtection: ->
+    @filter.changedAttributes().protection? or
+    @filter.changedAttributes().protection_levels?
+
+  isFromPressure: ->
+    @filter.changedAttributes().pressure? or
+    @filter.changedAttributes().pressure_levels?
+
+  tabHasSelections: ->
+    tab = @filter.get('tab')
+    unless tab == 'change' then return no
+    scenarioCode = @filter.get('scenario')
+    subjectCode = @filter.get('subject')
+    lensCode = @filter.get('lens')
+    if subjectCode? and lensCode? and scenarioCode?
+      return no
+    yes
 
   updateFilterQuery: (model, event) =>
     unless @filter.changedAttributes().query? or 
-    @filter.changedAttributes().protection? or
-    @filter.changedAttributes().protection_levels?
+    @isFromProtection() or @isFromPressure() or @tabHasSelections()
       @filter.set( 'query', @buildQuery(@filter) )

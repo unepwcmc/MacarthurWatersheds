@@ -43,7 +43,8 @@ class Backbone.Views.LensSelectorView extends Backbone.View
   onClose: ->
 
   setDefaultLens: =>
-    @filter.set('lens', @getDefaultFilter().selector)
+    if @filter.get('subject')?
+      @filter.set('lens', @getDefaultFilter().selector)
 
   getDefaultFilter: ->
     _.find(@config[@filter.get('subject')], (obj) -> 

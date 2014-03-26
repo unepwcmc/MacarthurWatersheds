@@ -53,10 +53,11 @@ class Backbone.Views.MapView extends Backbone.View
   # This re-styles the map with new data
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
+    @styleValueField = 'rank'  # or value
     q = @filter.get('query')
+    unless q? then return
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
       @data = @sortDataBy(data.rows, 'value')
-      @styleValueField = 'rank'  # or value
       @setMinMax()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
