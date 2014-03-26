@@ -17,6 +17,13 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
     @$el.html(@template(
       levels: levels
     ))
+    
+    # SORRY
+    theSelect = @$el.find('.select-box')
+    setTimeout(->
+      theSelect.customSelect()
+    , 100)
+    # /SORRY
 
   setLevel: (event) ->
     level = $(event.target).find(':selected').attr('value')

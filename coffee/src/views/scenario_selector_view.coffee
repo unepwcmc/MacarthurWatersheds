@@ -24,6 +24,14 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
       filter: @filter
       scenarios: scenarios
     ))
+
+    # SORRY
+    theSelect = @$el.find('.select-box')
+    setTimeout(->
+      theSelect.customSelect()
+    , 100)
+    # /SORRY
+
     return @
 
   onClose: ->

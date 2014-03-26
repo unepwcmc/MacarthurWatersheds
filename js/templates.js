@@ -97,7 +97,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Lenses</h1>\n\n<select id=\"lens-select\">\n  ";
+  buffer += "<h1>Lenses</h1>\n\n<select id=\"lens-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.lenses), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>";
@@ -131,7 +131,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Levels</h1>\n\n<select id=\"levels-select\">\n  ";
+  buffer += "<h1>Levels</h1>\n\n<select id=\"levels-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";
@@ -213,7 +213,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<select id=\"pressure-select\">\n  ";
+  buffer += "<select id=\"pressure-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";
@@ -278,7 +278,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<select id=\"protection-select\">\n  ";
+  buffer += "<select id=\"protection-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";
@@ -304,7 +304,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<h1>Choose a region to explore</h1>\n<h1>Welcome to the Watershed exploration tool</h1>\n<ul class=\"regions\">\n  ";
+  buffer += "<h1>Welcome to the Watershed exploration tool</h1>\n<ul class=\"regions\">\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.regions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</ul>\n";
@@ -338,7 +338,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Scenario of change</h1>\n\n<select id=\"scenario-select\">\n  <option value=\"\" disabled selected>Select a scenario</option>\n  ";
+  buffer += "<h1>Scenario of change</h1>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" disabled selected>Select a scenario</option>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scenarios), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";
