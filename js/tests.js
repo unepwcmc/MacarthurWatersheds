@@ -439,35 +439,6 @@
     return assert.strictEqual(querydata[2805].protectionPercentage, 59.1202577939);
   });
 
-  test('.filterFeatureLevels should return true for filter.agrCommDevLevel high and filter.medium', function() {
-    var filter, mapView, querydata, rows;
-    rows = [
-      {
-        watershed_id: 2805,
-        value: 8.6066515929,
-        protection_percentage: 59.1202577939
-      }, {
-        watershed_id: 2814,
-        value: 106.4846311487,
-        protection_percentage: 26.6124303217
-      }, {
-        watershed_id: 2815,
-        value: 33.0610034886,
-        protection_percentage: 18.2542237936
-      }
-    ];
-    filter = new Backbone.Models.Filter();
-    filter.set('level', 'medium');
-    filter.set('agrCommDevLevel', 'high');
-    mapView = new Backbone.Views.MapView({
-      filter: filter
-    });
-    querydata = mapView.buildQuerydata(rows);
-    mapView.setMinMax();
-    mapView.filterFeatureLevels(2814);
-    return assert.isTrue(querydata[2805].protectionPercentage, 59.1202577939);
-  });
-
 }).call(this);
 
 (function() {
@@ -667,7 +638,7 @@
     return assert.isFalse(activeTab.siblings().hasClass('active'), "Expected other tabs NOT to be active");
   });
 
-  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected, then the LensSelectorView is not rendered and the LevelSelectorAgrCommDevView is', function() {
+  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected, then the LensSelectorView is rendered and the LevelSelectorAgrCommDevView is', function() {
     var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, tabView;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity'
@@ -683,7 +654,7 @@
     filter.set('subject', 'biodiversity');
     filter.set('scenario', 'mf2050');
     try {
-      assert.isTrue(lensSelectorRenderSpy.callCount === lensSelectorRenderCalles, "Expected the lensSelectorView NOT to be called");
+      assert.isTrue(lensSelectorRenderSpy.callCount > lensSelectorRenderCalles, "Expected the lensSelectorView to be called");
       return assert.isTrue(levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles, "Expected the levelSelectorAgrCommDevView to be called");
     } finally {
       lensSelectorRenderSpy.restore();
