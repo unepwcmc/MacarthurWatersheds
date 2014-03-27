@@ -13,8 +13,8 @@ MacArthur.CONFIG =
     { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ] }
   ]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity"}
-    { selector: "ecosystem", name: "Ecosystem"}
+    { selector: "biodiversity", name: "Biodiversity importance"}
+    { selector: "ecosystem", name: "Ecosystem function"}
   ],
   lenses: {
     biodiversity: [

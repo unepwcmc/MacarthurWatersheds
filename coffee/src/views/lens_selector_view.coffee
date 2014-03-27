@@ -16,6 +16,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     @render()
 
   render: ->
+    subject = @filter.get('subject')
     lenses = _.map(@config[@filter.get('subject')], (lens) => 
       if @filter.get('lens') is lens.selector
         lens.selected = true
@@ -25,6 +26,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     )
     @$el.html(@template(
       lenses: lenses
+      subject: subject.charAt(0).toUpperCase() + subject.slice(1)
     ))
 
     # SORRY

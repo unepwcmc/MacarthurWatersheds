@@ -132,7 +132,11 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Lenses</h1>\n\n<select id=\"lens-select\" class='select-box'>\n  ";
+  buffer += "<h1>";
+  if (stack1 = helpers.subject) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.subject); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + " Lens</h1>\n\n<select id=\"lens-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.lenses), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>";
@@ -166,7 +170,7 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<h1>Levels</h1>\n\n<select id=\"levels-select\" class='select-box'>\n  ";
+  buffer += "<h1>Level of Importance</h1>\n\n<select id=\"levels-select\" class='select-box'>\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n";

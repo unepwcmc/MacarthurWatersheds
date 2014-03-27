@@ -32,10 +32,10 @@
     subjects: [
       {
         selector: "biodiversity",
-        name: "Biodiversity"
+        name: "Biodiversity importance"
       }, {
         selector: "ecosystem",
-        name: "Ecosystem"
+        name: "Ecosystem function"
       }
     ],
     lenses: {
@@ -913,7 +913,8 @@
     };
 
     LensSelectorView.prototype.render = function() {
-      var lenses, theSelect;
+      var lenses, subject, theSelect;
+      subject = this.filter.get('subject');
       lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
         return function(lens) {
           if (_this.filter.get('lens') === lens.selector) {
@@ -925,7 +926,8 @@
         };
       })(this));
       this.$el.html(this.template({
-        lenses: lenses
+        lenses: lenses,
+        subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
       theSelect = this.$el.find('.select-box');
       setTimeout(function() {
