@@ -159,8 +159,7 @@ test('if the tab is set to `change` and the filter lens is set,
 )
 
 test('if the tab is set to `future_threats` and the subject and scenario
-  are set, `buildQuery` should be called and @buildLensClause() should 
-  return `comprov`', ->
+  are set, `buildQuery` should be called', ->
 
   regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   filter = new Backbone.Models.Filter(
@@ -173,19 +172,13 @@ test('if the tab is set to `future_threats` and the subject and scenario
   
   queryBuiler = new MacArthur.QueryBuilder(filter)
   tabView = new Backbone.Views.TabView( filter: filter )
-  buildQueryCalls = buildQuerySpy.callCount
-
+  
   queryBuiler.updateFilterQuery()
 
   try
-    assert.isTrue(
-      buildQuerySpy.callCount > buildQueryCalls,
+    assert.strictEqual(
+      buildQuerySpy.callCount, 1,
       "Expected the buildQuery to be called after updateFilterQuery"
-    )
-
-    assert.notStrictEqual(
-      queryBuiler.buildLensClause().indexOf("comprov"), -1,
-      "Expected buildLensClause to return with comprov"
     )
 
   finally

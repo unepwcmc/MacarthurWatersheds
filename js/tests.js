@@ -187,8 +187,8 @@
     }
   });
 
-  test('if the tab is set to `future_threats` and the subject and scenario are set, `buildQuery` should be called and @buildLensClause() should return `comprov`', function() {
-    var buildQueryCalls, buildQuerySpy, filter, queryBuiler, regions, tabView;
+  test('if the tab is set to `future_threats` and the subject and scenario are set, `buildQuery` should be called', function() {
+    var buildQuerySpy, filter, queryBuiler, regions, tabView;
     regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
     filter = new Backbone.Models.Filter({
       region: regions.models[0],
@@ -201,11 +201,9 @@
     tabView = new Backbone.Views.TabView({
       filter: filter
     });
-    buildQueryCalls = buildQuerySpy.callCount;
     queryBuiler.updateFilterQuery();
     try {
-      assert.isTrue(buildQuerySpy.callCount > buildQueryCalls, "Expected the buildQuery to be called after updateFilterQuery");
-      return assert.notStrictEqual(queryBuiler.buildLensClause().indexOf("comprov"), -1, "Expected buildLensClause to return with comprov");
+      return assert.strictEqual(buildQuerySpy.callCount, 1, "Expected the buildQuery to be called after updateFilterQuery");
     } finally {
       buildQuerySpy.restore();
     }
