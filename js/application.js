@@ -418,7 +418,8 @@
       this.filter.unset('subject');
       this.filter.unset('lens');
       this.filter.unset('scenario');
-      return this.filter.unset('level');
+      this.filter.unset('level');
+      return this.filter.unset('agrCommDevLevel');
     };
 
     return TabView;
@@ -509,6 +510,7 @@
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.setPressureFill = __bind(this.setPressureFill, this);
+      this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
       this.setProtectionFill = __bind(this.setProtectionFill, this);
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
@@ -528,7 +530,8 @@
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
-      return this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
+      this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
+      return this.listenTo(this.filter, 'change:agrCommDevLevel', this.updateQueryLayerStyle);
     };
 
     MapView.prototype.sortDataBy = function(data, field) {
@@ -606,11 +609,15 @@
     MapView.prototype.setMinMax = function(type) {
       this.max = {
         'value': this.data[this.data.length - 1].value,
-        'rank': this.data.length
+        'rank': this.data.length,
+        'agrCommDev': _.max(this.data, function(o) {
+          return o.comprov_value;
+        }).comprov_value
       };
       this.min = {
         'value': this.data[0].value,
-        'rank': 0
+        'rank': 0,
+        'agrCommDev': 0
       };
       return this;
     };
@@ -623,7 +630,8 @@
               rank: x.rank,
               value: x.value,
               protectionPercentage: x.protection_percentage,
-              pressureIndex: x.pressure_index
+              pressureIndex: x.pressure_index,
+              agrCommDevValue: x.comprov_value || ""
             }
           ];
         };
@@ -700,6 +708,35 @@
       return op;
     };
 
+    MapView.prototype.setAgrCommDevFill = function(op, d) {
+      var agrCommDevLevel, min, range;
+      agrCommDevLevel = this.filter.get('agrCommDevLevel');
+      min = this.min.agrCommDev;
+      d = d.agrCommDevValue;
+      range = (this.max.agrCommDev - min) / this.categories;
+      if (agrCommDevLevel === 'high') {
+        if (!(d >= min + range * 2)) {
+          op = 0;
+        }
+      }
+      if (agrCommDevLevel === 'medium') {
+        if (!(d >= min + range && d < min + range * 2)) {
+          op = 0;
+        }
+      }
+      if (agrCommDevLevel === 'low') {
+        if (!(d >= min && d < min + range)) {
+          op = 0;
+        }
+      }
+      if (agrCommDevLevel === 'negative') {
+        if (!(d < 0)) {
+          op = 0;
+        }
+      }
+      return op;
+    };
+
     MapView.prototype.setPressureFill = function(op, d) {
       var pressureLevel;
       pressureLevel = this.filter.get('pressureLevel');
@@ -730,6 +767,9 @@
       }
       if (this.filter.get('pressure') === true) {
         op = this.setPressureFill(op, d);
+      }
+      if (this.filter.get('agrCommDevLevel') != null) {
+        op = this.setAgrCommDevFill(op, d);
       }
       return op;
     };

@@ -11,6 +11,7 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
+    @listenTo(@filter, 'change:agrCommDevLevel', @updateQueryLayerStyle)
 
   sortDataBy: (data, field) ->
     _.map(_.sortBy(data, field), (row, i) -> 
@@ -73,10 +74,12 @@ class Backbone.Views.MapView extends Backbone.View
     @max = {
       'value': @data[@data.length - 1].value
       'rank': @data.length
+      'agrCommDev': _.max(@data, (o) -> o.comprov_value).comprov_value
     }
     @min = {
       'value': @data[0].value
       'rank': 0
+      'agrCommDev': 0#_.min(@data, (o) -> o.comprov_value).comprov_value
     }
     @
 
@@ -86,7 +89,8 @@ class Backbone.Views.MapView extends Backbone.View
         rank: x.rank,
         value: x.value, 
         protectionPercentage: x.protection_percentage,
-        pressureIndex: x.pressure_index
+        pressureIndex: x.pressure_index,
+        agrCommDevValue: x.comprov_value or ""
       }])
     )
 
@@ -134,6 +138,25 @@ class Backbone.Views.MapView extends Backbone.View
         op = 0
     op
 
+  setAgrCommDevFill: (op, d) =>
+    agrCommDevLevel = @filter.get('agrCommDevLevel')
+    min = @min.agrCommDev
+    d = d.agrCommDevValue
+    range = (@max.agrCommDev - min) / @categories
+    if agrCommDevLevel == 'high'
+      unless d >= min + range * 2
+        op = 0 
+    if agrCommDevLevel == 'medium'
+      unless d >= min + range and d < min + range * 2
+        op = 0  
+    if agrCommDevLevel == 'low'
+      unless d >= min and d < min + range
+        op = 0  
+    if agrCommDevLevel == 'negative'
+      unless d < 0
+        op = 0
+    op
+
   setPressureFill: (op, d) =>
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
@@ -154,6 +177,8 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setProtectionFill op, d
     if @filter.get('pressure') == yes
       op = @setPressureFill op, d
+    if @filter.get('agrCommDevLevel')?
+      op = @setAgrCommDevFill op, d    
     return op
 
   baseLineStyle: (feature) ->
