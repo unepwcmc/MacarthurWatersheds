@@ -1,27 +1,4 @@
 (function() {
-  suite("Query Builder integration");
-
-  test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
-    var changeQuerySpy, filter, newQuery, oldQuery, queryBuilder, updatedQuery;
-    filter = new Backbone.Models.Filter();
-    queryBuilder = new MacArthur.QueryBuilder(filter);
-    oldQuery = filter.get('query');
-    changeQuerySpy = sinon.spy();
-    filter.on('change:query', changeQuerySpy);
-    newQuery = "SELECT BLAH BLAH BVLAH";
-    sinon.stub(queryBuilder, 'buildQuery', function() {
-      return newQuery;
-    });
-    filter.set('subject', MacArthur.CONFIG.subjects[0].selector);
-    updatedQuery = filter.get('query');
-    assert.notEqual(updatedQuery, oldQuery, "Expected filter.query to be modified");
-    assert.strictEqual(updatedQuery, newQuery, "Expected filter.query set to the result of QueryBuilder.buildQuery");
-    return assert.isTrue(changeQuerySpy.calledOnce, "Expected filter to fire a change:query event once, but fired " + changeQuerySpy.callCount + " times");
-  });
-
-}).call(this);
-
-(function() {
   suite('Main Controller');
 
   test('The application starts by showing the choose region view and a map', function() {
@@ -52,6 +29,29 @@
       $('body').remove('#map');
       $('body').remove('#side-panel');
     }
+  });
+
+}).call(this);
+
+(function() {
+  suite("Query Builder integration");
+
+  test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
+    var changeQuerySpy, filter, newQuery, oldQuery, queryBuilder, updatedQuery;
+    filter = new Backbone.Models.Filter();
+    queryBuilder = new MacArthur.QueryBuilder(filter);
+    oldQuery = filter.get('query');
+    changeQuerySpy = sinon.spy();
+    filter.on('change:query', changeQuerySpy);
+    newQuery = "SELECT BLAH BLAH BVLAH";
+    sinon.stub(queryBuilder, 'buildQuery', function() {
+      return newQuery;
+    });
+    filter.set('subject', MacArthur.CONFIG.subjects[0].selector);
+    updatedQuery = filter.get('query');
+    assert.notEqual(updatedQuery, oldQuery, "Expected filter.query to be modified");
+    assert.strictEqual(updatedQuery, newQuery, "Expected filter.query set to the result of QueryBuilder.buildQuery");
+    return assert.isTrue(changeQuerySpy.calledOnce, "Expected filter to fire a change:query event once, but fired " + changeQuerySpy.callCount + " times");
   });
 
 }).call(this);
@@ -187,6 +187,30 @@
     }
   });
 
+  test('if the tab is set to `future_threats` and the subject and scenario are set, `buildQuery` should be called and @buildLensClause() should return `comprov`', function() {
+    var buildQueryCalls, buildQuerySpy, filter, queryBuiler, regions, tabView;
+    regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+    filter = new Backbone.Models.Filter({
+      region: regions.models[0],
+      subject: MacArthur.CONFIG.subjects[1].selector,
+      scenario: MacArthur.CONFIG.scenarios[1].selector,
+      tab: 'future_threats'
+    });
+    buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
+    queryBuiler = new MacArthur.QueryBuilder(filter);
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    buildQueryCalls = buildQuerySpy.callCount;
+    queryBuiler.updateFilterQuery();
+    try {
+      assert.isTrue(buildQuerySpy.callCount > buildQueryCalls, "Expected the buildQuery to be called after updateFilterQuery");
+      return assert.notStrictEqual(queryBuiler.buildLensClause().indexOf("comprov"), -1, "Expected buildLensClause to return with comprov");
+    } finally {
+      buildQuerySpy.restore();
+    }
+  });
+
 }).call(this);
 
 (function() {
@@ -237,6 +261,22 @@
     filterView = new Backbone.Views.FilterView({
       filter: filter
     });
+    try {
+      return assert.strictEqual(LensSelectorConstructorSpy.callCount, 0, "Expected a new LensSelectorView not to be created");
+    } finally {
+      LensSelectorConstructorSpy.restore();
+    }
+  });
+
+  test('in the change tab, if the subject filter is set, but not the scenario, no LensSelector subview is created', function() {
+    var LensSelectorConstructorSpy, filter, filterView;
+    LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
+    filter = new Backbone.Models.Filter();
+    filterView = new Backbone.Views.FilterView({
+      filter: filter
+    });
+    filter.set('tab', 'change');
+    filter.set('subject', 'biodiversity');
     try {
       return assert.strictEqual(LensSelectorConstructorSpy.callCount, 0, "Expected a new LensSelectorView not to be created");
     } finally {
@@ -397,6 +437,35 @@
     });
     querydata = mapView.buildQuerydata(rows);
     return assert.strictEqual(querydata[2805].protectionPercentage, 59.1202577939);
+  });
+
+  test('.filterFeatureLevels should return true for filter.agrCommDevLevel high and filter.medium', function() {
+    var filter, mapView, querydata, rows;
+    rows = [
+      {
+        watershed_id: 2805,
+        value: 8.6066515929,
+        protection_percentage: 59.1202577939
+      }, {
+        watershed_id: 2814,
+        value: 106.4846311487,
+        protection_percentage: 26.6124303217
+      }, {
+        watershed_id: 2815,
+        value: 33.0610034886,
+        protection_percentage: 18.2542237936
+      }
+    ];
+    filter = new Backbone.Models.Filter();
+    filter.set('level', 'medium');
+    filter.set('agrCommDevLevel', 'high');
+    mapView = new Backbone.Views.MapView({
+      filter: filter
+    });
+    querydata = mapView.buildQuerydata(rows);
+    mapView.setMinMax();
+    mapView.filterFeatureLevels(2814);
+    return assert.isTrue(querydata[2805].protectionPercentage, 59.1202577939);
   });
 
 }).call(this);
@@ -561,8 +630,8 @@
 (function() {
   suite('Tab View');
 
-  test('when the `change` tab selector has been clicked the view re-renders and the scenario subview is rendered', function() {
-    var filter, scenarioRenderSpy, tabView;
+  test('when the `change` tab selector and the `subject` selector have been clicked, the view re-renders and the scenario subview is rendered', function() {
+    var filter, filterView, scenarioRenderSpy, tabView;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity'
     });
@@ -570,7 +639,11 @@
     tabView = new Backbone.Views.TabView({
       filter: filter
     });
+    filterView = new Backbone.Views.FilterView({
+      filter: filter
+    });
     tabView.$el.find('li.change-tab').trigger('click');
+    filterView.$el.find('.subjects li:first').trigger('click');
     try {
       return assert.strictEqual(scenarioRenderSpy.callCount, 2, "Expected the filterView to be called twice");
     } finally {
@@ -592,6 +665,30 @@
     activeTab = tabView.$el.find('ul.tabs li.active');
     assert.strictEqual(activeTab.attr('data-subject'), 'change', "Expected the `change` tab to be active");
     return assert.isFalse(activeTab.siblings().hasClass('active'), "Expected other tabs NOT to be active");
+  });
+
+  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected, then the LensSelectorView is not rendered and the LevelSelectorAgrCommDevView is', function() {
+    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, tabView;
+    filter = new Backbone.Models.Filter({
+      subject: 'biodiversity'
+    });
+    lensSelectorRenderSpy = sinon.spy(Backbone.Views.LensSelectorView.prototype, 'render');
+    levelSelectorAgrCommDevRenderSpy = sinon.spy(Backbone.Views.LevelSelectorAgrCommDevView.prototype, 'render');
+    tabView = new Backbone.Views.TabView({
+      filter: filter
+    });
+    lensSelectorRenderCalles = lensSelectorRenderSpy.callCount;
+    levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount;
+    tabView.$el.find('li.future_threats-tab').trigger('click');
+    filter.set('subject', 'biodiversity');
+    filter.set('scenario', 'mf2050');
+    try {
+      assert.isTrue(lensSelectorRenderSpy.callCount === lensSelectorRenderCalles, "Expected the lensSelectorView NOT to be called");
+      return assert.isTrue(levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles, "Expected the levelSelectorAgrCommDevView to be called");
+    } finally {
+      lensSelectorRenderSpy.restore();
+      levelSelectorAgrCommDevRenderSpy.restore();
+    }
   });
 
 }).call(this);

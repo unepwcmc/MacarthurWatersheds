@@ -9,6 +9,9 @@
       }, {
         selector: "change",
         name: "Change"
+      }, {
+        selector: "future_threats",
+        name: "Future Threats"
       }
     ],
     regions: [
@@ -128,6 +131,25 @@
         selector: "low",
         name: "Low"
       }
+    ],
+    agrCommDevLevels: [
+      {
+        selector: "all",
+        name: "All",
+        "default": true
+      }, {
+        selector: "high",
+        name: "High"
+      }, {
+        selector: "medium",
+        name: "Medium"
+      }, {
+        selector: "low",
+        name: "Low"
+      }, {
+        selector: "negative",
+        name: "Decrease"
+      }
     ]
   };
 
@@ -173,7 +195,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, d.value, percentage as protection_percentage, \npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND metric = 'imp' \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -186,7 +208,11 @@
         'biodiversity': 'bd',
         'ecosystem': 'ef'
       };
-      name = subjectsMap[subjectCode];
+      if (this.filter.get('tab') === 'future_threats') {
+        name = 'ef';
+      } else {
+        name = subjectsMap[subjectCode];
+      }
       if (name == null) {
         throw new Error("Error building query, unknown subject '" + subjectCode + "'");
       }
@@ -210,6 +236,9 @@
     };
 
     QueryBuilder.prototype.hasLens = function(subjectCode, lensCode) {
+      if (this.filter.get('tab') === 'future_threats') {
+        return true;
+      }
       return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
         return function(lens) {
           return lens.selector === lensCode;
@@ -235,10 +264,10 @@
       return (this.filter.changedAttributes().pressure != null) || (this.filter.changedAttributes().pressure_levels != null);
     };
 
-    QueryBuilder.prototype.tabHasSelections = function() {
+    QueryBuilder.prototype.tabLacksSelections = function() {
       var lensCode, scenarioCode, subjectCode, tab;
       tab = this.filter.get('tab');
-      if (tab !== 'change') {
+      if (tab === 'now') {
         return false;
       }
       scenarioCode = this.filter.get('scenario');
@@ -251,7 +280,7 @@
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabHasSelections())) {
+      if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabLacksSelections())) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
@@ -366,6 +395,7 @@
     TabView.prototype.resetFilters = function() {
       this.filter.unset('subject');
       this.filter.unset('lens');
+      this.filter.unset('scenario');
       return this.filter.unset('level');
     };
 
@@ -871,7 +901,7 @@
     LensSelectorView.prototype.initialize = function(options) {
       this.config = _.cloneDeep(MacArthur.CONFIG.lenses);
       this.filter = options.filter;
-      this.filter.on('change:subject', this.setDefaultLens);
+      this.listenTo(this.filter, 'change:subject', this.setDefaultLens);
       if (this.filter.get('lens') == null) {
         this.setDefaultLens();
       }
@@ -906,7 +936,9 @@
       return this.filter.set('lens', lensName);
     };
 
-    LensSelectorView.prototype.onClose = function() {};
+    LensSelectorView.prototype.onClose = function() {
+      return this.remove();
+    };
 
     LensSelectorView.prototype.setDefaultLens = function() {
       if (this.filter.get('subject') != null) {
@@ -923,6 +955,44 @@
     return LensSelectorView;
 
   })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.LevelSelectorAgrCommDevView = (function(_super) {
+    __extends(LevelSelectorAgrCommDevView, _super);
+
+    function LevelSelectorAgrCommDevView() {
+      return LevelSelectorAgrCommDevView.__super__.constructor.apply(this, arguments);
+    }
+
+    LevelSelectorAgrCommDevView.prototype.template = Handlebars.templates['level_selector_agr_comm_dev'];
+
+    LevelSelectorAgrCommDevView.prototype.events = {
+      'change #agr-comm-select': "setLevel"
+    };
+
+    LevelSelectorAgrCommDevView.prototype.initialize = function(options) {
+      LevelSelectorAgrCommDevView.__super__.initialize.apply(this, arguments);
+      this.config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels);
+      this.levelType = 'agrCommDevLevel';
+      if (this.filter.get(this.levelType) == null) {
+        this.setDefaultLevel();
+      }
+      return this.render();
+    };
+
+    return LevelSelectorAgrCommDevView;
+
+  })(Backbone.Views.BaseSelectorView);
 
 }).call(this);
 
@@ -1198,8 +1268,10 @@
       this.$el.html(this.template({
         thisView: this,
         subjects: MacArthur.CONFIG.subjects,
-        showLensSelector: this.filter.get('subject') != null,
-        showScenarioSelector: this.filter.get('tab') === 'change',
+        showLensSelector: this.showLensSelector(),
+        showScenarioSelector: this.showScenarioSelector(),
+        showOtherSelectors: this.showOtherSelectors(),
+        showAgrCommDevSelector: this.showshowAgrCommDevSelector(),
         filter: this.filter
       }));
       this.attachSubViews();
@@ -1215,6 +1287,43 @@
     FilterView.prototype.onClose = function() {
       this.closeSubViews();
       return this.stopListening();
+    };
+
+    FilterView.prototype.showLensSelector = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'now') {
+        return this.filter.get('subject') != null;
+      }
+      if (tab === 'change') {
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
+      }
+      return false;
+    };
+
+    FilterView.prototype.showScenarioSelector = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'change' || tab === 'future_threats') {
+        return this.filter.get('subject') != null;
+      }
+      return false;
+    };
+
+    FilterView.prototype.showshowAgrCommDevSelector = function() {
+      return this.filter.get('tab') === 'future_threats' && (this.filter.get('subject') != null);
+    };
+
+    FilterView.prototype.showOtherSelectors = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'now' || tab === 'future_threats') {
+        return this.filter.get('subject') != null;
+      }
+      if (tab === 'change') {
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
+      }
+      return false;
     };
 
     return FilterView;

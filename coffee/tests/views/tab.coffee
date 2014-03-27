@@ -1,7 +1,7 @@
 suite 'Tab View'
 
-test('when the `change` tab selector has been clicked the view 
- re-renders and the scenario subview is rendered', ->
+test('when the `change` tab selector and the `subject` selector have been clicked, 
+ the view re-renders and the scenario subview is rendered', ->
 
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
@@ -9,8 +9,10 @@ test('when the `change` tab selector has been clicked the view
   scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView::, 'render')
 
   tabView = new Backbone.Views.TabView( filter: filter )
+  filterView = new Backbone.Views.FilterView( filter: filter )
 
   tabView.$el.find('li.change-tab').trigger('click')
+  filterView.$el.find('.subjects li:first').trigger('click')
 
   try
     assert.strictEqual(
@@ -50,5 +52,44 @@ test('when the `change` tab selector has been clicked an `active` class
     "Expected other tabs NOT to be active"
   )
 
+)
+
+test('when the `Future Threats` tab selector is clicked,
+  and the `subject` is selected
+  and the `scenario` is selected, then
+  the LensSelectorView is not rendered and
+  the LevelSelectorAgrCommDevView is', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: 'biodiversity'
+  )
+  lensSelectorRenderSpy = sinon.spy(
+    Backbone.Views.LensSelectorView::, 'render')
+  levelSelectorAgrCommDevRenderSpy = sinon.spy(
+    Backbone.Views.LevelSelectorAgrCommDevView::, 'render')
+
+  tabView = new Backbone.Views.TabView( filter: filter )
+
+  lensSelectorRenderCalles = lensSelectorRenderSpy.callCount
+  levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount
+
+  tabView.$el.find('li.future_threats-tab').trigger('click')
+
+  filter.set('subject', 'biodiversity')
+  filter.set('scenario', 'mf2050')
+
+  try
+    assert.isTrue(
+      lensSelectorRenderSpy.callCount == lensSelectorRenderCalles,
+      "Expected the lensSelectorView NOT to be called"
+    )
+    assert.isTrue(
+      levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles,
+      "Expected the levelSelectorAgrCommDevView to be called"
+    )
+
+  finally
+    lensSelectorRenderSpy.restore()
+    levelSelectorAgrCommDevRenderSpy.restore()
 
 )

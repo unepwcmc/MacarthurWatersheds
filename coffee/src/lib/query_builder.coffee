@@ -10,7 +10,7 @@ class window.MacArthur.QueryBuilder
       regionCode = @filter.get('region').get('code')
   
       """
-        SELECT d.watershed_id, d.value, percentage as protection_percentage, 
+        SELECT d.watershed_id, d.value, percentage as protection_percentage,
         pressure.value as pressure_index 
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
@@ -34,7 +34,10 @@ class window.MacArthur.QueryBuilder
       'biodiversity': 'bd',
       'ecosystem': 'ef'
     }
-    name = subjectsMap[subjectCode]
+    if @filter.get('tab') == 'future_threats'
+      name = 'ef'
+    else
+      name = subjectsMap[subjectCode]
     unless name?
       throw new Error("Error building query, unknown subject '#{subjectCode}'")
     "lens.name = '#{name}' "
@@ -51,6 +54,8 @@ class window.MacArthur.QueryBuilder
     "lens.type = '#{lensCode}' "
 
   hasLens: (subjectCode, lensCode) ->
+    if @filter.get('tab') == 'future_threats'
+      return yes
     _.find(MacArthur.CONFIG.lenses[subjectCode], (lens) =>
       lens.selector == lensCode
     )?
@@ -71,9 +76,9 @@ class window.MacArthur.QueryBuilder
     @filter.changedAttributes().pressure? or
     @filter.changedAttributes().pressure_levels?
 
-  tabHasSelections: ->
+  tabLacksSelections: ->
     tab = @filter.get('tab')
-    unless tab == 'change' then return no
+    if tab == 'now' then return no
     scenarioCode = @filter.get('scenario')
     subjectCode = @filter.get('subject')
     lensCode = @filter.get('lens')
@@ -83,5 +88,5 @@ class window.MacArthur.QueryBuilder
 
   updateFilterQuery: (model, event) =>
     unless @filter.changedAttributes().query? or 
-    @isFromProtection() or @isFromPressure() or @tabHasSelections()
+    @isFromProtection() or @isFromPressure() or @tabLacksSelections()
       @filter.set( 'query', @buildQuery(@filter) )
