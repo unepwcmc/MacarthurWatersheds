@@ -78,7 +78,7 @@ class window.MacArthur.QueryBuilder
 
   tabLacksSelections: ->
     tab = @filter.get('tab')
-    unless tab == 'change' then return no
+    if tab == 'now' then return no
     scenarioCode = @filter.get('scenario')
     subjectCode = @filter.get('subject')
     lensCode = @filter.get('lens')
@@ -87,7 +87,6 @@ class window.MacArthur.QueryBuilder
     yes
 
   updateFilterQuery: (model, event) =>
-    #console.log @filter.changedAttributes().query?, @isFromProtection(), @isFromPressure(), @tabLacksSelections()
     unless @filter.changedAttributes().query? or 
     @isFromProtection() or @isFromPressure() or @tabLacksSelections()
       @filter.set( 'query', @buildQuery(@filter) )

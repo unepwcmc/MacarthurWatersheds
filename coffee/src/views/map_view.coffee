@@ -58,7 +58,6 @@ class Backbone.Views.MapView extends Backbone.View
     unless q? then return
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
       @data = @sortDataBy(data.rows, 'value')
-      console.log 'data', @data, data
       @setMinMax()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {

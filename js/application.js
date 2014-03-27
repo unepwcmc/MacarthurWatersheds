@@ -267,7 +267,7 @@
     QueryBuilder.prototype.tabLacksSelections = function() {
       var lensCode, scenarioCode, subjectCode, tab;
       tab = this.filter.get('tab');
-      if (tab !== 'change') {
+      if (tab === 'now') {
         return false;
       }
       scenarioCode = this.filter.get('scenario');
@@ -567,7 +567,6 @@
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
-          console.log('data', _this.data, data);
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {

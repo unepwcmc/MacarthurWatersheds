@@ -55,8 +55,8 @@ test('when the `change` tab selector has been clicked an `active` class
 )
 
 test('when the `Future Threats` tab selector is clicked,
-  then the `subject` is selected
-  then the `scenario` is selected, then
+  and the `subject` is selected
+  and the `scenario` is selected, then
   the LensSelectorView is not rendered and
   the LevelSelectorAgrCommDevView is', ->
 
