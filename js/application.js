@@ -413,9 +413,14 @@
         levels: levels
       }));
       theSelect = this.$el.find('.select-box');
-      return setTimeout(function() {
-        return theSelect.customSelect();
-      }, 100);
+      return setTimeout((function(_this) {
+        return function() {
+          theSelect.customSelect();
+          return _this.$el.find('.customSelectInner').css({
+            'width': '100%'
+          });
+        };
+      })(this), 100);
     };
 
     BaseSelectorView.prototype.setLevel = function(event) {
