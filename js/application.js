@@ -983,7 +983,7 @@
     LevelSelectorAgrCommDevView.prototype.initialize = function(options) {
       LevelSelectorAgrCommDevView.__super__.initialize.apply(this, arguments);
       this.config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels);
-      this.levelType = 'agrCommDevLevels';
+      this.levelType = 'agrCommDevLevel';
       if (this.filter.get(this.levelType) == null) {
         this.setDefaultLevel();
       }

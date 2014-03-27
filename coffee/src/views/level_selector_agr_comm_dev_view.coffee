@@ -10,7 +10,7 @@ class Backbone.Views.LevelSelectorAgrCommDevView extends Backbone.Views.BaseSele
   initialize: (options) ->
     super
     @config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels)
-    @levelType = 'agrCommDevLevels'
+    @levelType = 'agrCommDevLevel'
     unless @filter.get(@levelType)?
       @setDefaultLevel()
     @filter.set('lens', 'comprov')
