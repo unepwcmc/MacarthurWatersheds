@@ -281,6 +281,7 @@
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
       if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabLacksSelections())) {
+        console.log(this.buildQuery(this.filter));
         return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
@@ -567,6 +568,9 @@
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
+          if (!(_this.data.length > 0)) {
+            throw new Error("Data should not be empty, check your query");
+          }
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
@@ -1295,7 +1299,7 @@
       if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change') {
+      if (tab === 'change' || tab === 'future_threats') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
@@ -1311,16 +1315,16 @@
     };
 
     FilterView.prototype.showshowAgrCommDevSelector = function() {
-      return this.filter.get('tab') === 'future_threats' && (this.filter.get('subject') != null);
+      return this.filter.get('tab') === 'future_threats' && this.showOtherSelectors();
     };
 
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now' || tab === 'future_threats') {
+      if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change') {
+      if (tab === 'change' || tab === 'future_threats') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;

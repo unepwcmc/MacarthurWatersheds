@@ -40,7 +40,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     tab = @filter.get('tab')
     if tab == 'now'
       return @filter.get('subject')?
-    if tab == 'change'
+    if tab == 'change' or tab == 'future_threats'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
 
@@ -52,13 +52,13 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   showshowAgrCommDevSelector: ->
     @filter.get('tab') == 'future_threats' and 
-    @filter.get('subject')?
+    @showOtherSelectors()
 
   showOtherSelectors: ->
     tab = @filter.get('tab')
-    if tab == 'now' or tab == 'future_threats'
+    if tab == 'now'
       return @filter.get('subject')?
-    if tab == 'change'
+    if tab == 'change' or tab == 'future_threats'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
     

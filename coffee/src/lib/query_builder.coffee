@@ -89,4 +89,5 @@ class window.MacArthur.QueryBuilder
   updateFilterQuery: (model, event) =>
     unless @filter.changedAttributes().query? or 
     @isFromProtection() or @isFromPressure() or @tabLacksSelections()
+      console.log @buildQuery(@filter)
       @filter.set( 'query', @buildQuery(@filter) )

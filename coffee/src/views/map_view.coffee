@@ -58,6 +58,8 @@ class Backbone.Views.MapView extends Backbone.View
     unless q? then return
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
       @data = @sortDataBy(data.rows, 'value')
+      unless @data.length > 0
+        throw new Error("Data should not be empty, check your query")
       @setMinMax()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
