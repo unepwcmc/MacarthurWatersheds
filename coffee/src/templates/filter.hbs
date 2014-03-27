@@ -12,6 +12,13 @@
 
 {{#if showLensSelector}}
   {{addSubViewTo thisView 'LensSelectorView' filter=filter}}
+{{/if}}
+
+{{#if showAgrCommDevSelector}}
+  {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
+{{/if}}
+
+{{#if showOtherSelectors}}
   {{addSubViewTo thisView 'LevelSelectorView' filter=filter}}
   {{addSubViewTo thisView 'ProtectionOptionView' filter=filter}}
   {{addSubViewTo thisView 'PressureOptionView' filter=filter}}

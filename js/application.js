@@ -134,9 +134,12 @@
     ],
     agrCommDevLevels: [
       {
-        selector: "high",
-        name: "High",
+        selector: "all",
+        name: "All",
         "default": true
+      }, {
+        selector: "high",
+        name: "High"
       }, {
         selector: "medium",
         name: "Medium"
@@ -205,7 +208,11 @@
         'biodiversity': 'bd',
         'ecosystem': 'ef'
       };
-      name = subjectsMap[subjectCode];
+      if (this.filter.get('tab') === 'future_threats') {
+        name = 'ef';
+      } else {
+        name = subjectsMap[subjectCode];
+      }
       if (name == null) {
         throw new Error("Error building query, unknown subject '" + subjectCode + "'");
       }
@@ -229,6 +236,9 @@
     };
 
     QueryBuilder.prototype.hasLens = function(subjectCode, lensCode) {
+      if (this.filter.get('tab') === 'future_threats') {
+        return true;
+      }
       return _.find(MacArthur.CONFIG.lenses[subjectCode], (function(_this) {
         return function(lens) {
           return lens.selector === lensCode;
@@ -254,7 +264,7 @@
       return (this.filter.changedAttributes().pressure != null) || (this.filter.changedAttributes().pressure_levels != null);
     };
 
-    QueryBuilder.prototype.tabHasSelections = function() {
+    QueryBuilder.prototype.tabLacksSelections = function() {
       var lensCode, scenarioCode, subjectCode, tab;
       tab = this.filter.get('tab');
       if (tab !== 'change') {
@@ -270,7 +280,7 @@
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabHasSelections())) {
+      if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabLacksSelections())) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
     };
@@ -385,6 +395,7 @@
     TabView.prototype.resetFilters = function() {
       this.filter.unset('subject');
       this.filter.unset('lens');
+      this.filter.unset('scenario');
       return this.filter.unset('level');
     };
 
@@ -556,6 +567,7 @@
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
+          console.log('data', _this.data, data);
           _this.setMinMax();
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
@@ -890,7 +902,7 @@
     LensSelectorView.prototype.initialize = function(options) {
       this.config = _.cloneDeep(MacArthur.CONFIG.lenses);
       this.filter = options.filter;
-      this.filter.on('change:subject', this.setDefaultLens);
+      this.listenTo(this.filter, 'change:subject', this.setDefaultLens);
       if (this.filter.get('lens') == null) {
         this.setDefaultLens();
       }
@@ -899,7 +911,6 @@
 
     LensSelectorView.prototype.render = function() {
       var lenses, theSelect;
-      console.log('######################');
       lenses = _.map(this.config[this.filter.get('subject')], (function(_this) {
         return function(lens) {
           if (_this.filter.get('lens') === lens.selector) {
@@ -926,7 +937,9 @@
       return this.filter.set('lens', lensName);
     };
 
-    LensSelectorView.prototype.onClose = function() {};
+    LensSelectorView.prototype.onClose = function() {
+      return this.remove();
+    };
 
     LensSelectorView.prototype.setDefaultLens = function() {
       if (this.filter.get('subject') != null) {
@@ -970,11 +983,12 @@
 
     LevelSelectorAgrCommDevView.prototype.initialize = function(options) {
       LevelSelectorAgrCommDevView.__super__.initialize.apply(this, arguments);
-      this.config = _.cloneDeep(MacArthur.CONFIG.protectionLevels);
-      this.levelType = 'agrCommLevel';
+      this.config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels);
+      this.levelType = 'agrCommDevLevels';
       if (this.filter.get(this.levelType) == null) {
         this.setDefaultLevel();
       }
+      this.filter.set('lens', 'comprov');
       return this.render();
     };
 
@@ -1256,8 +1270,10 @@
       this.$el.html(this.template({
         thisView: this,
         subjects: MacArthur.CONFIG.subjects,
-        showLensSelector: this.filter.get('subject') != null,
-        showScenarioSelector: this.filter.get('tab') === 'change',
+        showLensSelector: this.showLensSelector(),
+        showScenarioSelector: this.showScenarioSelector(),
+        showOtherSelectors: this.showOtherSelectors(),
+        showAgrCommDevSelector: this.showAgrCommDevSelector(),
         filter: this.filter
       }));
       this.attachSubViews();
@@ -1267,13 +1283,49 @@
     FilterView.prototype.setSubject = function(event) {
       var subjectName;
       subjectName = $(event.target).attr('data-subject');
-      console.log('ZZZZZZZZZZZZZZZZZZz');
       return this.filter.set('subject', subjectName);
     };
 
     FilterView.prototype.onClose = function() {
       this.closeSubViews();
       return this.stopListening();
+    };
+
+    FilterView.prototype.showLensSelector = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'now') {
+        return this.filter.get('subject') != null;
+      }
+      if (tab === 'change') {
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
+      }
+      return false;
+    };
+
+    FilterView.prototype.showScenarioSelector = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'change' || tab === 'future_threats') {
+        return this.filter.get('subject') != null;
+      }
+      return false;
+    };
+
+    FilterView.prototype.showAgrCommDevSelector = function() {
+      return this.filter.get('tab') === 'future_threats' && this.showOtherSelectors();
+    };
+
+    FilterView.prototype.showOtherSelectors = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'now') {
+        return this.filter.get('subject') != null;
+      }
+      if (tab === 'change' || tab === 'future_threats') {
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
+      }
+      return false;
     };
 
     return FilterView;

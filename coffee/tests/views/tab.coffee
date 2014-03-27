@@ -1,7 +1,7 @@
 suite 'Tab View'
 
-test('when the `change` tab selector has been clicked the view 
- re-renders and the scenario subview is rendered', ->
+test('when the `change` tab selector and the `subject` selector have been clicked, 
+ the view re-renders and the scenario subview is rendered', ->
 
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
@@ -9,8 +9,10 @@ test('when the `change` tab selector has been clicked the view
   scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView::, 'render')
 
   tabView = new Backbone.Views.TabView( filter: filter )
+  filterView = new Backbone.Views.FilterView( filter: filter )
 
   tabView.$el.find('li.change-tab').trigger('click')
+  filterView.$el.find('.subjects li:first').trigger('click')
 
   try
     assert.strictEqual(
@@ -53,8 +55,10 @@ test('when the `change` tab selector has been clicked an `active` class
 )
 
 test('when the `Future Threats` tab selector is clicked,
-  the LensSelectorView is not rendered,
-  the LevelSelectorAgrCommDevView is rendered', ->
+  then the `subject` is selected
+  then the `scenario` is selected, then
+  the LensSelectorView is not rendered and
+  the LevelSelectorAgrCommDevView is', ->
 
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
@@ -66,16 +70,22 @@ test('when the `Future Threats` tab selector is clicked,
 
   tabView = new Backbone.Views.TabView( filter: filter )
 
+  lensSelectorRenderCalles = lensSelectorRenderSpy.callCount
+  levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount
+
   tabView.$el.find('li.future_threats-tab').trigger('click')
 
+  filter.set('subject', 'biodiversity')
+  filter.set('scenario', 'mf2050')
+
   try
-    assert.strictEqual(
-      lensSelectorRenderSpy.callCount, 1,
-      "Expected the lensSelectorView to be called once"
+    assert.isTrue(
+      lensSelectorRenderSpy.callCount == lensSelectorRenderCalles,
+      "Expected the lensSelectorView NOT to be called"
     )
-    assert.strictEqual(
-      levelSelectorAgrCommDevRenderSpy.callCount, 1,
-      "Expected the levelSelectorAgrCommDevView to be called once"
+    assert.isTrue(
+      levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles,
+      "Expected the levelSelectorAgrCommDevView to be called"
     )
 
   finally

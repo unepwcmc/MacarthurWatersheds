@@ -19,8 +19,10 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     @$el.html(@template(
       thisView: @
       subjects: MacArthur.CONFIG.subjects
-      showLensSelector: @filter.get('subject')?
-      showScenarioSelector: @filter.get('tab') is 'change'
+      showLensSelector: @showLensSelector()
+      showScenarioSelector: @showScenarioSelector()
+      showOtherSelectors: @showOtherSelectors()
+      showAgrCommDevSelector: @showAgrCommDevSelector()
       filter: @filter
     ))
     @attachSubViews()
@@ -28,10 +30,35 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   setSubject: (event) =>
     subjectName = $(event.target).attr('data-subject')
-    console.log 'ZZZZZZZZZZZZZZZZZZz'
     @filter.set('subject', subjectName)
 
   onClose: ->
     @closeSubViews()
     @stopListening()
+
+  showLensSelector: ->
+    tab = @filter.get('tab')
+    if tab == 'now'
+      return @filter.get('subject')?
+    if tab == 'change'
+      return @filter.get('subject')? and @filter.get('scenario')?
+    no
+
+  showScenarioSelector: ->
+    tab = @filter.get('tab')
+    if tab == 'change' or tab == 'future_threats'
+      return @filter.get('subject')?
+    no
+
+  showAgrCommDevSelector: ->
+    @filter.get('tab') == 'future_threats' and 
+    @showOtherSelectors()
+
+  showOtherSelectors: ->
+    tab = @filter.get('tab')
+    if tab == 'now'
+      return @filter.get('subject')?
+    if tab == 'change' or tab == 'future_threats'
+      return @filter.get('subject')? and @filter.get('scenario')?
+    no
     
