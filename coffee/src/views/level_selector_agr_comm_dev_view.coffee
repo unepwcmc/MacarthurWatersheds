@@ -13,6 +13,5 @@ class Backbone.Views.LevelSelectorAgrCommDevView extends Backbone.Views.BaseSele
     @levelType = 'agrCommDevLevel'
     unless @filter.get(@levelType)?
       @setDefaultLevel()
-    @filter.set('lens', 'comprov')
     @render()
     

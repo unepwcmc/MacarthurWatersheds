@@ -987,7 +987,6 @@
       if (this.filter.get(this.levelType) == null) {
         this.setDefaultLevel();
       }
-      this.filter.set('lens', 'comprov');
       return this.render();
     };
 
@@ -1272,7 +1271,7 @@
         showLensSelector: this.showLensSelector(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
-        showAgrCommDevSelector: this.showAgrCommDevSelector(),
+        showAgrCommDevSelector: this.showshowAgrCommDevSelector(),
         filter: this.filter
       }));
       this.attachSubViews();
@@ -1311,17 +1310,17 @@
       return false;
     };
 
-    FilterView.prototype.showAgrCommDevSelector = function() {
-      return this.filter.get('tab') === 'future_threats' && this.showOtherSelectors();
+    FilterView.prototype.showshowAgrCommDevSelector = function() {
+      return this.filter.get('tab') === 'future_threats' && (this.filter.get('subject') != null);
     };
 
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
