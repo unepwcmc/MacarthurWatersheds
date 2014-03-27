@@ -97,9 +97,9 @@ class Backbone.Views.MapView extends Backbone.View
     d = @querydata[feature]
     p = d[@styleValueField] - @min[@styleValueField]
     range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
-    if p >= @min[@styleValueField] + range * 2  then return '#e6550d'
-    if p >= @min[@styleValueField] + range      then return '#fdae6b'
-    if p >= @min[@styleValueField]              then return '#fee6ce'
+    if p >= @min[@styleValueField] + range * 2  then return '#FF6B00'
+    if p >= @min[@styleValueField] + range      then return '#FF8F27'
+    if p >= @min[@styleValueField]              then return '#FFB367'
     '#fff'
 
   filterFeatureLevel: (id) =>
@@ -158,7 +158,7 @@ class Backbone.Views.MapView extends Backbone.View
     {
       weight: 1.2,
       opacity: 1,
-      color: 'white',
+      color: '#C0A972',
       fillOpacity: 0
     }
 
@@ -166,7 +166,8 @@ class Backbone.Views.MapView extends Backbone.View
     {
       weight: 0
       opacity: 0
-      fillOpacity: 0
+      fillColor: '#C0A972'
+      fillOpacity: 0.6
     }
 
   queryPolyStyle: (feature) =>

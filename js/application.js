@@ -587,13 +587,13 @@
       p = d[this.styleValueField] - this.min[this.styleValueField];
       range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
       if (p >= this.min[this.styleValueField] + range * 2) {
-        return '#e6550d';
+        return '#FF6B00';
       }
       if (p >= this.min[this.styleValueField] + range) {
-        return '#fdae6b';
+        return '#FF8F27';
       }
       if (p >= this.min[this.styleValueField]) {
-        return '#fee6ce';
+        return '#FFB367';
       }
       return '#fff';
     };
@@ -683,7 +683,7 @@
       return {
         weight: 1.2,
         opacity: 1,
-        color: 'white',
+        color: '#C0A972',
         fillOpacity: 0
       };
     };
@@ -692,7 +692,8 @@
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: 0
+        fillColor: '#C0A972',
+        fillOpacity: 0.6
       };
     };
 
