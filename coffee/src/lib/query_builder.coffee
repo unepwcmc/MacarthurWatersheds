@@ -11,17 +11,23 @@ class window.MacArthur.QueryBuilder
   
       """
         SELECT d.watershed_id, d.value, percentage as protection_percentage,
-        pressure.value as pressure_index 
+        pressure.value as pressure_index, comprov_value 
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
         LEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id 
         LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
         LEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id 
         LEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id 
+        LEFT JOIN (
+        SELECT d.watershed_id, d.value AS comprov_value FROM 
+        macarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
+        WHERE lens.type = 'comprov' AND metric = 'change' 
+        AND #{@buildScenarioClause()} AND type_data = 'value' ) s 
+        ON s.watershed_id = d.watershed_id 
         WHERE r.code = '#{regionCode}' 
         AND #{@buildSubjectClause()} 
         AND #{@buildLensClause()}
-        AND metric = 'imp' 
+        AND #{@buildMetricClause()} 
         AND #{@buildScenarioClause()} 
         AND type_data = 'value'
       """
@@ -34,10 +40,7 @@ class window.MacArthur.QueryBuilder
       'biodiversity': 'bd',
       'ecosystem': 'ef'
     }
-    if @filter.get('tab') == 'future_threats'
-      name = 'ef'
-    else
-      name = subjectsMap[subjectCode]
+    name = subjectsMap[subjectCode]
     unless name?
       throw new Error("Error building query, unknown subject '#{subjectCode}'")
     "lens.name = '#{name}' "
@@ -52,6 +55,13 @@ class window.MacArthur.QueryBuilder
   buildLensClause: ->
     lensCode = @filter.get('lens')
     "lens.type = '#{lensCode}' "
+
+  buildMetricClause: ->
+    tab = @filter.get('tab')
+    if tab == 'future_threats' or tab == 'change'
+      "metric = 'change' "
+    else
+      "metric = 'imp' "
 
   hasLens: (subjectCode, lensCode) ->
     if @filter.get('tab') == 'future_threats'
