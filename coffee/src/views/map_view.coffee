@@ -100,10 +100,13 @@ class Backbone.Views.MapView extends Backbone.View
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
-    color = d3.scale.linear()
-      .domain([@min[@styleValueField], @max[@styleValueField]])
-      .range(["#fff7fb", "#023858"])
-    color(@querydata[feature][@styleValueField])
+    d = @querydata[feature]
+    p = d[@styleValueField] - @min[@styleValueField]
+    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
+    if p >= @min[@styleValueField] + range * 2  then return '#e6550d'
+    if p >= @min[@styleValueField] + range      then return '#fdae6b'
+    if p >= @min[@styleValueField]              then return '#fee6ce'
+    '#fff'
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
