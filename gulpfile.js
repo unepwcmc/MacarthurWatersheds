@@ -21,6 +21,7 @@ var paths = {
     'coffee/src/views/region_chooser_view.coffee',
     'coffee/src/views/scenario_selector_view.coffee',
     'coffee/src/views/lens_selector_view.coffee',
+    'coffee/src/views/level_selector_agr_comm_dev_view.coffee',
     'coffee/src/views/level_selector_view.coffee',
     'coffee/src/views/pressure_option_view.coffee',
     'coffee/src/views/pressure_selector_view.coffee',

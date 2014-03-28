@@ -157,3 +157,30 @@ test('if the tab is set to `change` and the filter lens is set,
   finally
     buildQuerySpy.restore()
 )
+
+test('if the tab is set to `future_threats` and the subject and scenario
+  are set, `buildQuery` should be called', ->
+
+  regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
+  filter = new Backbone.Models.Filter(
+    region: regions.models[0]
+    subject: MacArthur.CONFIG.subjects[1].selector
+    scenario: MacArthur.CONFIG.scenarios[1].selector
+    tab: 'future_threats'
+  )
+  buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
+  
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+  tabView = new Backbone.Views.TabView( filter: filter )
+  
+  queryBuiler.updateFilterQuery()
+
+  try
+    assert.strictEqual(
+      buildQuerySpy.callCount, 1,
+      "Expected the buildQuery to be called after updateFilterQuery"
+    )
+
+  finally
+    buildQuerySpy.restore()
+)

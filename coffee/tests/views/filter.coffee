@@ -63,3 +63,24 @@ test('if the filter does not have a subject set,
   finally
     LensSelectorConstructorSpy.restore()
 )
+
+test('in the change tab, if the subject filter is set, but not the scenario,
+ no LensSelector subview is created', ->
+
+  LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView')
+
+  filter = new Backbone.Models.Filter()
+
+  filterView = new Backbone.Views.FilterView( filter: filter )
+  filter.set('tab', 'change')
+  filter.set('subject', 'biodiversity')
+
+  try
+    assert.strictEqual(
+      LensSelectorConstructorSpy.callCount, 0,
+      "Expected a new LensSelectorView not to be created"
+    )
+
+  finally
+    LensSelectorConstructorSpy.restore()
+)
