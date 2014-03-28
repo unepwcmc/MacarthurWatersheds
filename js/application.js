@@ -1338,7 +1338,7 @@
         showLensSelector: this.showLensSelector(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
-        showAgrCommDevSelector: this.showshowAgrCommDevSelector(),
+        showAgrCommDevSelector: this.showAgrCommDevSelector(),
         filter: this.filter
       }));
       this.attachSubViews();
@@ -1377,7 +1377,7 @@
       return false;
     };
 
-    FilterView.prototype.showshowAgrCommDevSelector = function() {
+    FilterView.prototype.showAgrCommDevSelector = function() {
       return this.filter.get('tab') === 'future_threats' && this.showOtherSelectors();
     };
 
