@@ -6,7 +6,7 @@ require '../src/cartodb/cartodb_query.rb'
 SUBJECT = ['bd', 'ef']
 TYPE_DATA = ['value', 'rank']
 METRIC = ['imp', 'change']
-BD_LENS = ['allsp', 'crenvu', 'amphibia', 'mammalia', 'aves']
+BD_LENS = ['allsp', 'crenvu', 'amphibia', 'mammalia', 'aves', 'crenvu']
 EF_LENS = ['totef', 'comprov', 'wildprov', 'regprov']
 SCENARIO = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
 CONSERVATION = ['nocons']
@@ -96,19 +96,26 @@ def self.datapoint
  end
 end
 
+def pressure
+  other_values('pressure', 'value', 'value')
+end
+
+
 def protection
+  other_values('protection', 'percentage', 'percent_wdpa_filter')
+end
+
+def other_values filter, type, column
     sql = <<-SQL 
-      INSERT INTO macarthur_protection(watershed_id, percentage)
-      SELECT w.cartodb_id, cast(percent_wdpa_filter as double precision)
-      FROM macarthur_original_protection p
+      INSERT INTO macarthur_#{filter}(watershed_id, #{type})
+      SELECT w.cartodb_id, cast(#{column} as double precision)
+      FROM macarthur_original_#{filter} p
       LEFT JOIN macarthur_watershed w
       ON p.field_name = w.name
     SQL
     puts sql
     CartodbQuery.run(sql)
 end
-
-
 
 ARGV.each do|action|
   if action == 'geometry_data'
@@ -119,5 +126,7 @@ ARGV.each do|action|
     datapoint
   elsif action == 'protection'
     protection 
+  elsif action == 'pressure'
+    pressure
   end
 end

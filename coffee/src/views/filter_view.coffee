@@ -22,7 +22,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       showLensSelector: @showLensSelector()
       showScenarioSelector: @showScenarioSelector()
       showOtherSelectors: @showOtherSelectors()
-      showAgrCommDevSelector: @showshowAgrCommDevSelector()
+      showAgrCommDevSelector: @showAgrCommDevSelector()
       filter: @filter
     ))
     @attachSubViews()
@@ -50,7 +50,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       return @filter.get('subject')?
     no
 
-  showshowAgrCommDevSelector: ->
+  showAgrCommDevSelector: ->
     @filter.get('tab') == 'future_threats' and 
     @showOtherSelectors()
 
