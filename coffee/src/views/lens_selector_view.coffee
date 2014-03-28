@@ -10,12 +10,13 @@ class Backbone.Views.LensSelectorView extends Backbone.View
   initialize: (options) ->
     @config = _.cloneDeep(MacArthur.CONFIG.lenses)
     @filter = options.filter
-    @filter.on('change:subject', @setDefaultLens)
+    @listenTo(@filter, 'change:subject', @setDefaultLens)
     unless @filter.get('lens')?
       @setDefaultLens()
     @render()
 
   render: ->
+    subject = @filter.get('subject')
     lenses = _.map(@config[@filter.get('subject')], (lens) => 
       if @filter.get('lens') is lens.selector
         lens.selected = true
@@ -25,6 +26,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     )
     @$el.html(@template(
       lenses: lenses
+      subject: subject.charAt(0).toUpperCase() + subject.slice(1)
     ))
 
     # SORRY
@@ -41,6 +43,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     @filter.set('lens', lensName)
 
   onClose: ->
+    @remove()
 
   setDefaultLens: =>
     if @filter.get('subject')?

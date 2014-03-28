@@ -41,5 +41,7 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
   resetFilters: ->
     @filter.unset('subject')
     @filter.unset('lens')
+    @filter.unset('scenario')
     @filter.unset('level')
+    @filter.unset('agrCommDevLevel')
     
