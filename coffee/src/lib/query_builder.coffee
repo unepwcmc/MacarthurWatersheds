@@ -42,7 +42,7 @@ class window.MacArthur.QueryBuilder
         SELECT d.watershed_id, d.value AS comprov_value FROM 
         macarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
         WHERE lens.type = 'comprov' AND metric = 'change' 
-        AND #{@buildScenarioClause()} AND type_data = 'value' ) s 
+        AND #{@buildScenarioClause('comprov')} AND type_data = 'value' ) s 
         ON s.watershed_id = d.watershed_id 
       """
     else
@@ -59,12 +59,19 @@ class window.MacArthur.QueryBuilder
       throw new Error("Error building query, unknown subject '#{subjectCode}'")
     "lens.name = '#{name}' "
 
-  buildScenarioClause: ->
+  buildScenarioClause: (originSelect) ->
     scenario = @filter.get('scenario')
-    if scenario?
-      return "scenario = '#{scenario}' "
-    else 
-      return "scenario = 'bas' "
+    tab = @filter.get('tab')
+    if tab == 'future_threats'
+      if originSelect == 'comprov'
+        return "scenario = '#{scenario}' "
+      else 
+        return "scenario = 'bas' "
+    else
+      if scenario?
+        return "scenario = '#{scenario}' "
+      else 
+        return "scenario = 'bas' "
 
   buildLensClause: ->
     lensCode = @filter.get('lens')
@@ -72,7 +79,7 @@ class window.MacArthur.QueryBuilder
 
   buildMetricClause: ->
     tab = @filter.get('tab')
-    if tab == 'future_threats' or tab == 'change'
+    if tab == 'change'
       "metric = 'change' "
     else
       "metric = 'imp' "
@@ -102,7 +109,7 @@ class window.MacArthur.QueryBuilder
 
   tabLacksSelections: ->
     tab = @filter.get('tab')
-    if tab == 'now' then return no
+    if tab == 'now' or tab == 'future_threats' then return no
     scenarioCode = @filter.get('scenario')
     subjectCode = @filter.get('subject')
     lensCode = @filter.get('lens')
