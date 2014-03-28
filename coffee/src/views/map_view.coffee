@@ -79,7 +79,7 @@ class Backbone.Views.MapView extends Backbone.View
     @min = {
       'value': @data[0].value
       'rank': 0
-      'agrCommDev': 0#_.min(@data, (o) -> o.comprov_value).comprov_value
+      'agrCommDev': 0
     }
     @
 
