@@ -636,7 +636,7 @@
     return assert.isFalse(activeTab.siblings().hasClass('active'), "Expected other tabs NOT to be active");
   });
 
-  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected, then the LensSelectorView is rendered and the LevelSelectorAgrCommDevView is', function() {
+  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected, then the LensSelectorView and LevelSelectorAgrCommDevView are rendered', function() {
     var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, tabView;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity'

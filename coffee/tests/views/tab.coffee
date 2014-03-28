@@ -55,10 +55,8 @@ test('when the `change` tab selector has been clicked an `active` class
 )
 
 test('when the `Future Threats` tab selector is clicked,
-  and the `subject` is selected
-  and the `scenario` is selected, then
-  the LensSelectorView is rendered and
-  the LevelSelectorAgrCommDevView is', ->
+  and the `subject` is selected and the `scenario` is selected, then
+  the LensSelectorView and LevelSelectorAgrCommDevView are rendered', ->
 
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
