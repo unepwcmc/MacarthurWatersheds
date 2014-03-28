@@ -646,7 +646,7 @@
 
     MapView.prototype.getColor = function(feature) {
       var color;
-      color = d3.scale.linear().domain([this.min[this.styleValueField], this.max[this.styleValueField]]).range(["#fff7fb", "#023858"]);
+      color = d3.scale.linear().domain([this.min[this.styleValueField], this.max[this.styleValueField]]).range(["#d0d1e6", "#023858"]);
       return color(this.querydata[feature][this.styleValueField]);
     };
 

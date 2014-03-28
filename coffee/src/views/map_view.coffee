@@ -102,7 +102,7 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     color = d3.scale.linear()
       .domain([@min[@styleValueField], @max[@styleValueField]])
-      .range(["#fff7fb", "#023858"])
+      .range(["#d0d1e6", "#023858"])
     color(@querydata[feature][@styleValueField])
 
   filterFeatureLevel: (id) =>
