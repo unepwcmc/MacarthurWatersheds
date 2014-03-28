@@ -12,9 +12,11 @@ h1, h2, h3 {
   font-weight: 500; }
 
 header {
+  z-index: 9999;
   background: #23252C;
   padding: 15px;
-  font-family: 'Dosis', sans-serif; }
+  font-family: 'Dosis', sans-serif;
+  border-bottom: 1px solid #1C1E23; }
   header a {
     text-transform: uppercase;
     font-weight: 700;
@@ -176,3 +178,21 @@ select option {
   width: 300px;
   height: 30px;
   color: #fff; }
+
+ul.tabs {
+  list-style-type: none;
+  background: #23252C;
+  color: #fff;
+  margin: 0;
+  overflow: hidden;
+  padding: 0; }
+  ul.tabs li {
+    padding: 10px;
+    float: left;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 600;
+    width: 33%;
+    text-align: center; }
+    ul.tabs li:hover {
+      background: #1C1E23; }

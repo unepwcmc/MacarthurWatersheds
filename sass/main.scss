@@ -22,9 +22,11 @@ h1, h2, h3 {
 }
 
 header {
+  z-index: 9999;
 	background: $background-grey;
 	padding: 15px;
 	font-family: 'Dosis', sans-serif;
+  border-bottom: 1px solid $dark-grey;
   a {
     text-transform: uppercase;
     font-weight: 700;
@@ -213,3 +215,24 @@ select option {
 //.selector {
 //  height: 200px;
 //}
+
+ul.tabs {
+  list-style-type: none;
+  background: $background-grey;
+  color: #fff;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  li {
+    padding:10px;
+    float: left;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 600;
+    width: 33%;
+    text-align: center;
+    &:hover {
+      background: $dark-grey;
+    }
+  }
+}
