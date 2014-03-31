@@ -517,6 +517,7 @@
 
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
+      this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.setPressureFill = __bind(this.setPressureFill, this);
       this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
@@ -551,6 +552,8 @@
     };
 
     MapView.prototype.initBaseLayer = function() {
+      this.mapHasData = false;
+      this.lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6]);
       this.map = L.map('map', {
         scrollWheelZoom: false
       }).setView([0, 0], 2);
@@ -575,7 +578,12 @@
         style: this.baseLineStyle
       }).addTo(this.map);
       this.queryLayer;
-      return this.map.fitBounds(regionBounds);
+      this.map.fitBounds(regionBounds);
+      return this.map.on('zoomend', (function(_this) {
+        return function() {
+          return _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
+        };
+      })(this));
     };
 
     MapView.prototype.bindPopup = function(feature, layer) {
@@ -610,6 +618,10 @@
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
           }).addTo(_this.map);
+          if (!_this.mapHasData) {
+            _this.mapHasData = true;
+            _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
+          }
           return _this.queryLayerInteriors.bringToFront();
         };
       })(this));
@@ -774,9 +786,9 @@
 
     MapView.prototype.baseLineStyle = function(feature) {
       return {
-        weight: 1.2,
+        weight: this.lineWeight(this.map.getZoom()),
         opacity: 1,
-        color: 'white',
+        color: this.mapHasData ? 'white' : '#3c4f6b',
         fillOpacity: 0
       };
     };
