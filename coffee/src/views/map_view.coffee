@@ -111,7 +111,6 @@ class Backbone.Views.MapView extends Backbone.View
 
   getColor: (feature) =>
     if @filter.get('tab') == 'change'
-      console.log @min[@styleValueField]
       domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
       range = ["#2166ac", "#f7f7f7", "#b2182b"]
     else
