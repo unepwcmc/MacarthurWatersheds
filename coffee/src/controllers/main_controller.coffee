@@ -16,7 +16,6 @@ class ModalContainer
 
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
-    _.extend Backbone.View::, {setActiveElement: @setActiveElement}
     @regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
     @filter = new Backbone.Models.Filter()
     @queryBuilder = new window.MacArthur.QueryBuilder(@filter)
@@ -63,14 +62,5 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @sidePanel.showView(view)
     @map.initQueryLayer(geo, region)
 
-  setActiveElement: (name, plural) ->
-    collection_name = plural or "#{name}s"
-    _.map(MacArthur.CONFIG[collection_name], (element) =>
-      if @filter.get(name) is element.selector
-        element.active = true
-      else
-        element.active = false
-      element
-    )
-
+  
 

@@ -153,6 +153,21 @@
     ]
   };
 
+  MacArthur.getFilterOptionsWithSelectedSet = (function(_this) {
+    return function(filter, name, plural) {
+      var collection_name;
+      collection_name = plural || ("" + name + "s");
+      return _.map(MacArthur.CONFIG[collection_name], function(element) {
+        if (filter.get(name) === element.selector) {
+          element.active = true;
+        } else {
+          element.active = false;
+        }
+        return element;
+      });
+    };
+  })(this);
+
 }).call(this);
 
 (function() {
@@ -382,7 +397,7 @@
 
     TabView.prototype.render = function() {
       var tabs;
-      tabs = this.setActiveElement('tab');
+      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'tab');
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
@@ -895,7 +910,7 @@
 
     ScenarioSelectorView.prototype.render = function() {
       var scenarios, theSelect;
-      scenarios = this.setActiveElement('scenario');
+      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario');
       this.$el.html(this.template({
         filter: this.filter,
         scenarios: scenarios
@@ -1315,7 +1330,7 @@
 
     FilterView.prototype.render = function() {
       var subjects;
-      subjects = this.setActiveElement('subject');
+      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'subject');
       this.$el.html(this.template({
         thisView: this,
         subjects: subjects,
@@ -1421,9 +1436,6 @@
       this.getGeometries = __bind(this.getGeometries, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
-      _.extend(Backbone.View.prototype, {
-        setActiveElement: this.setActiveElement
-      });
       this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.filter = new Backbone.Models.Filter();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
@@ -1480,21 +1492,6 @@
       });
       this.sidePanel.showView(view);
       return this.map.initQueryLayer(geo, region);
-    };
-
-    MainController.prototype.setActiveElement = function(name, plural) {
-      var collection_name;
-      collection_name = plural || ("" + name + "s");
-      return _.map(MacArthur.CONFIG[collection_name], (function(_this) {
-        return function(element) {
-          if (_this.filter.get(name) === element.selector) {
-            element.active = true;
-          } else {
-            element.active = false;
-          }
-          return element;
-        };
-      })(this));
     };
 
     return MainController;

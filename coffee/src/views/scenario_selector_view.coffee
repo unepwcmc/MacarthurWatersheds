@@ -13,7 +13,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
     @render()
 
   render: ->
-    scenarios = @setActiveElement('scenario')
+    scenarios = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'scenario')
     @$el.html(@template(
       filter: @filter
       scenarios: scenarios
