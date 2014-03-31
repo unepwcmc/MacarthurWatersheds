@@ -104,3 +104,8 @@ The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/
 
 
 Then run cap deploy.
+
+
+### d3.js dependency
+
+The app relies a bare-bones d3 custom build. If, in the future, some more d3 dependent code is added and things brake, it could mean a new build is needed!
