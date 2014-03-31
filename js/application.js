@@ -153,20 +153,18 @@
     ]
   };
 
-  MacArthur.getFilterOptionsWithSelectedSet = (function(_this) {
-    return function(filter, name, plural) {
-      var collection_name;
-      collection_name = plural || ("" + name + "s");
-      return _.map(MacArthur.CONFIG[collection_name], function(element) {
-        if (filter.get(name) === element.selector) {
-          element.active = true;
-        } else {
-          element.active = false;
-        }
-        return element;
-      });
-    };
-  })(this);
+  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural) {
+    var collection_name;
+    collection_name = plural || ("" + name + "s");
+    return _.map(MacArthur.CONFIG[collection_name], function(element) {
+      if (filter.get(name) === element.selector) {
+        element.active = true;
+      } else {
+        element.active = false;
+      }
+      return element;
+    });
+  };
 
 }).call(this);
 

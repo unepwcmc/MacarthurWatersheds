@@ -61,9 +61,9 @@ MacArthur.CONFIG =
     { selector: "negative", name: "Decrease" }
   ]
 
-MacArthur.getFilterOptionsWithSelectedSet = (filter, name, plural) =>
+MacArthur.getFilterOptionsWithSelectedSet = (filter, name, plural) ->
   collection_name = plural or "#{name}s"
-  _.map(MacArthur.CONFIG[collection_name], (element) =>
+  _.map(MacArthur.CONFIG[collection_name], (element) ->
     if filter.get(name) is element.selector
       element.active = true
     else
