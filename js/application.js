@@ -211,7 +211,7 @@
 
     QueryBuilder.prototype.buildComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause()) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
+        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
       } else {
         return "";
       }
@@ -231,13 +231,22 @@
       return "lens.name = '" + name + "' ";
     };
 
-    QueryBuilder.prototype.buildScenarioClause = function() {
-      var scenario;
+    QueryBuilder.prototype.buildScenarioClause = function(originSelect) {
+      var scenario, tab;
       scenario = this.filter.get('scenario');
-      if (scenario != null) {
-        return "scenario = '" + scenario + "' ";
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        if (originSelect === 'comprov') {
+          return "scenario = '" + scenario + "' ";
+        } else {
+          return "scenario = 'bas' ";
+        }
       } else {
-        return "scenario = 'bas' ";
+        if (scenario != null) {
+          return "scenario = '" + scenario + "' ";
+        } else {
+          return "scenario = 'bas' ";
+        }
       }
     };
 
@@ -250,7 +259,7 @@
     QueryBuilder.prototype.buildMetricClause = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'future_threats' || tab === 'change') {
+      if (tab === 'change') {
         return "metric = 'change' ";
       } else {
         return "metric = 'imp' ";
@@ -289,7 +298,7 @@
     QueryBuilder.prototype.tabLacksSelections = function() {
       var lensCode, scenarioCode, subjectCode, tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return false;
       }
       scenarioCode = this.filter.get('scenario');
@@ -1359,10 +1368,10 @@
     FilterView.prototype.showLensSelector = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
@@ -1384,10 +1393,10 @@
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
