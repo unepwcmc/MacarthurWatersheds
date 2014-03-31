@@ -19,6 +19,9 @@ class Backbone.Views.MapView extends Backbone.View
       row
     )
 
+  setZeroValueIndex: () ->
+    @zeroValueIndex = _.findIndex(@sortDataBy(@data, 'value'), (d) -> d.value >= 0)
+
   initBaseLayer: ->
     @mapHasData = no
     @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
@@ -65,6 +68,7 @@ class Backbone.Views.MapView extends Backbone.View
       unless @data.length > 0
         throw new Error("Data should not be empty, check your query")
       @setMinMax()
+      if @filter.get('tab') == 'change' then @setZeroValueIndex()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
@@ -106,9 +110,13 @@ class Backbone.Views.MapView extends Backbone.View
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
-    color = d3.scale.linear()
-      .domain([@min[@styleValueField], @max[@styleValueField]])
-      .range(["#d0d1e6", "#023858"])
+    if @filter.get('tab') == 'change'
+      domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
+      range = ["#2166ac", "#f7f7f7", "#b2182b"]
+    else
+      domain = [@min[@styleValueField], @max[@styleValueField]]
+      range = ["#fddbc7", "#b2182b"]
+    color = d3.scale.linear().domain(domain).range(range)
     color(@querydata[feature][@styleValueField])
 
   filterFeatureLevel: (id) =>

@@ -555,6 +555,12 @@
       });
     };
 
+    MapView.prototype.setZeroValueIndex = function() {
+      return this.zeroValueIndex = _.findIndex(this.sortDataBy(this.data, 'value'), function(d) {
+        return d.value >= 0;
+      });
+    };
+
     MapView.prototype.initBaseLayer = function() {
       this.mapHasData = false;
       this.lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6]);
@@ -617,6 +623,9 @@
             throw new Error("Data should not be empty, check your query");
           }
           _this.setMinMax();
+          if (_this.filter.get('tab') === 'change') {
+            _this.setZeroValueIndex();
+          }
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
@@ -670,8 +679,16 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var color;
-      color = d3.scale.linear().domain([this.min[this.styleValueField], this.max[this.styleValueField]]).range(["#d0d1e6", "#023858"]);
+      var color, domain, range;
+      if (this.filter.get('tab') === 'change') {
+        console.log(this.min[this.styleValueField]);
+        domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
+        range = ["#2166ac", "#f7f7f7", "#b2182b"];
+      } else {
+        domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
+        range = ["#fddbc7", "#b2182b"];
+      }
+      color = d3.scale.linear().domain(domain).range(range);
       return color(this.querydata[feature][this.styleValueField]);
     };
 
