@@ -800,10 +800,15 @@
     };
 
     MapView.prototype.baseLineStyle = function(feature) {
+      var weight;
+      weight = this.zoomLevelConfig.lineWeight[this.map.getZoom()] || 2.6;
+      if (!this.mapHasData) {
+        weight += .2;
+      }
       return {
-        weight: this.zoomLevelConfig.lineWeight[this.map.getZoom()] || 2.6,
+        weight: weight,
         opacity: 1,
-        color: this.mapHasData ? 'white' : '#7e7e7e',
+        color: this.mapHasData ? 'white' : '#3c4f6b',
         fillOpacity: 0
       };
     };

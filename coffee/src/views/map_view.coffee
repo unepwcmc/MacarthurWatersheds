@@ -199,10 +199,12 @@ class Backbone.Views.MapView extends Backbone.View
     return op
 
   baseLineStyle: (feature) =>
+    weight = @zoomLevelConfig.lineWeight[@map.getZoom()] or 2.6
+    unless @mapHasData then weight += .2
     {
-      weight: @zoomLevelConfig.lineWeight[@map.getZoom()] or 2.6
+      weight: weight
       opacity: 1
-      color: if @mapHasData then 'white' else '#7e7e7e'
+      color: if @mapHasData then 'white' else '#3c4f6b'
       fillOpacity: 0
     }
 
