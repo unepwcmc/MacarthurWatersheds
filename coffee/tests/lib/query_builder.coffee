@@ -161,20 +161,25 @@ test('if the tab is set to `change` and the filter lens is set,
 test('if the tab is set to `future_threats` and the subject 
   is set, `buildQuery` should be called', ->
 
-  regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
+  config = MacArthur.CONFIG
+  regions = new Backbone.Collections.RegionCollection config.regions
+
   filter = new Backbone.Models.Filter(
     region: regions.models[0]
     tab: 'future_threats'
+    subject: config.subjects[0].selector
+    agrCommDevLevel: config.agrCommDevLevels[0].selector
+    lens: config.lenses[config.subjects[1].selector][0].selector
+    level: config.levels[0].selector
   )
   buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
   
   queryBuiler = new MacArthur.QueryBuilder(filter)
   tabView = new Backbone.Views.TabView( filter: filter )
-  filter.set('subject', MacArthur.CONFIG.subjects[1].selector)
+  filter.set('subject', config.subjects[1].selector)
 
   try
     assert.strictEqual(
-      # TODO: why it is called twice???
       buildQuerySpy.callCount, 1,
       "Expected the buildQuery to be called after updateFilterQuery"
     )
