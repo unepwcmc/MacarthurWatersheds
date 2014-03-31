@@ -4,18 +4,6 @@ window.Backbone.Views ||= {}
 class Backbone.Views.MapView extends Backbone.View
   template: Handlebars.templates['map']
 
-  zoomLevelConfig: 
-    lineWeight:
-      '1':   .8
-      '2':  1
-      '3':  1.2
-      '4':  1.4
-      '5':  1.6
-      '6':  1.8
-      '7':  2
-      '9':  2.2
-      '10': 2.4
-
   initialize: (options) ->
     @filter = options.filter
     @initBaseLayer()
@@ -33,6 +21,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   initBaseLayer: ->
     @mapHasData = no
+    @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
@@ -199,10 +188,8 @@ class Backbone.Views.MapView extends Backbone.View
     return op
 
   baseLineStyle: (feature) =>
-    weight = @zoomLevelConfig.lineWeight[@map.getZoom()] or 2.6
-    unless @mapHasData then weight += .2
     {
-      weight: weight
+      weight: @lineWeight @map.getZoom()
       opacity: 1
       color: if @mapHasData then 'white' else '#3c4f6b'
       fillOpacity: 0

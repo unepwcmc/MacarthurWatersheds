@@ -525,20 +525,6 @@
 
     MapView.prototype.template = Handlebars.templates['map'];
 
-    MapView.prototype.zoomLevelConfig = {
-      lineWeight: {
-        '1': .8,
-        '2': 1,
-        '3': 1.2,
-        '4': 1.4,
-        '5': 1.6,
-        '6': 1.8,
-        '7': 2,
-        '9': 2.2,
-        '10': 2.4
-      }
-    };
-
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.initBaseLayer();
@@ -558,6 +544,7 @@
 
     MapView.prototype.initBaseLayer = function() {
       this.mapHasData = false;
+      this.lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6]);
       this.map = L.map('map', {
         scrollWheelZoom: false
       }).setView([0, 0], 2);
@@ -800,13 +787,8 @@
     };
 
     MapView.prototype.baseLineStyle = function(feature) {
-      var weight;
-      weight = this.zoomLevelConfig.lineWeight[this.map.getZoom()] || 2.6;
-      if (!this.mapHasData) {
-        weight += .2;
-      }
       return {
-        weight: weight,
+        weight: this.lineWeight(this.map.getZoom()),
         opacity: 1,
         color: this.mapHasData ? 'white' : '#3c4f6b',
         fillOpacity: 0
