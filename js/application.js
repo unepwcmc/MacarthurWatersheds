@@ -925,7 +925,7 @@
 
     ScenarioSelectorView.prototype.onClose = function() {};
 
-    ScenarioSelectorView.prototype.setScenario = function() {
+    ScenarioSelectorView.prototype.setScenario = function(event) {
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
       return this.filter.set('scenario', scenarioName);

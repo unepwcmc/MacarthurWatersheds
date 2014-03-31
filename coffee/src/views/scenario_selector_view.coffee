@@ -36,7 +36,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
 
   onClose: ->
 
-  setScenario: ->
+  setScenario: (event) ->
     scenarioName = $(event.target).find(':selected').attr('value')
     @filter.set('scenario', scenarioName)
     
