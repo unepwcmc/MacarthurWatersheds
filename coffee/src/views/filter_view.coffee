@@ -16,9 +16,10 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     @render()
 
   render: ->
+    subjects = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'subject')
     @$el.html(@template(
       thisView: @
-      subjects: MacArthur.CONFIG.subjects
+      subjects: subjects
       showLensSelector: @showLensSelector()
       showScenarioSelector: @showScenarioSelector()
       showOtherSelectors: @showOtherSelectors()

@@ -153,6 +153,19 @@
     ]
   };
 
+  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural) {
+    var collection_name;
+    collection_name = plural || ("" + name + "s");
+    return _.map(MacArthur.CONFIG[collection_name], function(element) {
+      if (filter.get(name) === element.selector) {
+        element.active = true;
+      } else {
+        element.active = false;
+      }
+      return element;
+    });
+  };
+
 }).call(this);
 
 (function() {
@@ -391,16 +404,7 @@
 
     TabView.prototype.render = function() {
       var tabs;
-      tabs = _.map(this.config, (function(_this) {
-        return function(tab) {
-          if (_this.filter.get('tab') === tab.selector) {
-            tab.active = true;
-          } else {
-            tab.active = false;
-          }
-          return tab;
-        };
-      })(this));
+      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'tab');
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
@@ -914,16 +918,7 @@
 
     ScenarioSelectorView.prototype.render = function() {
       var scenarios, theSelect;
-      scenarios = _.map(this.config, (function(_this) {
-        return function(scenario) {
-          if (_this.filter.get('scenario') === scenario.selector) {
-            scenario.selected = true;
-          } else {
-            scenario.selected = false;
-          }
-          return scenario;
-        };
-      })(this));
+      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario');
       this.$el.html(this.template({
         filter: this.filter,
         scenarios: scenarios
@@ -1342,9 +1337,11 @@
     };
 
     FilterView.prototype.render = function() {
+      var subjects;
+      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'subject');
       this.$el.html(this.template({
         thisView: this,
-        subjects: MacArthur.CONFIG.subjects,
+        subjects: subjects,
         showLensSelector: this.showLensSelector(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),

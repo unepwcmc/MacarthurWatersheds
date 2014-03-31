@@ -61,6 +61,6 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     )
     @sidePanel.showView(view)
     @map.initQueryLayer(geo, region)
-    
 
+  
 

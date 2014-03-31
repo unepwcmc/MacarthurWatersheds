@@ -13,14 +13,7 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     @render()
 
   render: ->
-    tabs = _.map(@config, (tab) =>
-      if @filter.get('tab') is tab.selector
-        tab.active = true
-      else
-        tab.active = false
-      tab
-    )
-
+    tabs = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'tab')
     @$el.html(@template(
       thisView: @
       filter: @filter
