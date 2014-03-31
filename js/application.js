@@ -654,20 +654,9 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, p, range;
-      d = this.querydata[feature];
-      p = d[this.styleValueField] - this.min[this.styleValueField];
-      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
-      if (p >= this.min[this.styleValueField] + range * 2) {
-        return '#e6550d';
-      }
-      if (p >= this.min[this.styleValueField] + range) {
-        return '#fdae6b';
-      }
-      if (p >= this.min[this.styleValueField]) {
-        return '#fee6ce';
-      }
-      return '#fff';
+      var color;
+      color = d3.scale.linear().domain([this.min[this.styleValueField], this.max[this.styleValueField]]).range(["#d0d1e6", "#023858"]);
+      return color(this.querydata[feature][this.styleValueField]);
     };
 
     MapView.prototype.filterFeatureLevel = function(id) {
