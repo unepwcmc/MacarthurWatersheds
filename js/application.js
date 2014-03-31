@@ -382,16 +382,7 @@
 
     TabView.prototype.render = function() {
       var tabs;
-      tabs = _.map(this.config, (function(_this) {
-        return function(tab) {
-          if (_this.filter.get('tab') === tab.selector) {
-            tab.active = true;
-          } else {
-            tab.active = false;
-          }
-          return tab;
-        };
-      })(this));
+      tabs = this.setActiveElement('tab');
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
@@ -904,16 +895,7 @@
 
     ScenarioSelectorView.prototype.render = function() {
       var scenarios, theSelect;
-      scenarios = _.map(this.config, (function(_this) {
-        return function(scenario) {
-          if (_this.filter.get('scenario') === scenario.selector) {
-            scenario.selected = true;
-          } else {
-            scenario.selected = false;
-          }
-          return scenario;
-        };
-      })(this));
+      scenarios = this.setActiveElement('scenario');
       this.$el.html(this.template({
         filter: this.filter,
         scenarios: scenarios
@@ -1332,9 +1314,11 @@
     };
 
     FilterView.prototype.render = function() {
+      var subjects;
+      subjects = this.setActiveElement('subject');
       this.$el.html(this.template({
         thisView: this,
-        subjects: MacArthur.CONFIG.subjects,
+        subjects: subjects,
         showLensSelector: this.showLensSelector(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
@@ -1437,6 +1421,9 @@
       this.getGeometries = __bind(this.getGeometries, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
+      _.extend(Backbone.View.prototype, {
+        setActiveElement: this.setActiveElement
+      });
       this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.filter = new Backbone.Models.Filter();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
@@ -1493,6 +1480,21 @@
       });
       this.sidePanel.showView(view);
       return this.map.initQueryLayer(geo, region);
+    };
+
+    MainController.prototype.setActiveElement = function(name, plural) {
+      var collection_name;
+      collection_name = plural || ("" + name + "s");
+      return _.map(MacArthur.CONFIG[collection_name], (function(_this) {
+        return function(element) {
+          if (_this.filter.get(name) === element.selector) {
+            element.active = true;
+          } else {
+            element.active = false;
+          }
+          return element;
+        };
+      })(this));
     };
 
     return MainController;

@@ -13,13 +13,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
     @render()
 
   render: ->
-    scenarios = _.map(@config, (scenario) =>
-      if @filter.get('scenario') is scenario.selector
-        scenario.selected = true
-      else
-        scenario.selected = false
-      scenario
-    )
+    scenarios = @setActiveElement('scenario')
     @$el.html(@template(
       filter: @filter
       scenarios: scenarios
