@@ -508,6 +508,7 @@
 
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
+      this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.setPressureFill = __bind(this.setPressureFill, this);
       this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
@@ -523,6 +524,20 @@
     }
 
     MapView.prototype.template = Handlebars.templates['map'];
+
+    MapView.prototype.zoomLevelConfig = {
+      lineWeight: {
+        '1': .8,
+        '2': 1,
+        '3': 1.2,
+        '4': 1.4,
+        '5': 1.6,
+        '6': 1.8,
+        '7': 2,
+        '9': 2.2,
+        '10': 2.4
+      }
+    };
 
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
@@ -542,6 +557,7 @@
     };
 
     MapView.prototype.initBaseLayer = function() {
+      this.mapHasData = false;
       this.map = L.map('map', {
         scrollWheelZoom: false
       }).setView([0, 0], 2);
@@ -566,7 +582,12 @@
         style: this.baseLineStyle
       }).addTo(this.map);
       this.queryLayer;
-      return this.map.fitBounds(regionBounds);
+      this.map.fitBounds(regionBounds);
+      return this.map.on('zoomend', (function(_this) {
+        return function() {
+          return _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
+        };
+      })(this));
     };
 
     MapView.prototype.bindPopup = function(feature, layer) {
@@ -601,6 +622,10 @@
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
           }).addTo(_this.map);
+          if (!_this.mapHasData) {
+            _this.mapHasData = true;
+            _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
+          }
           return _this.queryLayerInteriors.bringToFront();
         };
       })(this));
@@ -776,9 +801,9 @@
 
     MapView.prototype.baseLineStyle = function(feature) {
       return {
-        weight: 1.2,
+        weight: this.zoomLevelConfig.lineWeight[this.map.getZoom()] || 2.6,
         opacity: 1,
-        color: 'white',
+        color: this.mapHasData ? 'white' : '#7e7e7e',
         fillOpacity: 0
       };
     };
