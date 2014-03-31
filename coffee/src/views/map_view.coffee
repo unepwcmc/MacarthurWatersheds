@@ -20,6 +20,8 @@ class Backbone.Views.MapView extends Backbone.View
     )
 
   initBaseLayer: ->
+    @mapHasData = no
+    @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
@@ -37,6 +39,7 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     @queryLayer
     @map.fitBounds regionBounds
+    @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
   
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
@@ -67,6 +70,9 @@ class Backbone.Views.MapView extends Backbone.View
         style: @queryPolyStyle
         onEachFeature: @bindPopup
       }).addTo(@map)
+      unless @mapHasData
+        @mapHasData = yes
+        @queryLayerInteriors.setStyle @baseLineStyle
       @queryLayerInteriors.bringToFront()
     )
 
@@ -178,11 +184,11 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setAgrCommDevFill op, d    
     return op
 
-  baseLineStyle: (feature) ->
+  baseLineStyle: (feature) =>
     {
-      weight: 1.2,
-      opacity: 1,
-      color: 'white',
+      weight: @lineWeight @map.getZoom()
+      opacity: 1
+      color: if @mapHasData then 'white' else '#3c4f6b'
       fillOpacity: 0
     }
 
