@@ -599,7 +599,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + w.pressure_index + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
+      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + (w.pressure_index.toFixed(2)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {

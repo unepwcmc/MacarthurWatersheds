@@ -48,7 +48,7 @@ class Backbone.Views.MapView extends Backbone.View
     layer.bindPopup(
       """
       Value: #{w.value.toFixed(2)} <br>
-      Pressure Index: #{w.pressure_index} <br>
+      Pressure Index: #{w.pressure_index.toFixed(2)} <br>
       Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
       """,
       popupOptions
