@@ -432,7 +432,11 @@
       this.filter.unset('lens');
       this.filter.unset('scenario');
       this.filter.unset('level');
-      return this.filter.unset('agrCommDevLevel');
+      this.filter.unset('agrCommDevLevel');
+      this.filter.unset('protection');
+      this.filter.unset('protectionLevel');
+      this.filter.unset('pressure');
+      return this.filter.unset('pressureLevel');
     };
 
     return TabView;
