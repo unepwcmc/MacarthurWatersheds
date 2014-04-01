@@ -14,9 +14,11 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
 
   render: ->
     scenarios = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'scenario')
+    defaultOption = if @filter.get('scenario')? then no else yes
     @$el.html(@template(
       filter: @filter
       scenarios: scenarios
+      defaultOption: defaultOption
     ))
 
     # SORRY
