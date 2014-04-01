@@ -11,22 +11,42 @@ class window.MacArthur.QueryBuilder
   
       """
         SELECT d.watershed_id, d.value, percentage as protection_percentage,
-        pressure.value as pressure_index 
+        pressure.value as pressure_index #{@includeComprovValueClause()}
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
         LEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id 
         LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
         LEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id 
         LEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id 
+        #{@buildComprovValueClause()} 
         WHERE r.code = '#{regionCode}' 
         AND #{@buildSubjectClause()} 
         AND #{@buildLensClause()}
-        AND metric = 'imp' 
+        AND #{@buildMetricClause()} 
         AND #{@buildScenarioClause()} 
         AND type_data = 'value'
       """
     else
       @filter.get('query')
+  
+  includeComprovValueClause: ->
+    if @filter.get('tab') == 'future_threats'
+      ", comprov_value "
+    else
+      " "
+
+  buildComprovValueClause: ->
+    if @filter.get('tab') == 'future_threats'
+      """
+        LEFT JOIN (
+        SELECT d.watershed_id, d.value AS comprov_value FROM 
+        macarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
+        WHERE lens.type = 'comprov' AND metric = 'change' 
+        AND #{@buildScenarioClause('comprov')} AND type_data = 'value' ) s 
+        ON s.watershed_id = d.watershed_id 
+      """
+    else
+      ""
 
   buildSubjectClause: ->
     subjectCode = @filter.get('subject')
@@ -34,24 +54,35 @@ class window.MacArthur.QueryBuilder
       'biodiversity': 'bd',
       'ecosystem': 'ef'
     }
-    if @filter.get('tab') == 'future_threats'
-      name = 'ef'
-    else
-      name = subjectsMap[subjectCode]
+    name = subjectsMap[subjectCode]
     unless name?
       throw new Error("Error building query, unknown subject '#{subjectCode}'")
     "lens.name = '#{name}' "
 
-  buildScenarioClause: ->
+  buildScenarioClause: (originSelect) ->
     scenario = @filter.get('scenario')
-    if scenario?
-      return "scenario = '#{scenario}' "
-    else 
-      return "scenario = 'bas' "
+    tab = @filter.get('tab')
+    if tab == 'future_threats'
+      if originSelect == 'comprov'
+        return "scenario = '#{scenario}' "
+      else 
+        return "scenario = 'bas' "
+    else
+      if scenario?
+        return "scenario = '#{scenario}' "
+      else 
+        return "scenario = 'bas' "
 
   buildLensClause: ->
     lensCode = @filter.get('lens')
     "lens.type = '#{lensCode}' "
+
+  buildMetricClause: ->
+    tab = @filter.get('tab')
+    if tab == 'change'
+      "metric = 'change' "
+    else
+      "metric = 'imp' "
 
   hasLens: (subjectCode, lensCode) ->
     if @filter.get('tab') == 'future_threats'
@@ -78,7 +109,7 @@ class window.MacArthur.QueryBuilder
 
   tabLacksSelections: ->
     tab = @filter.get('tab')
-    if tab == 'now' then return no
+    if tab == 'now' or tab == 'future_threats' then return no
     scenarioCode = @filter.get('scenario')
     subjectCode = @filter.get('subject')
     lensCode = @filter.get('lens')

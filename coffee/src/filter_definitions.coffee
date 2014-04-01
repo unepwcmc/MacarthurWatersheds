@@ -13,8 +13,8 @@ MacArthur.CONFIG =
     { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ] }
   ]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity"}
-    { selector: "ecosystem", name: "Ecosystem"}
+    { selector: "biodiversity", name: "Biodiversity importance"}
+    { selector: "ecosystem", name: "Ecosystem function"}
   ],
   lenses: {
     biodiversity: [
@@ -60,3 +60,13 @@ MacArthur.CONFIG =
     { selector: "low", name: "Low" }
     { selector: "negative", name: "Decrease" }
   ]
+
+MacArthur.getFilterOptionsWithSelectedSet = (filter, name, plural) ->
+  collection_name = plural or "#{name}s"
+  _.map(MacArthur.CONFIG[collection_name], (element) ->
+    if filter.get(name) is element.selector
+      element.active = true
+    else
+      element.active = false
+    element
+  )

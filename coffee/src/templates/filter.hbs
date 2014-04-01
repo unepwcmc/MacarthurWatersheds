@@ -1,7 +1,7 @@
 <div class="subjects">
   <ul>
     {{# each subjects}}
-    <li data-subject="{{selector}}">{{name}}</li>
+    <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{name}}</li>
     {{/each}}
   </ul>
 </div>
@@ -20,9 +20,6 @@
 
 {{#if showOtherSelectors}}
   {{addSubViewTo thisView 'LevelSelectorView' filter=filter}}
-{{/if}}
-
-{{#if showOtherSelectors}}
   {{addSubViewTo thisView 'ProtectionOptionView' filter=filter}}
   {{addSubViewTo thisView 'PressureOptionView' filter=filter}}
 {{/if}}

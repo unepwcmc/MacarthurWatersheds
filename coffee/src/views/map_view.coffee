@@ -11,6 +11,7 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
+    @listenTo(@filter, 'change:agrCommDevLevel', @updateQueryLayerStyle)
 
   sortDataBy: (data, field) ->
     _.map(_.sortBy(data, field), (row, i) -> 
@@ -18,7 +19,12 @@ class Backbone.Views.MapView extends Backbone.View
       row
     )
 
+  setZeroValueIndex: () ->
+    @zeroValueIndex = _.findIndex(@sortDataBy(@data, 'value'), (d) -> d.value >= 0)
+
   initBaseLayer: ->
+    @mapHasData = no
+    @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
     @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
@@ -36,6 +42,7 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     @queryLayer
     @map.fitBounds regionBounds
+    @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
   
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
@@ -44,7 +51,7 @@ class Backbone.Views.MapView extends Backbone.View
     layer.bindPopup(
       """
       Value: #{w.value.toFixed(2)} <br>
-      Pressure Index: #{w.pressure_index} <br>
+      Pressure Index: #{w.pressure_index.toFixed(2)} <br>
       Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
       """,
       popupOptions
@@ -58,12 +65,18 @@ class Backbone.Views.MapView extends Backbone.View
     unless q? then return
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
       @data = @sortDataBy(data.rows, 'value')
+      unless @data.length > 0
+        throw new Error("Data should not be empty, check your query")
       @setMinMax()
+      if @filter.get('tab') == 'change' then @setZeroValueIndex()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
       }).addTo(@map)
+      unless @mapHasData
+        @mapHasData = yes
+        @queryLayerInteriors.setStyle @baseLineStyle
       @queryLayerInteriors.bringToFront()
     )
 
@@ -71,10 +84,12 @@ class Backbone.Views.MapView extends Backbone.View
     @max = {
       'value': @data[@data.length - 1].value
       'rank': @data.length
+      'agrCommDev': _.max(@data, (o) -> o.comprov_value).comprov_value
     }
     @min = {
       'value': @data[0].value
       'rank': 0
+      'agrCommDev': 0
     }
     @
 
@@ -84,7 +99,8 @@ class Backbone.Views.MapView extends Backbone.View
         rank: x.rank,
         value: x.value, 
         protectionPercentage: x.protection_percentage,
-        pressureIndex: x.pressure_index
+        pressureIndex: x.pressure_index,
+        agrCommDevValue: x.comprov_value or ""
       }])
     )
 
@@ -94,13 +110,14 @@ class Backbone.Views.MapView extends Backbone.View
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
-    d = @querydata[feature]
-    p = d[@styleValueField] - @min[@styleValueField]
-    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
-    if p >= @min[@styleValueField] + range * 2  then return '#e6550d'
-    if p >= @min[@styleValueField] + range      then return '#fdae6b'
-    if p >= @min[@styleValueField]              then return '#fee6ce'
-    '#fff'
+    if @filter.get('tab') == 'change'
+      domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
+      range = ["#2166ac", "#f7f7f7", "#b2182b"]
+    else
+      domain = [@min[@styleValueField], @max[@styleValueField]]
+      range = ["#fddbc7", "#b2182b"]
+    color = d3.scale.linear().domain(domain).range(range)
+    color(@querydata[feature][@styleValueField])
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
@@ -132,6 +149,25 @@ class Backbone.Views.MapView extends Backbone.View
         op = 0
     op
 
+  setAgrCommDevFill: (op, d) =>
+    agrCommDevLevel = @filter.get('agrCommDevLevel')
+    min = @min.agrCommDev
+    d = d.agrCommDevValue
+    range = (@max.agrCommDev - min) / @categories
+    if agrCommDevLevel == 'high'
+      unless d >= min + range * 2
+        op = 0 
+    if agrCommDevLevel == 'medium'
+      unless d >= min + range and d < min + range * 2
+        op = 0  
+    if agrCommDevLevel == 'low'
+      unless d >= min and d < min + range
+        op = 0  
+    if agrCommDevLevel == 'negative'
+      unless d < 0
+        op = 0
+    op
+
   setPressureFill: (op, d) =>
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
@@ -152,13 +188,15 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setProtectionFill op, d
     if @filter.get('pressure') == yes
       op = @setPressureFill op, d
+    if @filter.get('agrCommDevLevel')?
+      op = @setAgrCommDevFill op, d    
     return op
 
-  baseLineStyle: (feature) ->
+  baseLineStyle: (feature) =>
     {
-      weight: 1.2,
-      opacity: 1,
-      color: 'white',
+      weight: @lineWeight @map.getZoom()
+      opacity: 1
+      color: if @mapHasData then 'white' else '#3c4f6b'
       fillOpacity: 0
     }
 
