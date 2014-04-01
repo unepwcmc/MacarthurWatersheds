@@ -25,7 +25,7 @@ class Backbone.Views.MapView extends Backbone.View
   initBaseLayer: ->
     @mapHasData = no
     @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
-    @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
+    @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 3)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
       attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
