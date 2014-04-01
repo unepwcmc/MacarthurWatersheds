@@ -670,7 +670,8 @@
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index,
-              agrCommDevValue: x.comprov_value || ""
+              agrCommDevValue: x.comprov_value || "",
+              lake: x.lake || false
             }
           ];
         };
@@ -839,7 +840,7 @@
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: fillOpacity,
+        fillOpacity: feature.properties.lake ? 0 : fillOpacity,
         fillColor: fillColor
       };
     };
