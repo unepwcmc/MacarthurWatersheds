@@ -958,6 +958,7 @@
     ScenarioSelectorView.prototype.setScenario = function(event) {
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
+      console.log(scenarioName);
       return this.filter.set('scenario', scenarioName);
     };
 
