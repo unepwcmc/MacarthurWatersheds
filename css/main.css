@@ -241,3 +241,11 @@ div.secondary-filter {
   border-top: 1px solid #eee; }
   div.secondary-filter h2 {
     margin-top: 30px; }
+
+div.scenario-container {
+  background: #f7f7f7;
+  padding: 10px;
+  margin-top: 30px; }
+  div.scenario-container h1 {
+    margin-top: 0;
+    color: #fff; }
