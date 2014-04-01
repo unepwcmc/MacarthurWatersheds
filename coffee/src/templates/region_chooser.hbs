@@ -1,6 +1,9 @@
 <h1>Welcome to the Watershed exploration tool</h1>
 <ul class="regions">
   {{#each regions}}
-    <li><div class="region-area" data-region-code="{{code}}"></div><div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div></li>
+    <li>
+      <div class="region-area" data-region-code="{{code}}" style="background-image: url(/imgs/{{code}}.png);"></div>
+      <div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div>
+    </li>
   {{/each}}
 </ul>

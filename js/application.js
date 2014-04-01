@@ -20,13 +20,13 @@
         name: "Andes",
         bounds: [[-22, -57], [14, -83]]
       }, {
-        code: "MEK",
-        name: "Mekong",
-        bounds: [[6, 110], [35, 90]]
-      }, {
         code: "GLR",
         name: "African Great Lakes",
         bounds: [[-18, 30], [10, 40]]
+      }, {
+        code: "MEK",
+        name: "Mekong",
+        bounds: [[6, 110], [35, 90]]
       }
     ],
     subjects: [
