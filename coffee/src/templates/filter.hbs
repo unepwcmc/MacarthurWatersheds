@@ -6,16 +6,16 @@
   </ul>
 </div>
 
-{{#if showScenarioSelector}}
-  {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
-{{/if}}
 
 {{#if showAgrCommDevSelector}}
+  <div class="scenario-container">
+  {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
   {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
-{{/if}}
-
-{{#if showLensSelector}}
-  {{addSubViewTo thisView 'LensSelectorView' filter=filter}}
+  </div>
+{{else}}
+  {{#if showLensSelector}}
+    {{addSubViewTo thisView 'LensSelectorView' filter=filter}}
+  {{/if}}
 {{/if}}
 
 {{#if showOtherSelectors}}

@@ -29,40 +29,42 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   var buffer = "", stack1, options;
-  buffer += "\n  ";
+  buffer += "\n  <div class=\"scenario-container\">\n  ";
   options = {hash:{
     'filter': ((depth0 && depth0.filter))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ScenarioSelectorView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ScenarioSelectorView", options)))
-    + "\n";
+    + "\n  ";
+  options = {hash:{
+    'filter': ((depth0 && depth0.filter))
+  },data:data};
+  buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "LevelSelectorAgrCommDevView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "LevelSelectorAgrCommDevView", options)))
+    + "\n  </div>\n";
   return buffer;
   }
 
 function program6(depth0,data) {
   
-  var buffer = "", stack1, options;
+  var buffer = "", stack1;
   buffer += "\n  ";
-  options = {hash:{
-    'filter': ((depth0 && depth0.filter))
-  },data:data};
-  buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "LevelSelectorAgrCommDevView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "LevelSelectorAgrCommDevView", options)))
-    + "\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
   return buffer;
   }
-
-function program8(depth0,data) {
+function program7(depth0,data) {
   
   var buffer = "", stack1, options;
-  buffer += "\n  ";
+  buffer += "\n    ";
   options = {hash:{
     'filter': ((depth0 && depth0.filter))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "LensSelectorView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "LensSelectorView", options)))
-    + "\n";
+    + "\n  ";
   return buffer;
   }
 
-function program10(depth0,data) {
+function program9(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n  ";
@@ -87,17 +89,11 @@ function program10(depth0,data) {
   buffer += "<div class=\"subjects\">\n  <ul>\n    ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </ul>\n</div>\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  buffer += "\n  </ul>\n</div>\n\n\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showOtherSelectors), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showOtherSelectors), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n";
   return buffer;
@@ -402,10 +398,10 @@ function program2(depth0,data) {
   return "selected";
   }
 
-  buffer += "<div class=\"scenario-container\">\n	<h1>Scenario of change</h1>\n\n	<select id=\"scenario-select\" class='select-box'>\n	  <option value=\"\" disabled selected>Select a scenario</option>\n	  ";
+  buffer += "  <h1>Scenario of change</h1>\n\n	<select id=\"scenario-select\" class='select-box'>\n	  <option value=\"\" disabled selected>Select a scenario</option>\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scenarios), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</select>\n\n</div>\n";
+  buffer += "\n	</select>\n\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["tab"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
