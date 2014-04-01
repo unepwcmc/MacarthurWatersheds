@@ -877,7 +877,7 @@
     RegionChooserView.prototype.className = 'modal region-chooser';
 
     RegionChooserView.prototype.events = {
-      "click .regions li": "triggerChooseRegion"
+      "click .regions li div": "triggerChooseRegion"
     };
 
     RegionChooserView.prototype.initialize = function(options) {

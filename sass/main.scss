@@ -146,27 +146,29 @@ ul.regions {
 	list-style-type: none;
 	width: 100%;
 	li {
-		padding: 5px 10px;
-		float: left;
-		width: 30%;
-		margin-right: 5%;
-		background: $blue;
-		color: #fff;
-		text-align: center;
-		margin-bottom: 10px;
-    cursor: pointer;
-    @include border-radius(5px);
-		&:last-child {
-			margin-bottom: 0;
-			margin-right: 0;
-		}
-    &:hover, &:active {
-      -webkit-transition: all 0.5s ease;
-      -moz-transition: all 0.5s ease;
-      -ms-transition: all 0.5s ease;
-      -o-transition: all 0.5s ease;
-      transition: all 0.5s ease;
-      background: $hover;
+    div.region-link {
+      padding: 5px 10px;
+      float: left;
+      width: 30%;
+      margin-right: 5%;
+      background: $blue;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      @include border-radius(5px);
+      &:last-child {
+        margin-bottom: 0;
+        margin-right: 0;
+      }
+      &:hover, &:active {
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+        background: $hover;
+      }
     }
 	}
 }

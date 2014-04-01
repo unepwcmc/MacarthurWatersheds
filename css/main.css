@@ -116,7 +116,7 @@ ul.regions {
   padding: 5%;
   list-style-type: none;
   width: 100%; }
-  ul.regions li {
+  ul.regions li div.region-link {
     padding: 5px 10px;
     float: left;
     width: 30%;
@@ -130,10 +130,10 @@ ul.regions {
     -moz-border-radius: 5px;
     -ms-border-radius: 5px;
     border-radius: 5px; }
-    ul.regions li:last-child {
+    ul.regions li div.region-link:last-child {
       margin-bottom: 0;
       margin-right: 0; }
-    ul.regions li:hover, ul.regions li:active {
+    ul.regions li div.region-link:hover, ul.regions li div.region-link:active {
       -webkit-transition: all 0.5s ease;
       -moz-transition: all 0.5s ease;
       -ms-transition: all 0.5s ease;
