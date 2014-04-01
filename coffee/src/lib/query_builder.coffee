@@ -11,7 +11,8 @@ class window.MacArthur.QueryBuilder
   
       """
         SELECT d.watershed_id, d.value, percentage as protection_percentage,
-        pressure.value as pressure_index #{@includeComprovValueClause()}
+        pressure.value as pressure_index #{@includeComprovValueClause()},
+        w.lake 
         FROM macarthur_region r 
         RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
         LEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id 
