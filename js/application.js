@@ -432,7 +432,11 @@
       this.filter.unset('lens');
       this.filter.unset('scenario');
       this.filter.unset('level');
-      return this.filter.unset('agrCommDevLevel');
+      this.filter.unset('agrCommDevLevel');
+      this.filter.unset('protection');
+      this.filter.unset('protectionLevel');
+      this.filter.unset('pressure');
+      return this.filter.unset('pressureLevel');
     };
 
     return TabView;
@@ -486,7 +490,7 @@
             'width': '100%'
           });
         };
-      })(this), 100);
+      })(this), 20);
     };
 
     BaseSelectorView.prototype.setLevel = function(event) {
@@ -670,7 +674,8 @@
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index,
-              agrCommDevValue: x.comprov_value || ""
+              agrCommDevValue: x.comprov_value || "",
+              lake: x.lake || false
             }
           ];
         };
@@ -839,7 +844,7 @@
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: fillOpacity,
+        fillOpacity: feature.properties.lake ? 0 : fillOpacity,
         fillColor: fillColor
       };
     };
@@ -947,9 +952,14 @@
         defaultOption: defaultOption
       }));
       theSelect = this.$el.find('.select-box');
-      setTimeout(function() {
-        return theSelect.customSelect();
-      }, 100);
+      setTimeout((function(_this) {
+        return function() {
+          theSelect.customSelect();
+          return _this.$el.find('.customSelectInner').css({
+            'width': '100%'
+          });
+        };
+      })(this), 20);
       return this;
     };
 
@@ -1019,9 +1029,14 @@
         subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
       theSelect = this.$el.find('.select-box');
-      setTimeout(function() {
-        return theSelect.customSelect();
-      }, 100);
+      setTimeout((function(_this) {
+        return function() {
+          theSelect.customSelect();
+          return _this.$el.find('.customSelectInner').css({
+            'width': '100%'
+          });
+        };
+      })(this), 20);
       return this;
     };
 

@@ -23,7 +23,7 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
     setTimeout(=>
       theSelect.customSelect()
       @$el.find('.customSelectInner').css({'width': '100%'})
-    , 100)
+    , 20)
     # /SORRY
 
   setLevel: (event) ->

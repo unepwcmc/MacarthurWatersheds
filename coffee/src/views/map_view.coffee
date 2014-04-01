@@ -96,11 +96,12 @@ class Backbone.Views.MapView extends Backbone.View
   buildQuerydata: (data) =>
     _.object(_.map(data, (x) =>
       [x.watershed_id, {
-        rank: x.rank,
-        value: x.value, 
-        protectionPercentage: x.protection_percentage,
-        pressureIndex: x.pressure_index,
+        rank: x.rank
+        value: x.value
+        protectionPercentage: x.protection_percentage
+        pressureIndex: x.pressure_index
         agrCommDevValue: x.comprov_value or ""
+        lake: x.lake or no
       }])
     )
 
@@ -218,7 +219,7 @@ class Backbone.Views.MapView extends Backbone.View
     {
       weight: 0
       opacity: 0
-      fillOpacity: fillOpacity
+      fillOpacity: if feature.properties.lake then 0 else fillOpacity
       fillColor: fillColor
     }
 

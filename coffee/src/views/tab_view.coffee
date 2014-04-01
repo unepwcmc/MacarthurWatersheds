@@ -37,4 +37,8 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     @filter.unset('scenario')
     @filter.unset('level')
     @filter.unset('agrCommDevLevel')
+    @filter.unset('protection')
+    @filter.unset('protectionLevel')
+    @filter.unset('pressure')
+    @filter.unset('pressureLevel')
     
