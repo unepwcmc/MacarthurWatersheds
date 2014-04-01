@@ -1,4 +1,6 @@
-<h2><input type="checkbox" name="protection" {{#if protection}}checked{{/if}}>Protection</h2>
+<div class="secondary-filter">
+	<h2><input type="checkbox" name="See overlap with Protected Areas (PA)s" {{#if protection}}checked{{/if}}>See overlap with Protected Areas (PA)s</h2>
+</div>
 
 {{#if protection}}
   {{addSubViewTo thisView 'ProtectionSelectorView' filter=filter}}

@@ -31,7 +31,7 @@ header {
   z-index: -99999; }
 
 #side-panel {
-  width: 30%;
+  width: 25%;
   float: left;
   position: absolute;
   top: 50px;
@@ -40,7 +40,7 @@ header {
   background: #fff; }
 
 div.filters {
-  padding: 20px;
+  padding: 30px 20px;
   background: #fff;
   border: 1px solid #FAFAFA;
   color: #9DA2B3; }
@@ -55,11 +55,11 @@ div.filters {
 div.subjects ul {
   margin: 0;
   list-style-type: none;
-  padding-left: 0;
-  width: 80%;
+  padding: 0;
+  width: 100%;
   margin: auto; }
   div.subjects ul li {
-    padding: 5px 10px;
+    padding: 10px 10px;
     width: 100%;
     background: #4dc0dd;
     color: #fff;
@@ -72,7 +72,7 @@ div.subjects ul {
     border-radius: 5px; }
     div.subjects ul li:last-child {
       margin-bottom: 0; }
-    div.subjects ul li:hover, div.subjects ul li:active {
+    div.subjects ul li:hover, div.subjects ul li.active {
       -webkit-transition: all 0.5s ease;
       -moz-transition: all 0.5s ease;
       -ms-transition: all 0.5s ease;
@@ -145,7 +145,6 @@ ul.regions {
   background-color: #000;
   opacity: 0.1; }
 
-
 select option {
   width: 300px; }
 
@@ -156,12 +155,12 @@ select option {
   border: 1px solid #4dc0dd;
   display: inline-block;
   width: 100%;
-  padding: 5px 10px;
+  padding: 0 10px;
   background-image: url(/imgs/icon_macarthur.png);
-  background-position-x: 361px;
+  background-position-x: 295px;
   background-repeat: no-repeat;
-  background-position-y: 15px;
-  background-size: 5%;
+  background-position-y: 12px;
+  background-size: 4%;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
@@ -171,20 +170,24 @@ select option {
 .customSelect.customSelectHover {
   /* Styles for when the select box is hovered */
   background-color: #4dc0dd;
-  color: #fff;
-  background-image: url(/imgs/icon_macarthur.png); }
+  background-image: url(/imgs/icon_macarthur_white.png); }
+  .customSelect.customSelectHover .customSelectInner {
+    color: #fff; }
 
 .customSelect.customSelectOpen {
   /* Styles for when the select box is open */
   background-color: #4dc0dd;
-  color: #fff;
-  background-image: url(/imgs/icon_macarthur.png); }
+  background-image: url(/imgs/icon_macarthur_white.png); }
+  .customSelect.customSelectOpen .customSelectInner {
+    color: #fff; }
 
 .customSelect.customSelectFocus {
   /* Styles for when the select box is in focus */
   background-color: #4dc0dd;
   color: #fff;
   background-image: url(/imgs/icon_macarthur.png); }
+  .customSelect.customSelectFocus .customSelectInner {
+    color: #fff; }
 
 .customSelectInner {
   /* You can style the inner box too */
@@ -206,7 +209,8 @@ ul.tabs {
     cursor: pointer;
     text-transform: uppercase;
     font-weight: 600;
-    width: 33%;
+    font-size: 0.85em;
+    width: 25%;
     text-align: center;
     border-top: 1px solid #43434A;
     border-left: 1px solid #43434A;
@@ -214,6 +218,19 @@ ul.tabs {
     ul.tabs li:first-child {
       border-right: none; }
     ul.tabs li:last-child {
-      border-left: none; }
-    ul.tabs li:hover {
+      border-left: none;
+      width: 50%; }
+    ul.tabs li:hover, ul.tabs li.active {
       background: #202127; }
+
+div.selector {
+  margin-top: 30px;
+  border-top: 1px solid #eee; }
+  div.selector:first-child h1 {
+    margin: 30px 0 10px 0; }
+
+div.secondary-filter {
+  margin-top: 30px;
+  border-top: 1px solid #eee; }
+  div.secondary-filter h2 {
+    margin-top: 30px; }
