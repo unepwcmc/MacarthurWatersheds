@@ -877,7 +877,7 @@
     RegionChooserView.prototype.className = 'modal region-chooser';
 
     RegionChooserView.prototype.events = {
-      "click .regions li div": "triggerChooseRegion"
+      "click .regions .region-area": "triggerChooseRegion"
     };
 
     RegionChooserView.prototype.initialize = function(options) {
@@ -958,7 +958,6 @@
     ScenarioSelectorView.prototype.setScenario = function(event) {
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
-      console.log(scenarioName);
       return this.filter.set('scenario', scenarioName);
     };
 

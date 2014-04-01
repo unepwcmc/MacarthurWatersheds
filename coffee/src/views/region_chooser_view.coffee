@@ -6,7 +6,7 @@ class Backbone.Views.RegionChooserView extends Backbone.View
   className: 'modal region-chooser'
 
   events:
-    "click .regions li div": "triggerChooseRegion"
+    "click .regions .region-area": "triggerChooseRegion"
 
   initialize: (options) ->
     @regions = options.regions
