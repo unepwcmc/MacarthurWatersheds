@@ -23,8 +23,9 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
 
     # SORRY
     theSelect = @$el.find('.select-box')
-    setTimeout(->
+    setTimeout(=>
       theSelect.customSelect()
+      @$el.find('.customSelectInner').css({'width': '100%'})
     , 20)
     # /SORRY
 

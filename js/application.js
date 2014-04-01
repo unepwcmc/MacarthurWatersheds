@@ -947,9 +947,14 @@
         defaultOption: defaultOption
       }));
       theSelect = this.$el.find('.select-box');
-      setTimeout(function() {
-        return theSelect.customSelect();
-      }, 20);
+      setTimeout((function(_this) {
+        return function() {
+          theSelect.customSelect();
+          return _this.$el.find('.customSelectInner').css({
+            'width': '100%'
+          });
+        };
+      })(this), 20);
       return this;
     };
 
@@ -1019,9 +1024,14 @@
         subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
       theSelect = this.$el.find('.select-box');
-      setTimeout(function() {
-        return theSelect.customSelect();
-      }, 20);
+      setTimeout((function(_this) {
+        return function() {
+          theSelect.customSelect();
+          return _this.$el.find('.customSelectInner').css({
+            'width': '100%'
+          });
+        };
+      })(this), 20);
       return this;
     };
 
