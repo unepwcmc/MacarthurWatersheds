@@ -34,8 +34,7 @@ header {
 #map {
   width: 100%;
   height: 100%;
-  float: left;
-  z-index: -99999; }
+  float: left; }
 
 #side-panel {
   width: 25%;
@@ -92,7 +91,7 @@ div.subjects h1 {
 
 .region-chooser {
   width: 50%;
-  height: 250px;
+  height: 325px;
   color: #4dc0dd; }
   .region-chooser h1 {
     margin: 0;
@@ -116,30 +115,47 @@ ul.regions {
   padding: 5%;
   list-style-type: none;
   width: 100%; }
-  ul.regions li div.region-link {
-    padding: 5px 10px;
+  ul.regions li {
     float: left;
     width: 30%;
-    margin-right: 5%;
-    background: #4dc0dd;
-    color: #fff;
-    text-align: center;
-    margin-bottom: 10px;
-    cursor: pointer;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    border-radius: 5px; }
-    ul.regions li div.region-link:last-child {
+    margin-right: 5%; }
+    ul.regions li:last-child {
       margin-bottom: 0;
       margin-right: 0; }
-    ul.regions li div.region-link:hover, ul.regions li div.region-link:active {
-      -webkit-transition: all 0.5s ease;
-      -moz-transition: all 0.5s ease;
-      -ms-transition: all 0.5s ease;
-      -o-transition: all 0.5s ease;
-      transition: all 0.5s ease;
-      background: #359CBB; }
+    ul.regions li div.region-area {
+      background-image: url(/imgs/WAN.png);
+      background-repeat: no-repeat;
+      background-size: 50%;
+      background-position: center;
+      margin: 0 auto 20px auto;
+      height: 150px; }
+      ul.regions li div.region-area:hover, ul.regions li div.region-area:active {
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+        opacity: 0.7; }
+    ul.regions li div.region-area.region-link {
+      padding: 5px 10px;
+      background: #4dc0dd;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      height: 100%;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      border-radius: 5px; }
+      ul.regions li div.region-area.region-link:hover, ul.regions li div.region-area.region-link:active {
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+        background: #359CBB;
+        opacity: 1; }
 
 .disabler {
   z-index: 100;
