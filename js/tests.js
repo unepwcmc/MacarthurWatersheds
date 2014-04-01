@@ -600,6 +600,39 @@
 }).call(this);
 
 (function() {
+  suite('Scenario View');
+
+  test('in the Future Threats tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
+    var filter, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios[1].selector;
+    filter = new Backbone.Models.Filter();
+    scenarioView = new Backbone.Views.ScenarioSelectorView({
+      filter: filter
+    });
+    filter.set('tab', 'future_threats');
+    filter.set('subject', 'biodiversity');
+    scenarioView.$el.find("#scenario-select option[value='" + selector + "']").prop('selected', true);
+    scenarioView.$el.find("#scenario-select").trigger('change');
+    return assert.strictEqual(filter.get('scenario'), selector);
+  });
+
+  test('in the Change tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
+    var filter, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios[1].selector;
+    filter = new Backbone.Models.Filter();
+    scenarioView = new Backbone.Views.ScenarioSelectorView({
+      filter: filter
+    });
+    filter.set('tab', 'change');
+    filter.set('subject', 'biodiversity');
+    scenarioView.$el.find("#scenario-select option[value='" + selector + "']").prop('selected', true);
+    scenarioView.$el.find("#scenario-select").trigger('change');
+    return assert.strictEqual(filter.get('scenario'), selector);
+  });
+
+}).call(this);
+
+(function() {
   suite('Tab View');
 
   test('when the `change` tab selector and the `subject` selector have been clicked, the view re-renders and the scenario subview is rendered', function() {

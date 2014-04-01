@@ -681,7 +681,6 @@
     MapView.prototype.getColor = function(feature) {
       var color, domain, range;
       if (this.filter.get('tab') === 'change') {
-        console.log(this.min[this.styleValueField]);
         domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
         range = ["#2166ac", "#f7f7f7", "#b2182b"];
       } else {
@@ -934,11 +933,13 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var scenarios, theSelect;
+      var defaultOption, scenarios, theSelect;
       scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario');
+      defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
         filter: this.filter,
-        scenarios: scenarios
+        scenarios: scenarios,
+        defaultOption: defaultOption
       }));
       theSelect = this.$el.find('.select-box');
       setTimeout(function() {
