@@ -33,7 +33,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     theSelect = @$el.find('.select-box')
     setTimeout(->
       theSelect.customSelect()
-    , 100)
+    , 20)
     # /SORRY
     
     return @

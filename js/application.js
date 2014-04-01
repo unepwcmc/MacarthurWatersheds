@@ -486,7 +486,7 @@
             'width': '100%'
           });
         };
-      })(this), 100);
+      })(this), 20);
     };
 
     BaseSelectorView.prototype.setLevel = function(event) {
@@ -949,7 +949,7 @@
       theSelect = this.$el.find('.select-box');
       setTimeout(function() {
         return theSelect.customSelect();
-      }, 100);
+      }, 20);
       return this;
     };
 
@@ -958,7 +958,6 @@
     ScenarioSelectorView.prototype.setScenario = function(event) {
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
-      console.log(scenarioName);
       return this.filter.set('scenario', scenarioName);
     };
 
@@ -1022,7 +1021,7 @@
       theSelect = this.$el.find('.select-box');
       setTimeout(function() {
         return theSelect.customSelect();
-      }, 100);
+      }, 20);
       return this;
     };
 
