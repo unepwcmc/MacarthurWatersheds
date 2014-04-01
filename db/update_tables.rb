@@ -13,17 +13,17 @@ CONSERVATION = ['nocons']
 REGIONS = ['WAN', 'MEK', 'GLR']
 
 def self.regions 
-  REGIONS.each do |region|
+
+end
+
+def self.geometry_data
+ REGIONS.each do |region|
     sql = <<-SQL
       INSERT INTO macarthur_region(code)
       VALUES ('#{region}')
       SQL
     puts sql
     CartodbQuery.run(sql)
-end
-
-def self.geometry_data
-  
     sql = <<-SQL 
       INSERT INTO macarthur_watershed(the_geom, name,region_id)
       SELECT ws.the_geom, ws_id, mr.cartodb_id 
@@ -33,6 +33,14 @@ def self.geometry_data
     puts sql
     CartodbQuery.run(sql)
   end
+  sql = <<-SQL 
+      UPDATE macarthur_watershed w
+      SET lake = true
+      FROM macarthur_original_lakes l
+      WHERE w.name = l.cell_id AND l.lake = '1'
+    SQL
+    puts sql
+    CartodbQuery.run(sql)
 end
 
 def self.lens
