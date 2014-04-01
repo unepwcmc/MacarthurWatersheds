@@ -19,8 +19,13 @@ class Backbone.Views.MapView extends Backbone.View
       row
     )
 
+  setZeroValueIndex: () ->
+    @zeroValueIndex = _.findIndex(@sortDataBy(@data, 'value'), (d) -> d.value >= 0)
+
   initBaseLayer: ->
-    @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 2)
+    @mapHasData = no
+    @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
+    @map = L.map('map', {scrollWheelZoom: false}).setView([0, 0], 3)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
       attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
@@ -37,6 +42,7 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     @queryLayer
     @map.fitBounds regionBounds
+    @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
   
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
@@ -45,7 +51,7 @@ class Backbone.Views.MapView extends Backbone.View
     layer.bindPopup(
       """
       Value: #{w.value.toFixed(2)} <br>
-      Pressure Index: #{w.pressure_index} <br>
+      Pressure Index: #{w.pressure_index.toFixed(2)} <br>
       Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
       """,
       popupOptions
@@ -62,11 +68,15 @@ class Backbone.Views.MapView extends Backbone.View
       unless @data.length > 0
         throw new Error("Data should not be empty, check your query")
       @setMinMax()
+      if @filter.get('tab') == 'change' then @setZeroValueIndex()
       @querydata = @buildQuerydata @data
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
       }).addTo(@map)
+      unless @mapHasData
+        @mapHasData = yes
+        @queryLayerInteriors.setStyle @baseLineStyle
       @queryLayerInteriors.bringToFront()
     )
 
@@ -100,13 +110,14 @@ class Backbone.Views.MapView extends Backbone.View
       @queryLayer.setStyle @queryPolyStyle
 
   getColor: (feature) =>
-    d = @querydata[feature]
-    p = d[@styleValueField] - @min[@styleValueField]
-    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
-    if p >= @min[@styleValueField] + range * 2  then return '#FF6B00'
-    if p >= @min[@styleValueField] + range      then return '#FF8F27'
-    if p >= @min[@styleValueField]              then return '#FFB367'
-    '#fff'
+    if @filter.get('tab') == 'change'
+      domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
+      range = ["#2166ac", "#f7f7f7", "#b2182b"]
+    else
+      domain = [@min[@styleValueField], @max[@styleValueField]]
+      range = ["#fddbc7", "#b2182b"]
+    color = d3.scale.linear().domain(domain).range(range)
+    color(@querydata[feature][@styleValueField])
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
@@ -181,11 +192,11 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setAgrCommDevFill op, d    
     return op
 
-  baseLineStyle: (feature) ->
+  baseLineStyle: (feature) =>
     {
-      weight: 1.2,
-      opacity: 1,
-      color: '#C0A972',
+      weight: @lineWeight @map.getZoom()
+      opacity: 1
+      color: if @mapHasData then 'white' else '#3c4f6b'
       fillOpacity: 0
     }
 
@@ -193,8 +204,7 @@ class Backbone.Views.MapView extends Backbone.View
     {
       weight: 0
       opacity: 0
-      fillColor: '#C0A972'
-      fillOpacity: 0.6
+      fillOpacity: 0
     }
 
   queryPolyStyle: (feature) =>

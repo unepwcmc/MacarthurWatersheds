@@ -16,9 +16,10 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     @render()
 
   render: ->
+    subjects = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'subject')
     @$el.html(@template(
       thisView: @
-      subjects: MacArthur.CONFIG.subjects
+      subjects: subjects
       showLensSelector: @showLensSelector()
       showScenarioSelector: @showScenarioSelector()
       showOtherSelectors: @showOtherSelectors()
@@ -38,9 +39,9 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   showLensSelector: ->
     tab = @filter.get('tab')
-    if tab == 'now'
+    if tab == 'now' or tab == 'future_threats'
       return @filter.get('subject')?
-    if tab == 'change' or tab == 'future_threats'
+    if tab == 'change'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
 
@@ -56,9 +57,9 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   showOtherSelectors: ->
     tab = @filter.get('tab')
-    if tab == 'now'
+    if tab == 'now'  or tab == 'future_threats'
       return @filter.get('subject')?
-    if tab == 'change' or tab == 'future_threats'
+    if tab == 'change'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
     

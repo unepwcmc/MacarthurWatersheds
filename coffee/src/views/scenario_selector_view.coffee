@@ -13,16 +13,12 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
     @render()
 
   render: ->
-    scenarios = _.map(@config, (scenario) =>
-      if @filter.get('scenario') is scenario.selector
-        scenario.selected = true
-      else
-        scenario.selected = false
-      scenario
-    )
+    scenarios = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'scenario')
+    defaultOption = if @filter.get('scenario')? then no else yes
     @$el.html(@template(
       filter: @filter
       scenarios: scenarios
+      defaultOption: defaultOption
     ))
 
     # SORRY
@@ -36,7 +32,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
 
   onClose: ->
 
-  setScenario: ->
+  setScenario: (event) ->
     scenarioName = $(event.target).find(':selected').attr('value')
     @filter.set('scenario', scenarioName)
     

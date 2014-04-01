@@ -1,8 +1,8 @@
 <h1>Scenario of change</h1>
 
 <select id="scenario-select" class='select-box'>
-  <option value="" disabled selected>Select a scenario</option>
+  <option value="" {{#if defaultOption}}selected{{/if}} disabled>Select a scenario</option>
   {{# each scenarios}}
-  <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+  <option value="{{selector}}" {{#if active}}selected{{/if}}>{{name}}</option>
   {{/each}}
 </select>

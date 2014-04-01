@@ -187,21 +187,24 @@
     }
   });
 
-  test('if the tab is set to `future_threats` and the subject and scenario are set, `buildQuery` should be called', function() {
-    var buildQuerySpy, filter, queryBuiler, regions, tabView;
-    regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+  test('if the tab is set to `future_threats` and the subject is set, `buildQuery` should be called', function() {
+    var buildQuerySpy, config, filter, queryBuiler, regions, tabView;
+    config = MacArthur.CONFIG;
+    regions = new Backbone.Collections.RegionCollection(config.regions);
     filter = new Backbone.Models.Filter({
       region: regions.models[0],
-      subject: MacArthur.CONFIG.subjects[1].selector,
-      scenario: MacArthur.CONFIG.scenarios[1].selector,
-      tab: 'future_threats'
+      tab: 'future_threats',
+      subject: config.subjects[0].selector,
+      agrCommDevLevel: config.agrCommDevLevels[0].selector,
+      lens: config.lenses[config.subjects[1].selector][0].selector,
+      level: config.levels[0].selector
     });
     buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
     queryBuiler = new MacArthur.QueryBuilder(filter);
     tabView = new Backbone.Views.TabView({
       filter: filter
     });
-    queryBuiler.updateFilterQuery();
+    filter.set('subject', config.subjects[1].selector);
     try {
       return assert.strictEqual(buildQuerySpy.callCount, 1, "Expected the buildQuery to be called after updateFilterQuery");
     } finally {
@@ -592,6 +595,39 @@
     eventArg = spy.getCall(0).args[0];
     assert.strictEqual(eventArg.constructor.name, "Region", "Expected the event to send a Region model");
     return assert.strictEqual(eventArg.get('name'), 'Mekong', "Expected the event to be trigger with the right Region");
+  });
+
+}).call(this);
+
+(function() {
+  suite('Scenario View');
+
+  test('in the Future Threats tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
+    var filter, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios[1].selector;
+    filter = new Backbone.Models.Filter();
+    scenarioView = new Backbone.Views.ScenarioSelectorView({
+      filter: filter
+    });
+    filter.set('tab', 'future_threats');
+    filter.set('subject', 'biodiversity');
+    scenarioView.$el.find("#scenario-select option[value='" + selector + "']").prop('selected', true);
+    scenarioView.$el.find("#scenario-select").trigger('change');
+    return assert.strictEqual(filter.get('scenario'), selector);
+  });
+
+  test('in the Change tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
+    var filter, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios[1].selector;
+    filter = new Backbone.Models.Filter();
+    scenarioView = new Backbone.Views.ScenarioSelectorView({
+      filter: filter
+    });
+    filter.set('tab', 'change');
+    filter.set('subject', 'biodiversity');
+    scenarioView.$el.find("#scenario-select option[value='" + selector + "']").prop('selected', true);
+    scenarioView.$el.find("#scenario-select").trigger('change');
+    return assert.strictEqual(filter.get('scenario'), selector);
   });
 
 }).call(this);

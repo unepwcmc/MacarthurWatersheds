@@ -153,6 +153,19 @@
     ]
   };
 
+  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural) {
+    var collection_name;
+    collection_name = plural || ("" + name + "s");
+    return _.map(MacArthur.CONFIG[collection_name], function(element) {
+      if (filter.get(name) === element.selector) {
+        element.active = true;
+      } else {
+        element.active = false;
+      }
+      return element;
+    });
+  };
+
 }).call(this);
 
 (function() {
@@ -211,7 +224,7 @@
 
     QueryBuilder.prototype.buildComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause()) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
+        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
       } else {
         return "";
       }
@@ -231,13 +244,22 @@
       return "lens.name = '" + name + "' ";
     };
 
-    QueryBuilder.prototype.buildScenarioClause = function() {
-      var scenario;
+    QueryBuilder.prototype.buildScenarioClause = function(originSelect) {
+      var scenario, tab;
       scenario = this.filter.get('scenario');
-      if (scenario != null) {
-        return "scenario = '" + scenario + "' ";
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        if (originSelect === 'comprov') {
+          return "scenario = '" + scenario + "' ";
+        } else {
+          return "scenario = 'bas' ";
+        }
       } else {
-        return "scenario = 'bas' ";
+        if (scenario != null) {
+          return "scenario = '" + scenario + "' ";
+        } else {
+          return "scenario = 'bas' ";
+        }
       }
     };
 
@@ -250,7 +272,7 @@
     QueryBuilder.prototype.buildMetricClause = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'future_threats' || tab === 'change') {
+      if (tab === 'change') {
         return "metric = 'change' ";
       } else {
         return "metric = 'imp' ";
@@ -289,7 +311,7 @@
     QueryBuilder.prototype.tabLacksSelections = function() {
       var lensCode, scenarioCode, subjectCode, tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return false;
       }
       scenarioCode = this.filter.get('scenario');
@@ -382,16 +404,7 @@
 
     TabView.prototype.render = function() {
       var tabs;
-      tabs = _.map(this.config, (function(_this) {
-        return function(tab) {
-          if (_this.filter.get('tab') === tab.selector) {
-            tab.active = true;
-          } else {
-            tab.active = false;
-          }
-          return tab;
-        };
-      })(this));
+      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'tab');
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
@@ -513,6 +526,7 @@
 
     function MapView() {
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
+      this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.setPressureFill = __bind(this.setPressureFill, this);
       this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
@@ -546,10 +560,18 @@
       });
     };
 
+    MapView.prototype.setZeroValueIndex = function() {
+      return this.zeroValueIndex = _.findIndex(this.sortDataBy(this.data, 'value'), function(d) {
+        return d.value >= 0;
+      });
+    };
+
     MapView.prototype.initBaseLayer = function() {
+      this.mapHasData = false;
+      this.lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6]);
       this.map = L.map('map', {
         scrollWheelZoom: false
-      }).setView([0, 0], 2);
+      }).setView([0, 0], 3);
       this.queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?';
       return L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
         attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
@@ -571,7 +593,12 @@
         style: this.baseLineStyle
       }).addTo(this.map);
       this.queryLayer;
-      return this.map.fitBounds(regionBounds);
+      this.map.fitBounds(regionBounds);
+      return this.map.on('zoomend', (function(_this) {
+        return function() {
+          return _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
+        };
+      })(this));
     };
 
     MapView.prototype.bindPopup = function(feature, layer) {
@@ -583,7 +610,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + w.pressure_index + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
+      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + (w.pressure_index.toFixed(2)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
@@ -601,11 +628,18 @@
             throw new Error("Data should not be empty, check your query");
           }
           _this.setMinMax();
+          if (_this.filter.get('tab') === 'change') {
+            _this.setZeroValueIndex();
+          }
           _this.querydata = _this.buildQuerydata(_this.data);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
           }).addTo(_this.map);
+          if (!_this.mapHasData) {
+            _this.mapHasData = true;
+            _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
+          }
           return _this.queryLayerInteriors.bringToFront();
         };
       })(this));
@@ -650,20 +684,16 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, p, range;
-      d = this.querydata[feature];
-      p = d[this.styleValueField] - this.min[this.styleValueField];
-      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
-      if (p >= this.min[this.styleValueField] + range * 2) {
-        return '#FF6B00';
+      var color, domain, range;
+      if (this.filter.get('tab') === 'change') {
+        domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
+        range = ["#2166ac", "#f7f7f7", "#b2182b"];
+      } else {
+        domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
+        range = ["#fddbc7", "#b2182b"];
       }
-      if (p >= this.min[this.styleValueField] + range) {
-        return '#FF8F27';
-      }
-      if (p >= this.min[this.styleValueField]) {
-        return '#FFB367';
-      }
-      return '#fff';
+      color = d3.scale.linear().domain(domain).range(range);
+      return color(this.querydata[feature][this.styleValueField]);
     };
 
     MapView.prototype.filterFeatureLevel = function(id) {
@@ -781,9 +811,9 @@
 
     MapView.prototype.baseLineStyle = function(feature) {
       return {
-        weight: 1.2,
+        weight: this.lineWeight(this.map.getZoom()),
         opacity: 1,
-        color: '#C0A972',
+        color: this.mapHasData ? 'white' : '#3c4f6b',
         fillOpacity: 0
       };
     };
@@ -792,8 +822,7 @@
       return {
         weight: 0,
         opacity: 0,
-        fillColor: '#C0A972',
-        fillOpacity: 0.6
+        fillOpacity: 0
       };
     };
 
@@ -909,20 +938,13 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var scenarios, theSelect;
-      scenarios = _.map(this.config, (function(_this) {
-        return function(scenario) {
-          if (_this.filter.get('scenario') === scenario.selector) {
-            scenario.selected = true;
-          } else {
-            scenario.selected = false;
-          }
-          return scenario;
-        };
-      })(this));
+      var defaultOption, scenarios, theSelect;
+      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario');
+      defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
         filter: this.filter,
-        scenarios: scenarios
+        scenarios: scenarios,
+        defaultOption: defaultOption
       }));
       theSelect = this.$el.find('.select-box');
       setTimeout(function() {
@@ -933,7 +955,7 @@
 
     ScenarioSelectorView.prototype.onClose = function() {};
 
-    ScenarioSelectorView.prototype.setScenario = function() {
+    ScenarioSelectorView.prototype.setScenario = function(event) {
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
       return this.filter.set('scenario', scenarioName);
@@ -1338,9 +1360,11 @@
     };
 
     FilterView.prototype.render = function() {
+      var subjects;
+      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'subject');
       this.$el.html(this.template({
         thisView: this,
-        subjects: MacArthur.CONFIG.subjects,
+        subjects: subjects,
         showLensSelector: this.showLensSelector(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
@@ -1365,10 +1389,10 @@
     FilterView.prototype.showLensSelector = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
@@ -1390,10 +1414,10 @@
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now') {
+      if (tab === 'now' || tab === 'future_threats') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
