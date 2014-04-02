@@ -108,9 +108,12 @@
     ],
     protectionLevels: [
       {
-        selector: "high",
+        selector: "all",
         name: "Completely covered by PA’s",
         "default": true
+      }, {
+        selector: "high",
+        name: "Up to three thirds covered"
       }, {
         selector: "medium",
         name: "Up to two thirds covered"
@@ -615,6 +618,7 @@
       regionCode = region.get('code');
       regionBounds = region.get('bounds');
       this.categories = 3;
+      this.resetWatershedSelectionCount();
       this.collection = topojson.feature(geo, geo.objects[regionCode]);
       this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
       this.queryLayer = L.geoJson(this.collection, {
@@ -663,6 +667,7 @@
             _this.setZeroValueIndex();
           }
           _this.querydata = _this.buildQuerydata(_this.data);
+          _this.resetWatershedSelectionCount(_this.data.length);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
@@ -711,7 +716,9 @@
 
     MapView.prototype.updateQueryLayerStyle = function() {
       if (this.querydata != null) {
-        return this.queryLayer.setStyle(this.queryPolyStyle);
+        this.resetWatershedSelectionCount();
+        this.queryLayer.setStyle(this.queryPolyStyle);
+        return this.resultsNumber.set('number', this.currentSelectionCount);
       }
     };
 
@@ -757,8 +764,13 @@
     MapView.prototype.setProtectionFill = function(op, d) {
       var protectionLevel;
       protectionLevel = this.filter.get('protectionLevel');
+      if (protectionLevel === 'all') {
+        if (d.protectionPercentage !== 100) {
+          op = 0;
+        }
+      }
       if (protectionLevel === 'high') {
-        if (!(d.protectionPercentage >= 66)) {
+        if (!(d.protectionPercentage >= 66 && d.protectionPercentage < 100)) {
           op = 0;
         }
       }
@@ -838,6 +850,9 @@
       if (this.filter.get('agrCommDevLevel') != null) {
         op = this.setAgrCommDevFill(op, d);
       }
+      if (op === .9) {
+        this.currentSelectionCount += 1;
+      }
       return op;
     };
 
@@ -874,6 +889,12 @@
         fillOpacity: feature.properties.lake ? 0 : fillOpacity,
         fillColor: fillColor
       };
+    };
+
+    MapView.prototype.resetWatershedSelectionCount = function(number) {
+      number || (number = 0);
+      this.currentSelectionCount = number;
+      return this.resultsNumber.set('number', number);
     };
 
     MapView.prototype.onClose = function() {
