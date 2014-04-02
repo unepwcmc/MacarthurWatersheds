@@ -12,6 +12,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   initialize: (options) ->
     @filter = options.filter
+    @resultsNumber = options.resultsNumber
     @listenTo(@filter, 'change', @render)
     @render()
 
@@ -25,6 +26,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       showOtherSelectors: @showOtherSelectors()
       showAgrCommDevSelector: @showAgrCommDevSelector()
       filter: @filter
+      resultsNumber: @resultsNumber
     ))
     @attachSubViews()
     return @

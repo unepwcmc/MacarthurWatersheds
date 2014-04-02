@@ -4,8 +4,9 @@ window.Backbone.Views ||= {}
 class Backbone.Views.ResultsNumberView extends Backbone.View
   template: Handlebars.templates['results_number']
 
-  initialize: () ->
-    @resultsNumber = new Backbone.Models.ResultsNumber()
+  initialize: (options) ->
+    @resultsNumber = options.resultsNumber
+    @listenTo(@resultsNumber, 'change:number', @render)
     @render()
 
   render: ->
@@ -15,4 +16,4 @@ class Backbone.Views.ResultsNumberView extends Backbone.View
     return @
 
   onClose: ->
-    
+    @remove()

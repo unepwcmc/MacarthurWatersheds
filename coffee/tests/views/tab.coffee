@@ -2,7 +2,8 @@ suite 'Tab View'
 
 test('when the `change` tab selector and the `subject` selector have been clicked, 
  the view re-renders and the scenario subview is rendered', ->
-
+  resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
+   'initialize', -> )
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
   )
@@ -22,12 +23,13 @@ test('when the `change` tab selector and the `subject` selector have been clicke
 
   finally
     scenarioRenderSpy.restore()
-
+  resultsNumberRenderStub.restore()
 )
 
 test('when the `change` tab selector has been clicked an `active` class 
   is set on it and removed from all other siblings', ->
-
+  resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
+   'initialize', -> )
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
   )
@@ -51,13 +53,14 @@ test('when the `change` tab selector has been clicked an `active` class
     activeTab.siblings().hasClass('active'),
     "Expected other tabs NOT to be active"
   )
-
+  resultsNumberRenderStub.restore()
 )
 
 test('when the `Future Threats` tab selector is clicked,
   and the `subject` is selected and the `scenario` is selected, then
   the LensSelectorView and LevelSelectorAgrCommDevView are rendered', ->
-
+  resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
+   'initialize', -> )
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
   )
@@ -89,5 +92,5 @@ test('when the `Future Threats` tab selector is clicked,
   finally
     lensSelectorRenderSpy.restore()
     levelSelectorAgrCommDevRenderSpy.restore()
-
+  resultsNumberRenderStub.restore()
 )
