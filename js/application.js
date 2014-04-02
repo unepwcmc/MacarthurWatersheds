@@ -726,7 +726,7 @@
       var color, domain, range;
       if (this.filter.get('tab') === 'change') {
         domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
-        range = ["#A3D900", "#eee", "#FF5C26"];
+        range = ["#FF5C26", "#eee", "#A3D900"];
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
         range = ["#FFDC73", "#FF5C26"];

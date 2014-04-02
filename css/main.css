@@ -281,18 +281,20 @@ div.scenario-container {
   div.scenario-container .customSelect {
     background-position-x: 270px;
     background-position-y: 12px; }
-  div.scenario-container p {
-    font-size: 0.75em;
-    margin-top: 0; }
-  div.scenario-container p a {
-    color: #bbb; }
-    div.scenario-container p a:hover, div.scenario-container p a:active {
-      color: #4dc0dd;
-      -webkit-transition: all 0.5s ease;
-      -moz-transition: all 0.5s ease;
-      -ms-transition: all 0.5s ease;
-      -o-transition: all 0.5s ease;
-      transition: all 0.5s ease; }
+
+p.scenario-help {
+  font-size: 0.75em;
+  margin-top: 0; }
+
+p.scenario-help a {
+  color: #bbb; }
+  p.scenario-help a:hover, p.scenario-help a:active {
+    color: #4dc0dd;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease; }
 
 div.match-count {
   margin-bottom: 30px; }

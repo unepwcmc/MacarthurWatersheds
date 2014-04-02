@@ -316,18 +316,18 @@ div.scenario-container {
     background-position-x: 270px;
     background-position-y: 12px;
   }
+}
 
-  p {
-    font-size: 0.75em;
-    margin-top: 0;
-  }
+p.scenario-help {
+  font-size: 0.75em;
+  margin-top: 0;
+}
 
-  p a {
-    color: #bbb;
-    &:hover, &:active {
-      color: $blue;
-      @include transition(all, 0.5s, ease)
-    }
+p.scenario-help a {
+  color: #bbb;
+  &:hover, &:active {
+    color: $blue;
+    @include transition(all, 0.5s, ease)
   }
 }
 
