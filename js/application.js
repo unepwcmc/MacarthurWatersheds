@@ -1381,6 +1381,7 @@
         thisView: this,
         subjects: subjects,
         showLensSelector: this.showLensSelector(),
+        showScenarioGroup: this.showScenarioGroup(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
         showAgrCommDevSelector: this.showAgrCommDevSelector(),
@@ -1404,13 +1405,23 @@
     FilterView.prototype.showLensSelector = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now' || tab === 'future_threats') {
+      if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change') {
+      if (tab === 'change' || tab === 'future_threats') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
+    };
+
+    FilterView.prototype.showScenarioGroup = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        return true;
+      } else {
+        return false;
+      }
     };
 
     FilterView.prototype.showScenarioSelector = function() {
@@ -1429,10 +1440,10 @@
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now' || tab === 'future_threats') {
+      if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change') {
+      if (tab === 'change' || tab === 'future_threats') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
