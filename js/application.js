@@ -614,7 +614,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + (w.pressure_index.toFixed(2)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
+      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (this.formatToFirst2NonZeroDecimals(w.protection_percentage)) + " <br>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
@@ -848,6 +848,11 @@
         fillOpacity: feature.properties.lake ? 0 : fillOpacity,
         fillColor: fillColor
       };
+    };
+
+    MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
+      number += '';
+      return number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/);
     };
 
     MapView.prototype.onClose = function() {
