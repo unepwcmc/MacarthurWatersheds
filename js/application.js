@@ -193,30 +193,6 @@
 }).call(this);
 
 (function() {
-  var _base,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  (_base = window.Backbone).Models || (_base.Models = {});
-
-  window.Backbone.Models.ResultsNumber = (function(_super) {
-    __extends(ResultsNumber, _super);
-
-    function ResultsNumber() {
-      return ResultsNumber.__super__.constructor.apply(this, arguments);
-    }
-
-    ResultsNumber.prototype.defaults = {
-      number: 0
-    };
-
-    return ResultsNumber;
-
-  })(Backbone.Model);
-
-}).call(this);
-
-(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.MacArthur || (window.MacArthur = {});
@@ -878,44 +854,6 @@
     };
 
     return MapView;
-
-  })(Backbone.View);
-
-}).call(this);
-
-(function() {
-  var _base,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  window.Backbone || (window.Backbone = {});
-
-  (_base = window.Backbone).Views || (_base.Views = {});
-
-  Backbone.Views.ResultsNumberView = (function(_super) {
-    __extends(ResultsNumberView, _super);
-
-    function ResultsNumberView() {
-      return ResultsNumberView.__super__.constructor.apply(this, arguments);
-    }
-
-    ResultsNumberView.prototype.template = Handlebars.templates['results_number'];
-
-    ResultsNumberView.prototype.initialize = function() {
-      this.resultsNumber = new Backbone.Models.ResultsNumber();
-      return this.render();
-    };
-
-    ResultsNumberView.prototype.render = function() {
-      this.$el.html(this.template({
-        number: this.resultsNumber.get('number')
-      }));
-      return this;
-    };
-
-    ResultsNumberView.prototype.onClose = function() {};
-
-    return ResultsNumberView;
 
   })(Backbone.View);
 
