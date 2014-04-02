@@ -869,7 +869,8 @@
       return {
         weight: 0,
         opacity: 0,
-        fillOpacity: 0
+        fillOpacity: 0.25,
+        color: '#C0A972'
       };
     };
 
