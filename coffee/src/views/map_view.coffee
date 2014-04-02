@@ -50,6 +50,7 @@ class Backbone.Views.MapView extends Backbone.View
     popupOptions = {maxWidth: 200}
     layer.bindPopup(
       """
+      Watershed id: #{w.name} <br>
       Value: #{w.value.toFixed(2)} <br>
       Pressure Index: #{w.pressure_index.toFixed(2)} <br>
       Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
@@ -101,6 +102,7 @@ class Backbone.Views.MapView extends Backbone.View
         protectionPercentage: x.protection_percentage
         pressureIndex: x.pressure_index
         agrCommDevValue: x.comprov_value or ""
+        watershed_name: x.name
         lake: x.lake or no
       }])
     )

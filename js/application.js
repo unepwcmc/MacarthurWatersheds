@@ -208,7 +208,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
+        return "SELECT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -224,7 +224,7 @@
 
     QueryBuilder.prototype.buildComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
+        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
       } else {
         return "";
       }
@@ -614,7 +614,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + (w.pressure_index.toFixed(2)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
+      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + (w.pressure_index.toFixed(2)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
@@ -675,6 +675,7 @@
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index,
               agrCommDevValue: x.comprov_value || "",
+              watershed_name: x.name,
               lake: x.lake || false
             }
           ];
