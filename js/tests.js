@@ -600,6 +600,13 @@
 }).call(this);
 
 (function() {
+  suite('Results number View');
+
+  test('When the Result model is updated the view is re-rendered and the result displayed');
+
+}).call(this);
+
+(function() {
   suite('Scenario View');
 
   test('in the Future Threats tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
