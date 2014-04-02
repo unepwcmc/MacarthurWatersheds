@@ -54,6 +54,7 @@ class Backbone.Views.MapView extends Backbone.View
       Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
       Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
       Protection Percentage: #{@formatToFirst2NonZeroDecimals(w.protection_percentage)} <br>
+      <a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>
       """,
       popupOptions
     );
