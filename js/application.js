@@ -193,6 +193,30 @@
 }).call(this);
 
 (function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  (_base = window.Backbone).Models || (_base.Models = {});
+
+  window.Backbone.Models.ResultsNumber = (function(_super) {
+    __extends(ResultsNumber, _super);
+
+    function ResultsNumber() {
+      return ResultsNumber.__super__.constructor.apply(this, arguments);
+    }
+
+    ResultsNumber.prototype.defaults = {
+      number: 0
+    };
+
+    return ResultsNumber;
+
+  })(Backbone.Model);
+
+}).call(this);
+
+(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.MacArthur || (window.MacArthur = {});
@@ -572,7 +596,7 @@
 
     MapView.prototype.initBaseLayer = function() {
       this.mapHasData = false;
-      this.lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6]);
+      this.lineWeight = d3.scale.linear().domain([0, 11]).range([.5, 2.6]);
       this.map = L.map('map', {
         scrollWheelZoom: true
       }).setView([0, 0], 3);
@@ -692,10 +716,10 @@
       var color, domain, range;
       if (this.filter.get('tab') === 'change') {
         domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
-        range = ["#2166ac", "#f7f7f7", "#b2182b"];
+        range = ["#A3D900", "#eee", "#FF5C26"];
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
-        range = ["#fddbc7", "#b2182b"];
+        range = ["#FFDC73", "#FF5C26"];
       }
       color = d3.scale.linear().domain(domain).range(range);
       return color(this.querydata[feature][this.styleValueField]);
@@ -817,8 +841,8 @@
     MapView.prototype.baseLineStyle = function(feature) {
       return {
         weight: this.lineWeight(this.map.getZoom()),
-        opacity: 1,
-        color: this.mapHasData ? 'white' : '#3c4f6b',
+        opacity: 0.5,
+        color: this.mapHasData ? '#222' : '#C0A972',
         fillOpacity: 0
       };
     };
@@ -854,6 +878,44 @@
     };
 
     return MapView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.ResultsNumberView = (function(_super) {
+    __extends(ResultsNumberView, _super);
+
+    function ResultsNumberView() {
+      return ResultsNumberView.__super__.constructor.apply(this, arguments);
+    }
+
+    ResultsNumberView.prototype.template = Handlebars.templates['results_number'];
+
+    ResultsNumberView.prototype.initialize = function() {
+      this.resultsNumber = new Backbone.Models.ResultsNumber();
+      return this.render();
+    };
+
+    ResultsNumberView.prototype.render = function() {
+      this.$el.html(this.template({
+        number: this.resultsNumber.get('number')
+      }));
+      return this;
+    };
+
+    ResultsNumberView.prototype.onClose = function() {};
+
+    return ResultsNumberView;
 
   })(Backbone.View);
 

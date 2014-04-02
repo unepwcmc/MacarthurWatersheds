@@ -24,7 +24,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   initBaseLayer: ->
     @mapHasData = no
-    @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
+    @lineWeight = d3.scale.linear().domain([0, 11]).range([.5, 2.6])
     @map = L.map('map', {scrollWheelZoom: true}).setView([0, 0], 3)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
@@ -113,10 +113,10 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     if @filter.get('tab') == 'change'
       domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
-      range = ["#2166ac", "#f7f7f7", "#b2182b"]
+      range = ["#A3D900", "#eee", "#FF5C26"]
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]
-      range = ["#fddbc7", "#b2182b"]
+      range = ["#FFDC73", "#FF5C26"]
     color = d3.scale.linear().domain(domain).range(range)
     color(@querydata[feature][@styleValueField])
 
@@ -196,8 +196,8 @@ class Backbone.Views.MapView extends Backbone.View
   baseLineStyle: (feature) =>
     {
       weight: @lineWeight @map.getZoom()
-      opacity: 1
-      color: if @mapHasData then 'white' else '#3c4f6b'
+      opacity: 0.5
+      color: if @mapHasData then '#222' else '#C0A972'
       fillOpacity: 0
     }
 
