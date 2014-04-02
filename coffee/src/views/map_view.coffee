@@ -6,6 +6,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   initialize: (options) ->
     @filter = options.filter
+    @resultsNumber = options.resultsNumber
     @initBaseLayer()
     @listenTo(@filter, 'change:query', @updateQueryLayer)
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)

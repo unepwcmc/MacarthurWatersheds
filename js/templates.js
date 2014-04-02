@@ -97,7 +97,9 @@ function program11(depth0,data) {
   }
 
   buffer += "<div class=\"results-number\">\n  ";
-  options = {hash:{},data:data};
+  options = {hash:{
+    'resultsNumber': ((depth0 && depth0.resultsNumber))
+  },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ResultsNumberView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ResultsNumberView", options)))
     + "\n</div>\n\n<div class=\"subjects\">\n  <ul>\n    ";
   stack2 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
@@ -392,11 +394,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<h3>Number of watershed results displayed on map: ";
+  buffer += "<h3>";
   if (stack1 = helpers.number) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.number); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</h3>\n";
+    + " Watersheds match your selection</h3>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scenario_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -474,7 +476,8 @@ function program2(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</ul>\n\n";
   options = {hash:{
-    'filter': ((depth0 && depth0.filter))
+    'filter': ((depth0 && depth0.filter)),
+    'resultsNumber': ((depth0 && depth0.resultsNumber))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "FilterView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "FilterView", options)))
     + "\n";

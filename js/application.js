@@ -423,6 +423,7 @@
     TabView.prototype.initialize = function(options) {
       this.config = _.cloneDeep(MacArthur.CONFIG.tabs);
       this.filter = options.filter;
+      this.resultsNumber = options.resultsNumber;
       return this.render();
     };
 
@@ -432,6 +433,7 @@
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
+        resultsNumber: this.resultsNumber,
         tabs: tabs
       }));
       this.attachSubViews();
@@ -573,6 +575,7 @@
 
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.resultsNumber = options.resultsNumber;
       this.initBaseLayer();
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
@@ -901,8 +904,9 @@
 
     ResultsNumberView.prototype.template = Handlebars.templates['results_number'];
 
-    ResultsNumberView.prototype.initialize = function() {
-      this.resultsNumber = new Backbone.Models.ResultsNumber();
+    ResultsNumberView.prototype.initialize = function(options) {
+      this.resultsNumber = options.resultsNumber;
+      this.listenTo(this.resultsNumber, 'change:number', this.render);
       return this.render();
     };
 
@@ -913,7 +917,9 @@
       return this;
     };
 
-    ResultsNumberView.prototype.onClose = function() {};
+    ResultsNumberView.prototype.onClose = function() {
+      return this.remove();
+    };
 
     return ResultsNumberView;
 
@@ -1432,6 +1438,7 @@
 
     FilterView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.resultsNumber = options.resultsNumber;
       this.listenTo(this.filter, 'change', this.render);
       return this.render();
     };
@@ -1446,7 +1453,8 @@
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
         showAgrCommDevSelector: this.showAgrCommDevSelector(),
-        filter: this.filter
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
       }));
       this.attachSubViews();
       return this;
@@ -1546,6 +1554,7 @@
       this.showMap = __bind(this.showMap, this);
       this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.filter = new Backbone.Models.Filter();
+      this.resultsNumber = new Backbone.Models.ResultsNumber();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
       this.modalContainer = new ModalContainer;
       this.sidePanel = new Backbone.Diorama.ManagedRegion();
@@ -1557,7 +1566,8 @@
 
     MainController.prototype.showMap = function() {
       return this.map = new Backbone.Views.MapView({
-        filter: this.filter
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
       });
     };
 
@@ -1596,7 +1606,8 @@
         region: region
       });
       view = new Backbone.Views.TabView({
-        filter: this.filter
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
       });
       this.sidePanel.showView(view);
       return this.map.initQueryLayer(geo, region);
