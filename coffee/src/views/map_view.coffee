@@ -8,6 +8,7 @@ class Backbone.Views.MapView extends Backbone.View
     @filter = options.filter
     @resultsNumber = options.resultsNumber
     @initBaseLayer()
+    @listenTo(@filter, 'change:tab', @resetQueryLayerStyle)
     @listenTo(@filter, 'change:query', @updateQueryLayer)
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
@@ -114,6 +115,9 @@ class Backbone.Views.MapView extends Backbone.View
       @resetWatershedSelectionCount()
       @queryLayer.setStyle @queryPolyStyle
       @resultsNumber.set 'number', @currentSelectionCount
+
+  resetQueryLayerStyle: =>
+    @queryLayer.setStyle @basePolyStyle
 
   getColor: (feature) =>
     if @filter.get('tab') == 'change'
