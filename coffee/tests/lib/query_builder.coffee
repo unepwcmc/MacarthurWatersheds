@@ -160,10 +160,10 @@ test('if the tab is set to `change` and the filter lens is set,
 
 test('if the tab is set to `future_threats` and the subject 
   is set, `buildQuery` should be called', ->
-
+  resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
+   'initialize', -> )
   config = MacArthur.CONFIG
   regions = new Backbone.Collections.RegionCollection config.regions
-
   filter = new Backbone.Models.Filter(
     region: regions.models[0]
     tab: 'future_threats'
@@ -173,7 +173,6 @@ test('if the tab is set to `future_threats` and the subject
     level: config.levels[0].selector
   )
   buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
-  
   queryBuiler = new MacArthur.QueryBuilder(filter)
   tabView = new Backbone.Views.TabView( filter: filter )
   filter.set('subject', config.subjects[1].selector)
@@ -186,4 +185,5 @@ test('if the tab is set to `future_threats` and the subject
 
   finally
     buildQuerySpy.restore()
+  resultsNumberRenderStub.restore()
 )

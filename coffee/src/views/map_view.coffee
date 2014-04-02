@@ -6,6 +6,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   initialize: (options) ->
     @filter = options.filter
+    @resultsNumber = options.resultsNumber
     @initBaseLayer()
     @listenTo(@filter, 'change:query', @updateQueryLayer)
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
@@ -36,6 +37,7 @@ class Backbone.Views.MapView extends Backbone.View
     regionCode = region.get('code')
     regionBounds = region.get('bounds')
     @categories = 3
+    @resetWatershedSelectionCount()
     @collection = topojson.feature(geo, geo.objects[regionCode])
     @interiors = topojson.mesh(geo, geo.objects[regionCode])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
@@ -70,6 +72,7 @@ class Backbone.Views.MapView extends Backbone.View
       @setMinMax()
       if @filter.get('tab') == 'change' then @setZeroValueIndex()
       @querydata = @buildQuerydata @data
+      @resetWatershedSelectionCount @data.length
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
@@ -108,7 +111,9 @@ class Backbone.Views.MapView extends Backbone.View
   # This show-hides watersheds, but does not re-style the map
   updateQueryLayerStyle: =>
     if @querydata?
+      @resetWatershedSelectionCount()
       @queryLayer.setStyle @queryPolyStyle
+      @resultsNumber.set 'number', @currentSelectionCount
 
   getColor: (feature) =>
     if @filter.get('tab') == 'change'
@@ -139,8 +144,11 @@ class Backbone.Views.MapView extends Backbone.View
 
   setProtectionFill: (op, d) =>
     protectionLevel = @filter.get('protectionLevel')
+    if protectionLevel == 'all'
+      unless d.protectionPercentage == 100
+        op = 0 
     if protectionLevel == 'high'
-      unless d.protectionPercentage >= 66
+      unless d.protectionPercentage >= 66 and d.protectionPercentage < 100
         op = 0 
     if protectionLevel == 'medium'
       unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
@@ -190,7 +198,8 @@ class Backbone.Views.MapView extends Backbone.View
     if @filter.get('pressure') == yes
       op = @setPressureFill op, d
     if @filter.get('agrCommDevLevel')?
-      op = @setAgrCommDevFill op, d    
+      op = @setAgrCommDevFill op, d 
+    if op == .9 then @currentSelectionCount += 1   
     return op
 
   baseLineStyle: (feature) =>
@@ -222,6 +231,11 @@ class Backbone.Views.MapView extends Backbone.View
       fillOpacity: if feature.properties.lake then 0 else fillOpacity
       fillColor: fillColor
     }
+
+  resetWatershedSelectionCount: (number) ->
+    number or= 0
+    @currentSelectionCount = number
+    @resultsNumber.set 'number', number
 
   onClose: ->
     @remove()

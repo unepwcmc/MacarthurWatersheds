@@ -108,9 +108,12 @@
     ],
     protectionLevels: [
       {
-        selector: "high",
+        selector: "all",
         name: "Completely covered by PA’s",
         "default": true
+      }, {
+        selector: "high",
+        name: "Up to three thirds covered"
       }, {
         selector: "medium",
         name: "Up to two thirds covered"
@@ -423,6 +426,7 @@
     TabView.prototype.initialize = function(options) {
       this.config = _.cloneDeep(MacArthur.CONFIG.tabs);
       this.filter = options.filter;
+      this.resultsNumber = options.resultsNumber;
       return this.render();
     };
 
@@ -432,6 +436,7 @@
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
+        resultsNumber: this.resultsNumber,
         tabs: tabs
       }));
       this.attachSubViews();
@@ -573,6 +578,7 @@
 
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.resultsNumber = options.resultsNumber;
       this.initBaseLayer();
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
@@ -612,6 +618,7 @@
       regionCode = region.get('code');
       regionBounds = region.get('bounds');
       this.categories = 3;
+      this.resetWatershedSelectionCount();
       this.collection = topojson.feature(geo, geo.objects[regionCode]);
       this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
       this.queryLayer = L.geoJson(this.collection, {
@@ -660,6 +667,7 @@
             _this.setZeroValueIndex();
           }
           _this.querydata = _this.buildQuerydata(_this.data);
+          _this.resetWatershedSelectionCount(_this.data.length);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
@@ -708,7 +716,9 @@
 
     MapView.prototype.updateQueryLayerStyle = function() {
       if (this.querydata != null) {
-        return this.queryLayer.setStyle(this.queryPolyStyle);
+        this.resetWatershedSelectionCount();
+        this.queryLayer.setStyle(this.queryPolyStyle);
+        return this.resultsNumber.set('number', this.currentSelectionCount);
       }
     };
 
@@ -754,8 +764,13 @@
     MapView.prototype.setProtectionFill = function(op, d) {
       var protectionLevel;
       protectionLevel = this.filter.get('protectionLevel');
+      if (protectionLevel === 'all') {
+        if (d.protectionPercentage !== 100) {
+          op = 0;
+        }
+      }
       if (protectionLevel === 'high') {
-        if (!(d.protectionPercentage >= 66)) {
+        if (!(d.protectionPercentage >= 66 && d.protectionPercentage < 100)) {
           op = 0;
         }
       }
@@ -835,6 +850,9 @@
       if (this.filter.get('agrCommDevLevel') != null) {
         op = this.setAgrCommDevFill(op, d);
       }
+      if (op === .9) {
+        this.currentSelectionCount += 1;
+      }
       return op;
     };
 
@@ -873,6 +891,12 @@
       };
     };
 
+    MapView.prototype.resetWatershedSelectionCount = function(number) {
+      number || (number = 0);
+      this.currentSelectionCount = number;
+      return this.resultsNumber.set('number', number);
+    };
+
     MapView.prototype.onClose = function() {
       return this.remove();
     };
@@ -901,8 +925,9 @@
 
     ResultsNumberView.prototype.template = Handlebars.templates['results_number'];
 
-    ResultsNumberView.prototype.initialize = function() {
-      this.resultsNumber = new Backbone.Models.ResultsNumber();
+    ResultsNumberView.prototype.initialize = function(options) {
+      this.resultsNumber = options.resultsNumber;
+      this.listenTo(this.resultsNumber, 'change:number', this.render);
       return this.render();
     };
 
@@ -913,7 +938,9 @@
       return this;
     };
 
-    ResultsNumberView.prototype.onClose = function() {};
+    ResultsNumberView.prototype.onClose = function() {
+      return this.remove();
+    };
 
     return ResultsNumberView;
 
@@ -1432,6 +1459,7 @@
 
     FilterView.prototype.initialize = function(options) {
       this.filter = options.filter;
+      this.resultsNumber = options.resultsNumber;
       this.listenTo(this.filter, 'change', this.render);
       return this.render();
     };
@@ -1446,7 +1474,8 @@
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
         showAgrCommDevSelector: this.showAgrCommDevSelector(),
-        filter: this.filter
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
       }));
       this.attachSubViews();
       return this;
@@ -1546,6 +1575,7 @@
       this.showMap = __bind(this.showMap, this);
       this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.filter = new Backbone.Models.Filter();
+      this.resultsNumber = new Backbone.Models.ResultsNumber();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
       this.modalContainer = new ModalContainer;
       this.sidePanel = new Backbone.Diorama.ManagedRegion();
@@ -1557,7 +1587,8 @@
 
     MainController.prototype.showMap = function() {
       return this.map = new Backbone.Views.MapView({
-        filter: this.filter
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
       });
     };
 
@@ -1596,7 +1627,8 @@
         region: region
       });
       view = new Backbone.Views.TabView({
-        filter: this.filter
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
       });
       this.sidePanel.showView(view);
       return this.map.initQueryLayer(geo, region);

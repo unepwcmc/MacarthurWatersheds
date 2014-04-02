@@ -97,7 +97,9 @@ function program11(depth0,data) {
   }
 
   buffer += "<div class=\"results-number\">\n  ";
-  options = {hash:{},data:data};
+  options = {hash:{
+    'resultsNumber': ((depth0 && depth0.resultsNumber))
+  },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ResultsNumberView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ResultsNumberView", options)))
     + "\n</div>\n\n<div class=\"subjects\">\n  <ul>\n    ";
   stack2 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
@@ -482,7 +484,8 @@ function program2(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</ul>\n\n";
   options = {hash:{
-    'filter': ((depth0 && depth0.filter))
+    'filter': ((depth0 && depth0.filter)),
+    'resultsNumber': ((depth0 && depth0.resultsNumber))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "FilterView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "FilterView", options)))
     + "\n";
