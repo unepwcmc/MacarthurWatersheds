@@ -7,6 +7,7 @@ class Backbone.Views.MapView extends Backbone.View
   initialize: (options) ->
     @filter = options.filter
     @initBaseLayer()
+    @listenTo(@filter, 'change:tab', @resetQueryLayerStyle)
     @listenTo(@filter, 'change:query', @updateQueryLayer)
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
@@ -109,6 +110,9 @@ class Backbone.Views.MapView extends Backbone.View
   updateQueryLayerStyle: =>
     if @querydata?
       @queryLayer.setStyle @queryPolyStyle
+
+  resetQueryLayerStyle: =>
+    @queryLayer.setStyle @basePolyStyle
 
   getColor: (feature) =>
     if @filter.get('tab') == 'change'

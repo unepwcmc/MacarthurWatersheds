@@ -537,6 +537,7 @@
       this.setProtectionFill = __bind(this.setProtectionFill, this);
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
+      this.resetQueryLayerStyle = __bind(this.resetQueryLayerStyle, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
       this.buildQuerydata = __bind(this.buildQuerydata, this);
       this.setMinMax = __bind(this.setMinMax, this);
@@ -550,6 +551,7 @@
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.initBaseLayer();
+      this.listenTo(this.filter, 'change:tab', this.resetQueryLayerStyle);
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
@@ -686,6 +688,10 @@
       if (this.querydata != null) {
         return this.queryLayer.setStyle(this.queryPolyStyle);
       }
+    };
+
+    MapView.prototype.resetQueryLayerStyle = function() {
+      return this.queryLayer.setStyle(this.basePolyStyle);
     };
 
     MapView.prototype.getColor = function(feature) {
