@@ -600,6 +600,28 @@
 }).call(this);
 
 (function() {
+  suite('Results number View');
+
+  test('When the Result model is updated the view is re-rendered and the result displayed', function() {
+    var resultsNumber, resultsNumberRenderSpy, resultsNumberView;
+    resultsNumberRenderSpy = sinon.spy(Backbone.Views.ResultsNumberView.prototype, 'render');
+    resultsNumber = new Backbone.Models.ResultsNumber({
+      number: 10
+    });
+    resultsNumberView = new Backbone.Views.ResultsNumberView({
+      resultsNumber: resultsNumber
+    });
+    resultsNumber.set('number', 20);
+    try {
+      return assert.strictEqual(resultsNumberRenderSpy.callCount, 2, "Expected the resultsNumberView to be called twice");
+    } finally {
+      resultsNumberRenderSpy.restore();
+    }
+  });
+
+}).call(this);
+
+(function() {
   suite('Scenario View');
 
   test('in the Future Threats tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
