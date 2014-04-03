@@ -43,7 +43,7 @@ header {
 }
 
 .map-container {
-  height: 100%;
+  height: calc(100% - 51px);
 }
 
 #map {
@@ -344,4 +344,9 @@ div.match-count {
       padding-right: 2px;
     }
   }
+}
+
+.legend {
+  line-height: 18px;
+  color: #555;
 }

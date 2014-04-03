@@ -29,7 +29,7 @@ header {
     cursor: pointer; }
 
 .map-container {
-  height: 100%; }
+  height: calc(100% - 51px); }
 
 #map {
   width: 100%;
@@ -307,3 +307,7 @@ div.match-count {
       color: #888;
       font-size: 1.5em;
       padding-right: 2px; }
+
+.legend {
+  line-height: 18px;
+  color: #555; }
