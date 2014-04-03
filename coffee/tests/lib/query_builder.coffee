@@ -170,7 +170,7 @@ test('if the tab is set to `future_threats` and the subject
     subject: config.subjects[0].selector
     agrCommDevLevel: config.agrCommDevLevels[0].selector
     lens: config.lenses[config.subjects[1].selector][0].selector
-    level: config.levels[0].selector
+    level: config.levels.default[0].selector
   )
   buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
   queryBuiler = new MacArthur.QueryBuilder(filter)
