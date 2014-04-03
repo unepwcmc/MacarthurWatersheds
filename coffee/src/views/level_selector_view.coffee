@@ -9,8 +9,14 @@ class Backbone.Views.LevelSelectorView extends Backbone.Views.BaseSelectorView
 
   initialize: (options) ->
     super
-    @config = _.cloneDeep(MacArthur.CONFIG.levels)
+    @listenTo(@filter, 'change:tab', @setConfig)
+    @setConfig()
     @levelType = 'level'
     unless @filter.get('level')?
       @setDefaultLevel()
     @render()
+
+  setConfig: =>
+    l = MacArthur.CONFIG.levels[@filter.get('tab')] or 
+      MacArthur.CONFIG.levels['default']
+    @config = _.cloneDeep(l)

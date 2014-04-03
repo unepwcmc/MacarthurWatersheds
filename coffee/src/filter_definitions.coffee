@@ -37,12 +37,21 @@ MacArthur.CONFIG =
     { selector: "secf2050", name: "Security first" }
     { selector: "polf2050", name: "Policy first" }
   ],
-  levels: [
-    { selector: "all", name: "All", default: true }
-    { selector: "high", name: "High" }
-    { selector: "medium", name: "Medium" }
-    { selector: "low", name: "Low" }
-  ],
+  levels: { 
+    default: [
+      { selector: "all", name: "All", default: true }
+      { selector: "high", name: "High" }
+      { selector: "medium", name: "Medium" }
+      { selector: "low", name: "Low" }
+    ],
+    change: [
+      { selector: "all", name: "All", default: true }
+      { selector: "increase", name: "Increase" }
+      { selector: "low", name: "Low" } 
+      { selector: "medium", name: "Medium" }
+      { selector: "high", name: "High" }
+    ]
+  },
   protectionLevels: [
     { selector: "all", name: "Completely covered by PA’s" , default: true }
     { selector: "high", name: "Up to three thirds covered" }
