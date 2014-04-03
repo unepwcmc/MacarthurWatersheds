@@ -347,12 +347,11 @@ div.match-count {
 }
 
 .legend {
+  border: 1px solid #eee;
   @include border-radius(5px);
   background-color: white;
-  padding: 5px;
+  padding: 7px;
   .map-legend-text {
-    padding: 5px 5px 0 5px;
-    height: 30px;
     width: 160px;
     div:first-child {
       float: left;
@@ -374,4 +373,33 @@ div.match-count {
       background: url("/imgs/legend_gradient_future_threats.png");
     }    
   }
+}
+
+div.legend div.map-legend-text p {
+  font-family: 'Open Sans', sans-serif;
+  color: #888;
+  font-weight: 600;
+  line-height: 1em;
+  text-transform: none;
+  height: 100%;
+  overflow: hidden;
+  padding: 0 0 7px 0;
+  margin: 0;
+}
+
+div.legend div.map-legend-gradient {
+  overflow: hidden;
+  span {
+  font-family: 'Open Sans', sans-serif;
+  color: #000;
+  opacity: 0.3;
+  font-weight: 700;
+  line-height: 1em;
+  text-transform: uppercase;
+  line-height: 20px;
+  padding: 0 5px;
+  &:last-child {
+    float: right;
+  }
+}
 }

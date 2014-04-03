@@ -73,10 +73,11 @@ class Backbone.Views.MapView extends Backbone.View
       tab = @filter.get('tab')
       div.innerHTML = """
         <div class='map-legend-text'>
-          <div>#{@legendText[tab][0]}</div>
-          <div>#{@legendText[tab][1]}</div>
+          <p>Biodiversity importance</p>
         </div>
           #{@getLegendGradientElement(tab)}
+          <span>#{@legendText[tab][0]}</span>
+          <span>#{@legendText[tab][1]}</span>          
         </div>
       """
       div

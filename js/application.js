@@ -681,7 +681,7 @@
           var div, tab;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
-          div.innerHTML = "<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n</div>";
+          div.innerHTML = "<div class='map-legend-text'>\n  <p>Biodiversity importance</p>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>          \n</div>";
           return div;
         };
       })(this);
