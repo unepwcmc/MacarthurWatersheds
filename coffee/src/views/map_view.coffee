@@ -51,9 +51,11 @@ class Backbone.Views.MapView extends Backbone.View
     popupOptions = {maxWidth: 200}
     layer.bindPopup(
       """
-      Value: #{w.value.toFixed(2)} <br>
-      Pressure Index: #{w.pressure_index.toFixed(2)} <br>
-      Protection Percentage: #{w.protection_percentage.toFixed(2)} <br>
+      Watershed id: #{w.name} <br>
+      Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
+      Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
+      Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
+      <a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>
       """,
       popupOptions
     );
@@ -102,6 +104,7 @@ class Backbone.Views.MapView extends Backbone.View
         protectionPercentage: x.protection_percentage
         pressureIndex: x.pressure_index
         agrCommDevValue: x.comprov_value or ""
+        watershed_name: x.name
         lake: x.lake or no
       }])
     )
@@ -226,6 +229,10 @@ class Backbone.Views.MapView extends Backbone.View
       fillOpacity: if feature.properties.lake then 0 else fillOpacity
       fillColor: fillColor
     }
+
+  formatToFirst2NonZeroDecimals: (number) ->
+    number += ''
+    number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/)
 
   onClose: ->
     @remove()

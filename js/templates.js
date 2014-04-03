@@ -336,7 +336,7 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"secondary-filter\">\n	<h2><input type=\"checkbox\" name=\"See overlap with Protected Areas (PA)s\" ";
+  buffer += "<div class=\"secondary-filter\">\n	<h2><input type=\"checkbox\" name=\"See watershed overlap with Protected Areas (PA)s\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.protection), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">See overlap with Protected Areas (PA)s</h2>\n</div>\n\n";
