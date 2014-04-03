@@ -10,7 +10,7 @@ class Backbone.Views.MapView extends Backbone.View
     'future_threats': ["#FFDC73", "#FF5C26"]
 
   legendText:
-    'change': ['Increase', 'Decrease']
+    'change': ['Decrease', 'Increase']
     'now': ["Low", "High"]
     'future_threats': ["Low", "High"]    
 
@@ -59,7 +59,8 @@ class Backbone.Views.MapView extends Backbone.View
 
   getLegendGradientElement: (tab) ->
     if Modernizr.cssgradients
-      colours = @colorRange[tab].join(', ')
+      a = if tab == 'change' then @colorRange[tab].reverse() else @colorRange[tab]
+      colours = a.join(', ')
       style = "linear-gradient(to right, #{colours});"
       return "<div class='map-legend-gradient' style='background: #{style}'>" 
     else
@@ -71,9 +72,10 @@ class Backbone.Views.MapView extends Backbone.View
     @legend.onAdd = (map) =>
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
+      title = if tab == 'change' then 'change' else 'importance'
       div.innerHTML = """
         <div class='map-legend-text'>
-          <p>Biodiversity importance</p>
+          <h3 class='legend-title'>Level of #{title}</h3>
         </div>
           #{@getLegendGradientElement(tab)}
           <span>#{@legendText[tab][0]}</span>
@@ -106,9 +108,12 @@ class Backbone.Views.MapView extends Backbone.View
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
     @styleValueField = 'rank'  # or value
+    console.log 'before filter'
     q = @filter.get('query')
     unless q? then return
-    $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}", (data) =>
+    console.log 'before data'
+    $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
+      console.log 'data!'
       @data = @sortDataBy(data.rows, 'value')
       unless @data.length > 0
         throw new Error("Data should not be empty, check your query")

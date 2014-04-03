@@ -592,7 +592,7 @@
     };
 
     MapView.prototype.legendText = {
-      'change': ['Increase', 'Decrease'],
+      'change': ['Decrease', 'Increase'],
       'now': ["Low", "High"],
       'future_threats': ["Low", "High"]
     };
@@ -659,9 +659,10 @@
     };
 
     MapView.prototype.getLegendGradientElement = function(tab) {
-      var colours, style;
+      var a, colours, style;
       if (Modernizr.cssgradients) {
-        colours = this.colorRange[tab].join(', ');
+        a = tab === 'change' ? this.colorRange[tab].reverse() : this.colorRange[tab];
+        colours = a.join(', ');
         style = "linear-gradient(to right, " + colours + ");";
         return "<div class='map-legend-gradient' style='background: " + style + "'>";
       } else {
@@ -678,10 +679,11 @@
       });
       this.legend.onAdd = (function(_this) {
         return function(map) {
-          var div, tab;
+          var div, tab, title;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
-          div.innerHTML = "<div class='map-legend-text'>\n  <p>Biodiversity importance</p>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>          \n</div>";
+          title = tab === 'change' ? 'change' : 'importance';
+          div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>          \n</div>";
           return div;
         };
       })(this);
@@ -711,12 +713,15 @@
       var q;
       this.map.removeLayer(this.queryLayer);
       this.styleValueField = 'rank';
+      console.log('before filter');
       q = this.filter.get('query');
       if (q == null) {
         return;
       }
-      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
+      console.log('before data');
+      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q + "&callback=?", (function(_this) {
         return function(data) {
+          console.log('data!');
           _this.data = _this.sortDataBy(data.rows, 'value');
           if (!(_this.data.length > 0)) {
             throw new Error("Data should not be empty, check your query");
