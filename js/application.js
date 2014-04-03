@@ -711,12 +711,15 @@
       var q;
       this.map.removeLayer(this.queryLayer);
       this.styleValueField = 'rank';
+      console.log('before filter');
       q = this.filter.get('query');
       if (q == null) {
         return;
       }
-      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
+      console.log('before data');
+      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q + "&callback=?", (function(_this) {
         return function(data) {
+          console.log('data!');
           _this.data = _this.sortDataBy(data.rows, 'value');
           if (!(_this.data.length > 0)) {
             throw new Error("Data should not be empty, check your query");
