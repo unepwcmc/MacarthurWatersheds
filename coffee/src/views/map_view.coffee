@@ -53,7 +53,7 @@ class Backbone.Views.MapView extends Backbone.View
       Watershed id: #{w.name} <br>
       Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
       Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
-      Protection Percentage: #{@formatToFirst2NonZeroDecimals(w.protection_percentage)} <br>
+      Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
       <a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>
       """,
       popupOptions

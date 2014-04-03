@@ -614,7 +614,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (this.formatToFirst2NonZeroDecimals(w.protection_percentage)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>", popupOptions);
+      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
