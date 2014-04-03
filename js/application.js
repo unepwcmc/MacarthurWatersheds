@@ -235,7 +235,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
+        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -251,7 +251,7 @@
 
     QueryBuilder.prototype.buildComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
+        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
       } else {
         return "";
       }
@@ -653,7 +653,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Value: " + (w.value.toFixed(2)) + " <br>\nPressure Index: " + (w.pressure_index.toFixed(2)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(2)) + " <br>", popupOptions);
+      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>", popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
@@ -715,6 +715,7 @@
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index,
               agrCommDevValue: x.comprov_value || "",
+              watershed_name: x.name,
               lake: x.lake || false
             }
           ];
@@ -908,6 +909,11 @@
       number || (number = 0);
       this.currentSelectionCount = number;
       return this.resultsNumber.set('number', number);
+    };
+
+    MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
+      number += '';
+      return number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/);
     };
 
     MapView.prototype.onClose = function() {
@@ -1484,6 +1490,7 @@
         thisView: this,
         subjects: subjects,
         showLensSelector: this.showLensSelector(),
+        showScenarioGroup: this.showScenarioGroup(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
         showAgrCommDevSelector: this.showAgrCommDevSelector(),
@@ -1508,13 +1515,23 @@
     FilterView.prototype.showLensSelector = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now' || tab === 'future_threats') {
+      if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change') {
+      if (tab === 'change' || tab === 'future_threats') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
+    };
+
+    FilterView.prototype.showScenarioGroup = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        return true;
+      } else {
+        return false;
+      }
     };
 
     FilterView.prototype.showScenarioSelector = function() {
@@ -1533,10 +1550,10 @@
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
-      if (tab === 'now' || tab === 'future_threats') {
+      if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change') {
+      if (tab === 'change' || tab === 'future_threats') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;

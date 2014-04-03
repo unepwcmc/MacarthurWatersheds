@@ -12,13 +12,14 @@ class window.MacArthur.QueryBuilder
       """
         SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,
         pressure.value as pressure_index #{@includeComprovValueClause()},
-        w.lake 
+        w.name, w.lake 
         FROM macarthur_region r 
-        RIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id 
-        LEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id 
-        LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
-        LEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id 
-        LEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id 
+        RIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id 
+        LEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id 
+        LEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id 
+        LEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id 
+        LEFT JOIN macarthur_pressure pressure 
+        ON pressure.watershed_id = w.cartodb_id 
         #{@buildComprovValueClause()} 
         WHERE r.code = '#{regionCode}' 
         AND #{@buildSubjectClause()} 
@@ -41,7 +42,8 @@ class window.MacArthur.QueryBuilder
       """
         LEFT JOIN (
         SELECT d.watershed_id, d.value AS comprov_value FROM 
-        macarthur_datapoint d LEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id 
+        macarthur_datapoint d 
+        LEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id 
         WHERE lens.type = 'comprov' AND metric = 'change' 
         AND #{@buildScenarioClause('comprov')} AND type_data = 'value' ) s 
         ON s.watershed_id = d.watershed_id 
