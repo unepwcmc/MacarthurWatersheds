@@ -61,7 +61,7 @@ class Backbone.Views.MapView extends Backbone.View
     if Modernizr.cssgradients
       colours = @colorRange[tab].join(', ')
       style = "linear-gradient(to right, #{colours});"
-      return "<div class='map-legend-gradient' style='#{style}'>" 
+      return "<div class='map-legend-gradient' style='background: #{style}'>" 
     else
       return "<div class='map-legend-gradient nogradient #{tab}'>"
 
