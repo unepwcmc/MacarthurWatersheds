@@ -592,7 +592,7 @@
     };
 
     MapView.prototype.legendText = {
-      'change': ['Increase', 'Decrease'],
+      'change': ['Decrease', 'Increase'],
       'now': ["Low", "High"],
       'future_threats': ["Low", "High"]
     };
@@ -659,9 +659,10 @@
     };
 
     MapView.prototype.getLegendGradientElement = function(tab) {
-      var colours, style;
+      var a, colours, style;
       if (Modernizr.cssgradients) {
-        colours = this.colorRange[tab].join(', ');
+        a = tab === 'change' ? this.colorRange[tab].reverse() : this.colorRange[tab];
+        colours = a.join(', ');
         style = "linear-gradient(to right, " + colours + ");";
         return "<div class='map-legend-gradient' style='background: " + style + "'>";
       } else {
@@ -678,10 +679,11 @@
       });
       this.legend.onAdd = (function(_this) {
         return function(map) {
-          var div, tab;
+          var div, tab, title;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
-          div.innerHTML = "<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n</div>";
+          title = tab === 'change' ? 'change' : 'importance';
+          div.innerHTML = "<h3 class='legend-title'>Level of " + title + "</h3>\n<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n</div>";
           return div;
         };
       })(this);

@@ -10,7 +10,7 @@ class Backbone.Views.MapView extends Backbone.View
     'future_threats': ["#FFDC73", "#FF5C26"]
 
   legendText:
-    'change': ['Increase', 'Decrease']
+    'change': ['Decrease', 'Increase']
     'now': ["Low", "High"]
     'future_threats': ["Low", "High"]    
 
@@ -59,7 +59,8 @@ class Backbone.Views.MapView extends Backbone.View
 
   getLegendGradientElement: (tab) ->
     if Modernizr.cssgradients
-      colours = @colorRange[tab].join(', ')
+      a = if tab == 'change' then @colorRange[tab].reverse() else @colorRange[tab]
+      colours = a.join(', ')
       style = "linear-gradient(to right, #{colours});"
       return "<div class='map-legend-gradient' style='background: #{style}'>" 
     else
@@ -71,7 +72,9 @@ class Backbone.Views.MapView extends Backbone.View
     @legend.onAdd = (map) =>
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
+      title = if tab == 'change' then 'change' else 'importance'
       div.innerHTML = """
+        <h3 class='legend-title'>Level of #{title}</h3>
         <div class='map-legend-text'>
           <div>#{@legendText[tab][0]}</div>
           <div>#{@legendText[tab][1]}</div>

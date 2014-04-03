@@ -350,6 +350,9 @@ div.match-count {
   @include border-radius(5px);
   background-color: white;
   padding: 5px;
+  h3 {
+    margin: 0;
+  }
   .map-legend-text {
     padding: 5px 5px 0 5px;
     height: 30px;
