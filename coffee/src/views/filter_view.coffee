@@ -21,6 +21,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       thisView: @
       subjects: subjects
       showLensSelector: @showLensSelector()
+      showScenarioGroup: @showScenarioGroup()
       showScenarioSelector: @showScenarioSelector()
       showOtherSelectors: @showOtherSelectors()
       showAgrCommDevSelector: @showAgrCommDevSelector()
@@ -39,11 +40,15 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   showLensSelector: ->
     tab = @filter.get('tab')
-    if tab == 'now' or tab == 'future_threats'
+    if tab == 'now'
       return @filter.get('subject')?
-    if tab == 'change'
+    if tab == 'change' or tab == 'future_threats'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
+
+  showScenarioGroup: ->
+    tab = @filter.get('tab')
+    if tab == 'future_threats' then yes else no
 
   showScenarioSelector: ->
     tab = @filter.get('tab')
@@ -57,9 +62,9 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
 
   showOtherSelectors: ->
     tab = @filter.get('tab')
-    if tab == 'now'  or tab == 'future_threats'
+    if tab == 'now'
       return @filter.get('subject')?
-    if tab == 'change'
+    if tab == 'change' or tab == 'future_threats'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
     

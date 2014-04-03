@@ -6,16 +6,21 @@
   </ul>
 </div>
 
-{{#if showAgrCommDevSelector}}
-  <div class="scenario-container">
+{{#if showScenarioGroup}}
+  <div class="{{#if showAgrCommDevSelector}}scenario-container{{/if}}">
   {{#if showScenarioSelector}}
     {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
   {{/if}}
-  {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
+  {{#if showAgrCommDevSelector}}
+    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
+  {{/if}}
   </div>
 {{else}}
   {{#if showScenarioSelector}}
     {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
+  {{/if}}
+  {{#if showAgrCommDevSelector}}
+    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
   {{/if}}
 {{/if}}
 
