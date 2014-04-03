@@ -18,6 +18,7 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->
     @regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
     @filter = new Backbone.Models.Filter()
+    @resultsNumber = new Backbone.Models.ResultsNumber()
     @queryBuilder = new window.MacArthur.QueryBuilder(@filter)
     @modalContainer = new ModalContainer
     @sidePanel = new Backbone.Diorama.ManagedRegion()
@@ -29,7 +30,10 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @chooseRegion()
 
   showMap: =>
-    @map = new Backbone.Views.MapView {filter: @filter}
+    @map = new Backbone.Views.MapView(
+      filter: @filter 
+      resultsNumber: @resultsNumber
+    )
 
   chooseRegion: =>
     regionChooserView = new Backbone.Views.RegionChooserView({regions: @regions})
@@ -58,6 +62,7 @@ class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
     @filter.set(region: region)
     view = new Backbone.Views.TabView(
       filter: @filter
+      resultsNumber: @resultsNumber
     )
     @sidePanel.showView(view)
     @map.initQueryLayer(geo, region)

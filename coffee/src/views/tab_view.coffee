@@ -10,6 +10,7 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
   initialize: (options) ->
     @config = _.cloneDeep(MacArthur.CONFIG.tabs)
     @filter = options.filter
+    @resultsNumber = options.resultsNumber
     @render()
 
   render: ->
@@ -17,6 +18,7 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     @$el.html(@template(
       thisView: @
       filter: @filter
+      resultsNumber: @resultsNumber
       tabs: tabs
     ))
     @attachSubViews()

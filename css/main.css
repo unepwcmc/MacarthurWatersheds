@@ -38,6 +38,7 @@ header {
 
 #side-panel {
   width: 25%;
+  max-width: 715px;
   float: left;
   position: absolute;
   top: 50px;
@@ -49,12 +50,12 @@ div.filters {
   padding: 30px 20px;
   background: #fff;
   border: 1px solid #FAFAFA;
-  color: #9DA2B3; }
+  color: #888; }
   div.filters h1 {
     margin: 20px 0 10px 0;
     font-size: 1em;
     text-transform: uppercase;
-    letter-spacing: 0.075em; }
+    letter-spacing: 0.035em; }
   div.filters h2 {
     font-size: 1em; }
 
@@ -84,14 +85,14 @@ div.subjects ul {
       -ms-transition: all 0.5s ease;
       -o-transition: all 0.5s ease;
       transition: all 0.5s ease;
-      background: #359CBB; }
+      background: #2F88A3; }
 div.subjects h1 {
   text-transform: uppercase;
   font-size: 1em; }
 
 .region-chooser {
   width: 50%;
-  height: 250px;
+  height: 325px;
   color: #4dc0dd; }
   .region-chooser h1 {
     margin: 0;
@@ -116,29 +117,45 @@ ul.regions {
   list-style-type: none;
   width: 100%; }
   ul.regions li {
-    padding: 5px 10px;
     float: left;
     width: 30%;
-    margin-right: 5%;
-    background: #4dc0dd;
-    color: #fff;
-    text-align: center;
-    margin-bottom: 10px;
-    cursor: pointer;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    border-radius: 5px; }
+    margin-right: 5%; }
     ul.regions li:last-child {
       margin-bottom: 0;
       margin-right: 0; }
-    ul.regions li:hover, ul.regions li:active {
-      -webkit-transition: all 0.5s ease;
-      -moz-transition: all 0.5s ease;
-      -ms-transition: all 0.5s ease;
-      -o-transition: all 0.5s ease;
-      transition: all 0.5s ease;
-      background: #359CBB; }
+    ul.regions li div.region-area {
+      background-repeat: no-repeat;
+      background-size: 50%;
+      background-position: center;
+      margin: 0 auto 20px auto;
+      height: 150px; }
+      ul.regions li div.region-area:hover, ul.regions li div.region-area:active {
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+        opacity: 0.7; }
+    ul.regions li div.region-area.region-link {
+      padding: 5px 10px;
+      background: #4dc0dd;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      height: 100%;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      border-radius: 5px; }
+      ul.regions li div.region-area.region-link:hover, ul.regions li div.region-area.region-link:active {
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+        background: #2F88A3;
+        opacity: 1; }
 
 .disabler {
   z-index: 100;
@@ -227,7 +244,13 @@ ul.tabs {
       border-left: none;
       width: 50%; }
     ul.tabs li:hover, ul.tabs li.active {
-      background: #202127; }
+      background: #131418;
+      color: #4dc0dd;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -ms-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease; }
 
 div.selector {
   margin-top: 30px;
@@ -241,20 +264,46 @@ div.secondary-filter {
   div.secondary-filter h2 {
     margin-top: 30px; }
 
-div.scenario-container {
+div.highlight-section {
   background: #f7f7f7;
   padding: 10px;
-  margin-top: 30px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   border-radius: 5px; }
+
+div.scenario-container {
+  margin-top: 30px; }
   div.scenario-container h1 {
-    margin-top: 0;
-    text-transform: none;
-    letter-spacing: 0; }
+    margin-top: 0; }
   div.scenario-container div:last-child h1 {
     margin-top: 20px; }
   div.scenario-container .customSelect {
     background-position-x: 270px;
     background-position-y: 12px; }
+
+p.scenario-help {
+  font-size: 0.75em;
+  margin-top: 0; }
+
+p.scenario-help a {
+  color: #bbb; }
+  p.scenario-help a:hover, p.scenario-help a:active {
+    color: #4dc0dd;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease; }
+
+div.match-count {
+  margin-bottom: 30px; }
+  div.match-count p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #bbb; }
+    div.match-count p span.watershed-number {
+      font-weight: 600;
+      color: #888;
+      font-size: 1.5em;
+      padding-right: 2px; }

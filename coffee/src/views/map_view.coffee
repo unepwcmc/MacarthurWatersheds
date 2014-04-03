@@ -6,6 +6,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   initialize: (options) ->
     @filter = options.filter
+    @resultsNumber = options.resultsNumber
     @initBaseLayer()
     @listenTo(@filter, 'change:tab', @resetQueryLayerStyle)
     @listenTo(@filter, 'change:query', @updateQueryLayer)
@@ -25,7 +26,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   initBaseLayer: ->
     @mapHasData = no
-    @lineWeight = d3.scale.linear().domain([0, 11]).range([.8, 2.6])
+    @lineWeight = d3.scale.linear().domain([0, 11]).range([.5, 2.6])
     @map = L.map('map', {scrollWheelZoom: true}).setView([0, 0], 3)
     @queryUrlRoot = 'https://carbon-tool.cartodb.com/tiles/macarthur_watershed/{z}/{x}/{y}.png?'
     L.tileLayer('https://a.tiles.mapbox.com/v3/timwilki.himjd69g/{z}/{x}/{y}.png', {
@@ -37,6 +38,7 @@ class Backbone.Views.MapView extends Backbone.View
     regionCode = region.get('code')
     regionBounds = region.get('bounds')
     @categories = 3
+    @resetWatershedSelectionCount()
     @collection = topojson.feature(geo, geo.objects[regionCode])
     @interiors = topojson.mesh(geo, geo.objects[regionCode])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
@@ -73,6 +75,7 @@ class Backbone.Views.MapView extends Backbone.View
       @setMinMax()
       if @filter.get('tab') == 'change' then @setZeroValueIndex()
       @querydata = @buildQuerydata @data
+      @resetWatershedSelectionCount @data.length
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
@@ -112,7 +115,9 @@ class Backbone.Views.MapView extends Backbone.View
   # This show-hides watersheds, but does not re-style the map
   updateQueryLayerStyle: =>
     if @querydata?
+      @resetWatershedSelectionCount()
       @queryLayer.setStyle @queryPolyStyle
+      @resultsNumber.set 'number', @currentSelectionCount
 
   resetQueryLayerStyle: =>
     @queryLayer.setStyle @basePolyStyle
@@ -120,10 +125,10 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     if @filter.get('tab') == 'change'
       domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
-      range = ["#2166ac", "#f7f7f7", "#b2182b"]
+      range = ["#FF5C26", "#eee", "#A3D900"]
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]
-      range = ["#fddbc7", "#b2182b"]
+      range = ["#FFDC73", "#FF5C26"]
     color = d3.scale.linear().domain(domain).range(range)
     color(@querydata[feature][@styleValueField])
 
@@ -146,8 +151,11 @@ class Backbone.Views.MapView extends Backbone.View
 
   setProtectionFill: (op, d) =>
     protectionLevel = @filter.get('protectionLevel')
+    if protectionLevel == 'all'
+      unless d.protectionPercentage == 100
+        op = 0 
     if protectionLevel == 'high'
-      unless d.protectionPercentage >= 66
+      unless d.protectionPercentage >= 66 and d.protectionPercentage < 100
         op = 0 
     if protectionLevel == 'medium'
       unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
@@ -197,14 +205,15 @@ class Backbone.Views.MapView extends Backbone.View
     if @filter.get('pressure') == yes
       op = @setPressureFill op, d
     if @filter.get('agrCommDevLevel')?
-      op = @setAgrCommDevFill op, d    
+      op = @setAgrCommDevFill op, d 
+    if op == .9 then @currentSelectionCount += 1   
     return op
 
   baseLineStyle: (feature) =>
     {
       weight: @lineWeight @map.getZoom()
-      opacity: 1
-      color: if @mapHasData then 'white' else '#3c4f6b'
+      opacity: 0.5
+      color: if @mapHasData then '#222' else '#C0A972'
       fillOpacity: 0
     }
 
@@ -212,7 +221,8 @@ class Backbone.Views.MapView extends Backbone.View
     {
       weight: 0
       opacity: 0
-      fillOpacity: 0
+      fillOpacity: 0.25
+      color: '#C0A972'
     }
 
   queryPolyStyle: (feature) =>
@@ -229,6 +239,11 @@ class Backbone.Views.MapView extends Backbone.View
       fillOpacity: if feature.properties.lake then 0 else fillOpacity
       fillColor: fillColor
     }
+
+  resetWatershedSelectionCount: (number) ->
+    number or= 0
+    @currentSelectionCount = number
+    @resultsNumber.set 'number', number
 
   formatToFirst2NonZeroDecimals: (number) ->
     number += ''

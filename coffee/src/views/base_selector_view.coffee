@@ -16,6 +16,7 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
     )
     @$el.html(@template(
       levels: levels
+      isChangeTab: @isChangeTab
     ))
     
     # SORRY
@@ -37,3 +38,6 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
     _.find(@config, (obj) -> 
       return obj.default?
     )
+
+  isChangeTab: =>
+    @filter.get('tab') == 'change'

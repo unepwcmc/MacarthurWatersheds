@@ -5,15 +5,15 @@ test('.render presents a list of the three regions', ->
   view = new Backbone.Views.RegionChooserView({regions: regions})
 
   assert.strictEqual(
-    view.$el.find(".regions li[data-region-code='WAN']").text(),
+    view.$el.find(".regions .region-area.region-link[data-region-code='WAN']").text(),
     "Andes"
   )
   assert.strictEqual(
-    view.$el.find(".regions li[data-region-code='GLR']").text(),
+    view.$el.find(".regions .region-area.region-link[data-region-code='GLR']").text(),
     "African Great Lakes"
   )
   assert.strictEqual(
-    view.$el.find(".regions li[data-region-code='MEK']").text(),
+    view.$el.find(".regions .region-area.region-link[data-region-code='MEK']").text(),
     "Mekong"
   )
 )
@@ -26,7 +26,7 @@ test("when a region is clicked, it triggers the 'regionChosen' event with
   spy = sinon.spy()
   view.on("regionChosen", spy)
 
-  view.$el.find(".regions li[data-region-code='MEK']").trigger('click')
+  view.$el.find(".regions .region-area.region-link[data-region-code='MEK']").trigger('click')
 
   assert.isTrue spy.calledOnce,
     "Expected regionChosen to be triggered"

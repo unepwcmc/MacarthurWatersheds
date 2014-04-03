@@ -10,7 +10,7 @@ class window.MacArthur.QueryBuilder
       regionCode = @filter.get('region').get('code')
   
       """
-        SELECT d.watershed_id, d.value, percentage as protection_percentage,
+        SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,
         pressure.value as pressure_index #{@includeComprovValueClause()},
         w.name, w.lake 
         FROM macarthur_region r 
