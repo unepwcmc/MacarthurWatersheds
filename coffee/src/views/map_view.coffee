@@ -57,19 +57,26 @@ class Backbone.Views.MapView extends Backbone.View
     @map.fitBounds regionBounds
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
+  getLegendGradientElement: (tab) ->
+    if Modernizr.cssgradients
+      colours = @colorRange[tab].join(', ')
+      style = "linear-gradient(to right, #{colours});"
+      return "<div class='map-legend-gradient' style='#{style}'>" 
+    else
+      return "<div class='map-legend-gradient nogradient #{tab}'>"
+
   setLegend: () =>
     if @legend then @unsetLegend()
     @legend = L.control(position: "bottomleft")
     @legend.onAdd = (map) =>
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
-      colours = @colorRange[tab].join(', ')
       div.innerHTML = """
         <div class='map-legend-text'>
           <div>#{@legendText[tab][0]}</div>
           <div>#{@legendText[tab][1]}</div>
         </div>
-        <div class='map-legend-gradient' style='background-image:linear-gradient(to right, #{colours});''>
+          #{@getLegendGradientElement(tab)}
         </div>
       """
       div

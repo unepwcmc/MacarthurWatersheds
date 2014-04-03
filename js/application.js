@@ -658,6 +658,17 @@
       })(this));
     };
 
+    MapView.prototype.getLegendGradientElement = function(tab) {
+      var colours, style;
+      if (Modernizr.cssgradients) {
+        colours = this.colorRange[tab].join(', ');
+        style = "linear-gradient(to right, " + colours + ");";
+        return "<div class='map-legend-gradient' style='" + style + "'>";
+      } else {
+        return "<div class='map-legend-gradient nogradient " + tab + "'>";
+      }
+    };
+
     MapView.prototype.setLegend = function() {
       if (this.legend) {
         this.unsetLegend();
@@ -667,11 +678,10 @@
       });
       this.legend.onAdd = (function(_this) {
         return function(map) {
-          var colours, div, tab;
+          var div, tab;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
-          colours = _this.colorRange[tab].join(', ');
-          div.innerHTML = "<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n<div class='map-legend-gradient' style='background-image:linear-gradient(to right, " + colours + ");''>\n</div>";
+          div.innerHTML = "<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n</div>";
           return div;
         };
       })(this);
