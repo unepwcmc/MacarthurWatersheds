@@ -76,7 +76,7 @@ class Backbone.Views.MapView extends Backbone.View
     @legend.addTo @map
 
   unsetLegend: =>
-    @legend.removeFrom @map
+    if @legend then @legend.removeFrom @map
     @legend = no
   
   bindPopup: (feature, layer) =>

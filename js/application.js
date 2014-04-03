@@ -564,7 +564,6 @@
     __extends(MapView, _super);
 
     function MapView() {
-      this.callTabRelatedChanges = __bind(this.callTabRelatedChanges, this);
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
@@ -680,8 +679,9 @@
     };
 
     MapView.prototype.unsetLegend = function() {
-      console.log('unsetLegend');
-      this.legend.removeFrom(this.map);
+      if (this.legend) {
+        this.legend.removeFrom(this.map);
+      }
       return this.legend = false;
     };
 
@@ -964,11 +964,6 @@
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
       number += '';
       return number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/);
-    };
-
-    MapView.prototype.callTabRelatedChanges = function() {
-      this.resetQueryLayerStyle();
-      return this.setLegend(this.filter.get('tab'));
     };
 
     MapView.prototype.onClose = function() {
