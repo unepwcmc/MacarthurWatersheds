@@ -111,9 +111,7 @@ class Backbone.Views.MapView extends Backbone.View
     console.log 'before filter'
     q = @filter.get('query')
     unless q? then return
-    console.log 'before data'
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
-      console.log 'data!'
       @data = @sortDataBy(data.rows, 'value')
       unless @data.length > 0
         throw new Error("Data should not be empty, check your query")
