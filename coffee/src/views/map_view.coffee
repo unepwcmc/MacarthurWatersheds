@@ -108,7 +108,6 @@ class Backbone.Views.MapView extends Backbone.View
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
     @styleValueField = 'rank'  # or value
-    console.log 'before filter'
     q = @filter.get('query')
     unless q? then return
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
