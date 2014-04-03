@@ -235,7 +235,7 @@
       var regionCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
+        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w on r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d on d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens on lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p on p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure on pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
       } else {
         return this.filter.get('query');
       }
@@ -488,6 +488,7 @@
     __extends(BaseSelectorView, _super);
 
     function BaseSelectorView() {
+      this.isChangeTab = __bind(this.isChangeTab, this);
       this.setDefaultLevel = __bind(this.setDefaultLevel, this);
       return BaseSelectorView.__super__.constructor.apply(this, arguments);
     }
@@ -509,7 +510,8 @@
         };
       })(this));
       this.$el.html(this.template({
-        levels: levels
+        levels: levels,
+        isChangeTab: this.isChangeTab
       }));
       theSelect = this.$el.find('.select-box');
       return setTimeout((function(_this) {
@@ -536,6 +538,10 @@
       return _.find(this.config, function(obj) {
         return obj["default"] != null;
       });
+    };
+
+    BaseSelectorView.prototype.isChangeTab = function() {
+      return this.filter.get('tab') === 'change';
     };
 
     return BaseSelectorView;
