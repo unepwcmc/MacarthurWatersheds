@@ -309,5 +309,28 @@ div.match-count {
       padding-right: 2px; }
 
 .legend {
-  line-height: 18px;
-  color: #555; }
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px;
+  background-color: white;
+  padding: 5px; }
+  .legend h3 {
+    margin: 0; }
+  .legend .map-legend-text {
+    padding: 5px 5px 0 5px;
+    height: 30px;
+    width: 160px; }
+    .legend .map-legend-text div:first-child {
+      float: left; }
+    .legend .map-legend-text div:last-child {
+      float: right; }
+  .legend .map-legend-gradient {
+    height: 20px;
+    width: 160px; }
+    .legend .map-legend-gradient.nogradient.now {
+      background: url("/imgs/legend_gradient_now.png"); }
+    .legend .map-legend-gradient.nogradient.change {
+      background: url("/imgs/legend_gradient_change.png"); }
+    .legend .map-legend-gradient.nogradient.future_threats {
+      background: url("/imgs/legend_gradient_future_threats.png"); }

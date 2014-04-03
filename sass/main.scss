@@ -347,6 +347,34 @@ div.match-count {
 }
 
 .legend {
-  line-height: 18px;
-  color: #555;
+  @include border-radius(5px);
+  background-color: white;
+  padding: 5px;
+  h3 {
+    margin: 0;
+  }
+  .map-legend-text {
+    padding: 5px 5px 0 5px;
+    height: 30px;
+    width: 160px;
+    div:first-child {
+      float: left;
+    }
+    div:last-child {
+      float: right;
+    }
+  }
+  .map-legend-gradient {
+    height: 20px;
+    width: 160px;
+    &.nogradient.now {
+      background: url("/imgs/legend_gradient_now.png");
+    }
+    &.nogradient.change {
+      background: url("/imgs/legend_gradient_change.png");
+    }
+    &.nogradient.future_threats {
+      background: url("/imgs/legend_gradient_future_threats.png");
+    }    
+  }
 }

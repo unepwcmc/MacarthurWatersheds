@@ -599,10 +599,24 @@
       this.setMinMax = __bind(this.setMinMax, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       this.bindPopup = __bind(this.bindPopup, this);
+      this.unsetLegend = __bind(this.unsetLegend, this);
+      this.setLegend = __bind(this.setLegend, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
 
     MapView.prototype.template = Handlebars.templates['map'];
+
+    MapView.prototype.colorRange = {
+      'change': ["#FF5C26", "#eee", "#A3D900"],
+      'now': ["#FFDC73", "#FF5C26"],
+      'future_threats': ["#FFDC73", "#FF5C26"]
+    };
+
+    MapView.prototype.legendText = {
+      'change': ['Decrease', 'Increase'],
+      'now': ["Low", "High"],
+      'future_threats': ["Low", "High"]
+    };
 
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
@@ -665,6 +679,45 @@
       })(this));
     };
 
+    MapView.prototype.getLegendGradientElement = function(tab) {
+      var a, colours, style;
+      if (Modernizr.cssgradients) {
+        a = tab === 'change' ? this.colorRange[tab].reverse() : this.colorRange[tab];
+        colours = a.join(', ');
+        style = "linear-gradient(to right, " + colours + ");";
+        return "<div class='map-legend-gradient' style='background: " + style + "'>";
+      } else {
+        return "<div class='map-legend-gradient nogradient " + tab + "'>";
+      }
+    };
+
+    MapView.prototype.setLegend = function() {
+      if (this.legend) {
+        this.unsetLegend();
+      }
+      this.legend = L.control({
+        position: "bottomleft"
+      });
+      this.legend.onAdd = (function(_this) {
+        return function(map) {
+          var div, tab, title;
+          div = L.DomUtil.create("div", "info legend");
+          tab = _this.filter.get('tab');
+          title = tab === 'change' ? 'change' : 'importance';
+          div.innerHTML = "<h3 class='legend-title'>Level of " + title + "</h3>\n<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n</div>";
+          return div;
+        };
+      })(this);
+      return this.legend.addTo(this.map);
+    };
+
+    MapView.prototype.unsetLegend = function() {
+      if (this.legend) {
+        this.legend.removeFrom(this.map);
+      }
+      return this.legend = false;
+    };
+
     MapView.prototype.bindPopup = function(feature, layer) {
       var id, popupOptions, w;
       id = layer.feature.properties.cartodb_id;
@@ -681,12 +734,15 @@
       var q;
       this.map.removeLayer(this.queryLayer);
       this.styleValueField = 'rank';
+      console.log('before filter');
       q = this.filter.get('query');
       if (q == null) {
         return;
       }
-      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q, (function(_this) {
+      console.log('before data');
+      return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q + "&callback=?", (function(_this) {
         return function(data) {
+          console.log('data!');
           _this.data = _this.sortDataBy(data.rows, 'value');
           if (!(_this.data.length > 0)) {
             throw new Error("Data should not be empty, check your query");
@@ -705,7 +761,8 @@
             _this.mapHasData = true;
             _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
           }
-          return _this.queryLayerInteriors.bringToFront();
+          _this.queryLayerInteriors.bringToFront();
+          return _this.setLegend();
         };
       })(this));
     };
@@ -748,7 +805,14 @@
       if (this.querydata != null) {
         this.resetWatershedSelectionCount();
         this.queryLayer.setStyle(this.queryPolyStyle);
-        return this.resultsNumber.set('number', this.currentSelectionCount);
+        this.resultsNumber.set('number', this.currentSelectionCount);
+        if (this.currentSelectionCount === 0) {
+          return this.unsetLegend();
+        } else {
+          if (!this.legend) {
+            return this.setLegend();
+          }
+        }
       }
     };
 
@@ -757,13 +821,14 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var color, domain, range;
-      if (this.filter.get('tab') === 'change') {
+      var color, domain, range, tab;
+      tab = this.filter.get('tab');
+      if (tab === 'change') {
         domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
-        range = ["#FF5C26", "#eee", "#A3D900"];
+        range = this.colorRange[tab];
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
-        range = ["#FFDC73", "#FF5C26"];
+        range = this.colorRange[tab];
       }
       color = d3.scale.linear().domain(domain).range(range);
       return color(this.querydata[feature][this.styleValueField]);
