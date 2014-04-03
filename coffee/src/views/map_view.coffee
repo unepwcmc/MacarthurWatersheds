@@ -4,6 +4,16 @@ window.Backbone.Views ||= {}
 class Backbone.Views.MapView extends Backbone.View
   template: Handlebars.templates['map']
 
+  colorRange:
+    'change': ["#FF5C26", "#eee", "#A3D900"]
+    'now': ["#FFDC73", "#FF5C26"]
+    'future_threats': ["#FFDC73", "#FF5C26"]
+
+  legendText:
+    'change': ['Increase', 'Decrease']
+    'now': ["Low", "High"]
+    'future_threats': ["Low", "High"]    
+
   initialize: (options) ->
     @filter = options.filter
     @resultsNumber = options.resultsNumber
@@ -46,6 +56,28 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayer
     @map.fitBounds regionBounds
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
+
+  setLegend: () =>
+    if @legend then @unsetLegend()
+    @legend = L.control(position: "bottomleft")
+    @legend.onAdd = (map) =>
+      div = L.DomUtil.create("div", "info legend")
+      tab = @filter.get('tab')
+      colours = @colorRange[tab].join(', ')
+      div.innerHTML = """
+        <div class='map-legend-text'>
+          <div>#{@legendText[tab][0]}</div>
+          <div>#{@legendText[tab][1]}</div>
+        </div>
+        <div class='map-legend-gradient' style='background-image:linear-gradient(to right, #{colours});''>
+        </div>
+      """
+      div
+    @legend.addTo @map
+
+  unsetLegend: =>
+    @legend.removeFrom @map
+    @legend = no
   
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
@@ -84,6 +116,7 @@ class Backbone.Views.MapView extends Backbone.View
         @mapHasData = yes
         @queryLayerInteriors.setStyle @baseLineStyle
       @queryLayerInteriors.bringToFront()
+      @setLegend()
     )
 
   setMinMax: (type) =>
@@ -118,17 +151,22 @@ class Backbone.Views.MapView extends Backbone.View
       @resetWatershedSelectionCount()
       @queryLayer.setStyle @queryPolyStyle
       @resultsNumber.set 'number', @currentSelectionCount
-
+      if @currentSelectionCount == 0
+        @unsetLegend()
+      else
+        unless @legend then @setLegend()
+ 
   resetQueryLayerStyle: =>
     @queryLayer.setStyle @basePolyStyle
 
   getColor: (feature) =>
-    if @filter.get('tab') == 'change'
+    tab = @filter.get('tab')
+    if tab == 'change'
       domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
-      range = ["#FF5C26", "#eee", "#A3D900"]
+      range = @colorRange[tab]
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]
-      range = ["#FFDC73", "#FF5C26"]
+      range = @colorRange[tab]
     color = d3.scale.linear().domain(domain).range(range)
     color(@querydata[feature][@styleValueField])
 
@@ -206,7 +244,7 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setPressureFill op, d
     if @filter.get('agrCommDevLevel')?
       op = @setAgrCommDevFill op, d 
-    if op == .9 then @currentSelectionCount += 1   
+    if op == .9 then @currentSelectionCount += 1 
     return op
 
   baseLineStyle: (feature) =>

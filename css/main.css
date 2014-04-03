@@ -309,5 +309,20 @@ div.match-count {
       padding-right: 2px; }
 
 .legend {
-  line-height: 18px;
-  color: #555; }
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px;
+  background-color: white;
+  padding: 5px; }
+  .legend .map-legend-text {
+    padding: 5px 5px 0 5px;
+    height: 30px;
+    width: 160px; }
+    .legend .map-legend-text div:first-child {
+      float: left; }
+    .legend .map-legend-text div:last-child {
+      float: right; }
+  .legend .map-legend-gradient {
+    height: 20px;
+    width: 160px; }

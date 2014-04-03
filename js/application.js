@@ -564,6 +564,7 @@
     __extends(MapView, _super);
 
     function MapView() {
+      this.callTabRelatedChanges = __bind(this.callTabRelatedChanges, this);
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
@@ -578,10 +579,24 @@
       this.setMinMax = __bind(this.setMinMax, this);
       this.updateQueryLayer = __bind(this.updateQueryLayer, this);
       this.bindPopup = __bind(this.bindPopup, this);
+      this.unsetLegend = __bind(this.unsetLegend, this);
+      this.setLegend = __bind(this.setLegend, this);
       return MapView.__super__.constructor.apply(this, arguments);
     }
 
     MapView.prototype.template = Handlebars.templates['map'];
+
+    MapView.prototype.colorRange = {
+      'change': ["#FF5C26", "#eee", "#A3D900"],
+      'now': ["#FFDC73", "#FF5C26"],
+      'future_threats': ["#FFDC73", "#FF5C26"]
+    };
+
+    MapView.prototype.legendText = {
+      'change': ['Increase', 'Decrease'],
+      'now': ["Low", "High"],
+      'future_threats': ["Low", "High"]
+    };
 
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
@@ -644,6 +659,32 @@
       })(this));
     };
 
+    MapView.prototype.setLegend = function() {
+      if (this.legend) {
+        this.unsetLegend();
+      }
+      this.legend = L.control({
+        position: "bottomleft"
+      });
+      this.legend.onAdd = (function(_this) {
+        return function(map) {
+          var colours, div, tab;
+          div = L.DomUtil.create("div", "info legend");
+          tab = _this.filter.get('tab');
+          colours = _this.colorRange[tab].join(', ');
+          div.innerHTML = "<div class='map-legend-text'>\n  <div>" + _this.legendText[tab][0] + "</div>\n  <div>" + _this.legendText[tab][1] + "</div>\n</div>\n<div class='map-legend-gradient' style='background-image:linear-gradient(to right, " + colours + ");''>\n</div>";
+          return div;
+        };
+      })(this);
+      return this.legend.addTo(this.map);
+    };
+
+    MapView.prototype.unsetLegend = function() {
+      console.log('unsetLegend');
+      this.legend.removeFrom(this.map);
+      return this.legend = false;
+    };
+
     MapView.prototype.bindPopup = function(feature, layer) {
       var id, popupOptions, w;
       id = layer.feature.properties.cartodb_id;
@@ -684,7 +725,8 @@
             _this.mapHasData = true;
             _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
           }
-          return _this.queryLayerInteriors.bringToFront();
+          _this.queryLayerInteriors.bringToFront();
+          return _this.setLegend();
         };
       })(this));
     };
@@ -727,7 +769,14 @@
       if (this.querydata != null) {
         this.resetWatershedSelectionCount();
         this.queryLayer.setStyle(this.queryPolyStyle);
-        return this.resultsNumber.set('number', this.currentSelectionCount);
+        this.resultsNumber.set('number', this.currentSelectionCount);
+        if (this.currentSelectionCount === 0) {
+          return this.unsetLegend();
+        } else {
+          if (!this.legend) {
+            return this.setLegend();
+          }
+        }
       }
     };
 
@@ -736,13 +785,14 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var color, domain, range;
-      if (this.filter.get('tab') === 'change') {
+      var color, domain, range, tab;
+      tab = this.filter.get('tab');
+      if (tab === 'change') {
         domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
-        range = ["#FF5C26", "#eee", "#A3D900"];
+        range = this.colorRange[tab];
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
-        range = ["#FFDC73", "#FF5C26"];
+        range = this.colorRange[tab];
       }
       color = d3.scale.linear().domain(domain).range(range);
       return color(this.querydata[feature][this.styleValueField]);
@@ -914,6 +964,11 @@
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
       number += '';
       return number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/);
+    };
+
+    MapView.prototype.callTabRelatedChanges = function() {
+      this.resetQueryLayerStyle();
+      return this.setLegend(this.filter.get('tab'));
     };
 
     MapView.prototype.onClose = function() {
