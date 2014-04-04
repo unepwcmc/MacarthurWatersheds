@@ -38,7 +38,7 @@
         name: "Biodiversity importance"
       }, {
         selector: "ecosystem",
-        name: "Ecosystem function"
+        name: "Ecosystem function importance"
       }
     ],
     lenses: {
