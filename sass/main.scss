@@ -40,10 +40,14 @@ header {
     text-decoration: none;
     cursor: pointer;
   }
+  span{
+  color: #fff;
+  display: block;
+  }
 }
 
 .map-container {
-  height: calc(100% - 51px);
+  height: calc(100% - 71px);
 }
 
 #map {
@@ -57,7 +61,7 @@ header {
   max-width: 715px;
   float: left;
   position: absolute;
-  top: 50px;
+  top: 72px;
   right: 0;
   z-index: 9999;
   background: #fff;
@@ -194,7 +198,7 @@ select option {
   width: 300px;
 }
 
-.customSelect { 
+.customSelect {
 /* This is the default class that is used */
 /* Put whatever custom styles you want here */
   background: transparent;
@@ -243,9 +247,14 @@ select option {
   color: $blue;
 }
 
-//.selector {
-//  height: 200px;
-//}
+.tab-tagline {
+  padding: 4px 0 4px 20px;
+  p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #929292;
+  }
+}
 
 ul.tabs {
   list-style-type: none;
@@ -312,7 +321,7 @@ div.scenario-container {
   div:last-child h1 {
     margin-top: 20px;
   }
-  .customSelect { 
+  .customSelect {
     background-position-x: 270px;
     background-position-y: 12px;
   }
@@ -371,7 +380,7 @@ div.match-count {
     }
     &.nogradient.future_threats {
       background: url("/imgs/legend_gradient_future_threats.png");
-    }    
+    }
   }
 }
 
