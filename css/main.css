@@ -357,3 +357,6 @@ div.legend div.map-legend-gradient {
     padding: 0 5px; }
     div.legend div.map-legend-gradient span:last-child {
       float: right; }
+
+header a:last-child {
+  float: right; }
