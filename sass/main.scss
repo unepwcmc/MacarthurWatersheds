@@ -39,10 +39,14 @@ header {
     color: $blue;
     text-decoration: none;
     cursor: pointer;
+    letter-spacing: 0.015em;
   }
-  span{
-  color: #fff;
-  display: block;
+  p{
+  color: $blue;
+  opacity: 0.7;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  font-size: 0.85em;
   }
 }
 
@@ -70,7 +74,9 @@ header {
 div.filters {
   padding: 30px 20px;
   background: #fff;
-  border: 1px solid #FAFAFA;
+  border-bottom: 1px solid #FAFAFA;
+  border-right: 1px solid #FAFAFA;
+  border-left: 1px solid #FAFAFA;
   color: #888;
   h1 {
     margin: 20px 0 10px 0;
@@ -248,7 +254,7 @@ select option {
 }
 
 .tab-strapline {
-  padding: 4px 0 4px 20px;
+  margin: 30px 20px 0 20px;
   p {
     margin: 0;
     font-size: 0.85em;

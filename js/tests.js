@@ -1,4 +1,39 @@
 (function() {
+  suite('Main Controller');
+
+  test('The application starts by showing the choose region view and a map', function() {
+    var chooseRegionActionStub, controller, showMapActionStub;
+    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
+    controller = new Backbone.Controllers.MainController();
+    try {
+      assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
+      return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
+    } finally {
+      chooseRegionActionStub.restore();
+      showMapActionStub.restore();
+    }
+  });
+
+  test('on initialize, the controller creates a side panel after the map', function() {
+    var chooseRegionActionStub, controller, showMapActionStub;
+    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
+    $('body').append('<div id="map">');
+    controller = new Backbone.Controllers.MainController();
+    try {
+      return assert.lengthOf($('body').find('#side-panel'), 1, "Expected to side a #side-panel");
+    } finally {
+      chooseRegionActionStub.restore();
+      showMapActionStub.restore();
+      $('body').remove('#map');
+      $('body').remove('#side-panel');
+    }
+  });
+
+}).call(this);
+
+(function() {
   suite("Query Builder integration");
 
   test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
@@ -177,41 +212,6 @@
       buildQuerySpy.restore();
     }
     return resultsNumberRenderStub.restore();
-  });
-
-}).call(this);
-
-(function() {
-  suite('Main Controller');
-
-  test('The application starts by showing the choose region view and a map', function() {
-    var chooseRegionActionStub, controller, showMapActionStub;
-    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
-    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
-    controller = new Backbone.Controllers.MainController();
-    try {
-      assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
-      return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
-    } finally {
-      chooseRegionActionStub.restore();
-      showMapActionStub.restore();
-    }
-  });
-
-  test('on initialize, the controller creates a side panel after the map', function() {
-    var chooseRegionActionStub, controller, showMapActionStub;
-    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
-    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
-    $('body').append('<div id="map">');
-    controller = new Backbone.Controllers.MainController();
-    try {
-      return assert.lengthOf($('body').find('#side-panel'), 1, "Expected to side a #side-panel");
-    } finally {
-      chooseRegionActionStub.restore();
-      showMapActionStub.restore();
-      $('body').remove('#map');
-      $('body').remove('#side-panel');
-    }
   });
 
 }).call(this);
