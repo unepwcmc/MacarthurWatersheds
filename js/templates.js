@@ -475,7 +475,7 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<h1>Scenario of change</h1>\n<p class=\"scenario-help\">These scenarios are based on UNEP GEO4. <a href=\"http://www.unep.org/geo/geo4.asp\" target=\"_blank\">Learn more here</a></p>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" ";
+  buffer += "<h1>Scenario of change</h1>\n<p class=\"scenario-help\">These scenarios are based on UNEP GEO4. <a href=\"http://www.unep.org/geo/geo4.asp\" target=\"_blank\">Learn more here <img src=\"../imgs/external-link-grey-light05.png\"></a></p>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.defaultOption), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " disabled>Select a scenario</option>\n  ";
