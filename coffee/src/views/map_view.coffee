@@ -59,8 +59,8 @@ class Backbone.Views.MapView extends Backbone.View
 
   getLegendGradientElement: (tab) ->
     if Modernizr.cssgradients
-      a = if tab == 'change' then @colorRange[tab].reverse() else @colorRange[tab]
-      colours = a.join(', ')
+      colorRange = _.cloneDeep(@colorRange[tab])
+      colours = colorRange.join(', ')
       style = "linear-gradient(to right, #{colours});"
       return "<div class='map-legend-gradient' style='background: #{style}'>" 
     else
@@ -108,12 +108,9 @@ class Backbone.Views.MapView extends Backbone.View
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
     @styleValueField = 'rank'  # or value
-    console.log 'before filter'
     q = @filter.get('query')
     unless q? then return
-    console.log 'before data'
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
-      console.log 'data!'
       @data = @sortDataBy(data.rows, 'value')
       unless @data.length > 0
         throw new Error("Data should not be empty, check your query")
