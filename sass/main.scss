@@ -30,7 +30,7 @@ h1, h2, h3 {
 header {
   z-index: 9999;
 	background: $dark-blue;
-	padding: 15px;
+	padding: 16px;
 	font-family: 'Dosis', sans-serif;
   border-bottom: 1px solid $dark-grey;
   a {
@@ -47,7 +47,7 @@ header {
 }
 
 .map-container {
-  height: calc(100% - 71px);
+  height: calc(100% - 73px);
 }
 
 #map {
@@ -247,7 +247,7 @@ select option {
   color: $blue;
 }
 
-.tab-tagline {
+.tab-strapline {
   padding: 4px 0 4px 20px;
   p {
     margin: 0;

@@ -5,15 +5,15 @@ MacArthur.CONFIG =
     {
       selector: "now"
       name: "Now"
-      tagline: "Current status"
+      strapline: "Current status"
     },{
       selector: "change"
       name: "Change"
-      tagline: "Change up to 2050"
-    },{
+      strapline: "Change up to 2050"
+    },{ 
       selector: "future_threats"
       name: "Future Threats"
-      tagline: "Future threats from agricultural development"
+      strapline: "Future threats from agricultural development"
     }
   ],
   regions: [
