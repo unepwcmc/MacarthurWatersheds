@@ -18,7 +18,7 @@ h1, h2, h3 {
 header {
   z-index: 9999;
   background: #2A2B33;
-  padding: 15px;
+  padding: 16px;
   font-family: 'Dosis', sans-serif;
   border-bottom: 1px solid #E1E1E1; }
   header a {
@@ -26,7 +26,14 @@ header {
     font-weight: 700;
     color: #4dc0dd;
     text-decoration: none;
-    cursor: pointer; }
+    cursor: pointer;
+    letter-spacing: 0.015em; }
+  header p {
+    color: #4dc0dd;
+    opacity: 0.7;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    font-size: 0.85em; }
 
 section header {
   background: none;
@@ -37,7 +44,7 @@ section header {
   margin: 0 auto; }
 
 .map-container {
-  height: calc(100% - 51px); }
+  height: calc(100% - 73px); }
 
 #map {
   width: 100%;
@@ -49,7 +56,7 @@ section header {
   max-width: 715px;
   float: left;
   position: absolute;
-  top: 50px;
+  top: 72px;
   right: 0;
   z-index: 9999;
   background: #fff; }
@@ -57,7 +64,9 @@ section header {
 div.filters {
   padding: 30px 20px;
   background: #fff;
-  border: 1px solid #FAFAFA;
+  border-bottom: 1px solid #FAFAFA;
+  border-right: 1px solid #FAFAFA;
+  border-left: 1px solid #FAFAFA;
   color: #888; }
   div.filters h1 {
     margin: 20px 0 10px 0;
@@ -226,6 +235,13 @@ select option {
   width: 300px;
   height: 30px;
   color: #4dc0dd; }
+
+.tab-strapline {
+  margin: 30px 20px 0 20px; }
+  .tab-strapline p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #929292; }
 
 ul.tabs {
   list-style-type: none;

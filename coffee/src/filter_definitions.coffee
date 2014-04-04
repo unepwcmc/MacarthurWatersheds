@@ -2,9 +2,19 @@ window.MacArthur ||= {}
 
 MacArthur.CONFIG =
   tabs: [
-    { selector: "now", name: "Now"}
-    { selector: "change", name: "Change"}
-    { selector: "future_threats", name: "Future Threats"}
+    {
+      selector: "now"
+      name: "Now"
+      strapline: "Current status"
+    },{
+      selector: "change"
+      name: "Change"
+      strapline: "Change up to 2050"
+    },{ 
+      selector: "future_threats"
+      name: "Future Threats"
+      strapline: "Future threats from agricultural development"
+    }
   ],
   regions: [
     # latLngBounds(southWest, northEast)
@@ -14,7 +24,7 @@ MacArthur.CONFIG =
   ]
   subjects: [
     { selector: "biodiversity", name: "Biodiversity importance"}
-    { selector: "ecosystem", name: "Ecosystem function"}
+    { selector: "ecosystem", name: "Ecosystem function importance"}
   ],
   lenses: {
     biodiversity: [
@@ -37,7 +47,7 @@ MacArthur.CONFIG =
     { selector: "secf2050", name: "Security first" }
     { selector: "polf2050", name: "Policy first" }
   ],
-  levels: { 
+  levels: {
     default: [
       { selector: "all", name: "All", default: true }
       { selector: "high", name: "High" }
@@ -47,7 +57,7 @@ MacArthur.CONFIG =
     change: [
       { selector: "all", name: "All", default: true }
       { selector: "increase", name: "Increase" }
-      { selector: "low", name: "Low" } 
+      { selector: "low", name: "Low" }
       { selector: "medium", name: "Medium" }
       { selector: "high", name: "High" }
     ]

@@ -167,10 +167,10 @@ function program2(depth0,data) {
   }
 
   buffer += "<div class=\"selector\">\n	<h1>";
-  if (stack1 = helpers.subject) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.subject); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  if (stack1 = helpers.title) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.title); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + " Lens</h1>\n\n	<select id=\"lens-select\" class='select-box'>\n	  ";
+    + "</h1>\n\n	<select id=\"lens-select\" class='select-box'>\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.lenses), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	</select>\n</div>\n";
@@ -475,7 +475,7 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<h1>Scenario of change</h1>\n<p class=\"scenario-help\">These scenarios are based on UNEP GEO4. <a href=\"http://www.unep.org/geo/geo4.asp\" target=\"_blank\">Learn more here</a></p>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" ";
+  buffer += "<h1>Scenario of change</h1>\n<p class=\"scenario-help\">These scenarios are based on UNEP GEO4. <a href=\"http://www.unep.org/geo/geo4.asp\" target=\"_blank\">Learn more here <img src=\"../imgs/external-link-grey-light05.png\"></a></p>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.defaultOption), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " disabled>Select a scenario</option>\n  ";
@@ -519,7 +519,11 @@ function program2(depth0,data) {
   buffer += "<ul class=\"tabs\">\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.tabs), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n\n";
+  buffer += "\n</ul>\n\n<div class=\"tab-strapline\">\n  <p>";
+  if (stack1 = helpers.strapline) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.strapline); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</p>\n</div>\n\n";
   options = {hash:{
     'filter': ((depth0 && depth0.filter)),
     'resultsNumber': ((depth0 && depth0.resultsNumber))
