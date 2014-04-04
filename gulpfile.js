@@ -3,12 +3,31 @@ var gulp = require('gulp');
 var coffee = require('gulp-coffee');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var minifyCSS = require('gulp-minify-css');
 var handlebars = require('gulp-handlebars');
 var declare = require('gulp-declare');
 var plumber = require('gulp-plumber');
 var sass = require('gulp-sass');
 
 var paths = {
+  all_js: [
+    'lib/modernizr/modernizr.custom.js',
+    'lib/d3/d3.js',
+    'lib/topojson/topojson.js',
+    'lib/jquery/dist/jquery.js',
+    'lib/customselect/jquery.customSelect.js',
+    'lib/lodash/dist/lodash.compat.js',
+    'lib/backbone/backbone.js',
+    'lib/handlebars/handlebars.js',
+    'lib/leaflet/leaflet.js',
+    'lib/diorama.js',
+    'js/templates.js',
+    'js/application.js',
+  ],
+  all_css: [
+    'css/main.css',
+    'css/leaflet.css',
+  ],
   application: [
     'coffee/src/filter_definitions.coffee', 
     'coffee/src/models/filter.coffee', 
@@ -47,6 +66,21 @@ gulp.task('tests', function() {
     .pipe(gulp.dest('js/'));
 });
 
+gulp.task('minify-js', function() {
+  // Minify and copy all JavaScript
+  return gulp.src(paths.all_js)
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('minify-css', function() {
+  return gulp.src(paths.all_css)
+    .pipe(concat('app.css'))
+    .pipe(minifyCSS())
+    .pipe(gulp.dest('dist/'))
+});
+
 gulp.task('application', function() {
   // Minify and copy all JavaScript (except vendor scripts)
   return gulp.src(paths.application)
@@ -83,3 +117,4 @@ gulp.task('watch', function() {
 
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', ['application', 'templates', 'tests', 'watch', 'sass']);
+gulp.task('minify', ['minify-js', 'minify-css']);

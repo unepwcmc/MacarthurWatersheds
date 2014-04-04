@@ -102,7 +102,12 @@ The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/
 	HostName ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
 	IdentityFile <- EC2 pem key location ->
 
-
+  ```sh
+    git checkout production
+    git merge master
+    gulp minify
+  ```
+  
 Then run cap deploy.
 
 

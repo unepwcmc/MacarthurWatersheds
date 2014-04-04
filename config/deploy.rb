@@ -8,7 +8,7 @@ role :web, "ec2-46-51-154-19.eu-west-1.compute.amazonaws.com"                   
 role :app, "ec2-46-51-154-19.eu-west-1.compute.amazonaws.com"                          # This may be the same as your `Web` server
 role :db,  "ec2-46-51-154-19.eu-west-1.compute.amazonaws.com", :primary => true # This is where Rails migrations will run
 
-set :branch, "master"
+set :branch, "production"
 set :scm_username, "unepwcmc-read"
 
 
