@@ -26,6 +26,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     )
     @$el.html(@template(
       lenses: lenses
+      title: @getLensTitle()
       subject: subject.charAt(0).toUpperCase() + subject.slice(1)
     ))
 
@@ -54,3 +55,9 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     _.find(@config[@filter.get('subject')], (obj) -> 
       return obj.default?
     )
+
+  getLensTitle: ->
+    if @filter.get('subject') == 'biodiversity'
+      return "For species"
+    else if @filter.get('subject') == 'ecosystem'
+      return "By provision"
