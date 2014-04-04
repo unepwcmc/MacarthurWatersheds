@@ -5,13 +5,16 @@
     tabs: [
       {
         selector: "now",
-        name: "Now"
+        name: "Now",
+        strapline: "Current status"
       }, {
         selector: "change",
-        name: "Change"
+        name: "Change",
+        strapline: "Change up to 2050"
       }, {
         selector: "future_threats",
-        name: "Future Threats"
+        name: "Future Threats",
+        strapline: "Future threats from agricultural development"
       }
     ],
     regions: [
@@ -35,7 +38,7 @@
         name: "Biodiversity importance"
       }, {
         selector: "ecosystem",
-        name: "Ecosystem function"
+        name: "Ecosystem function importance"
       }
     ],
     lenses: {
@@ -452,13 +455,17 @@
     };
 
     TabView.prototype.render = function() {
-      var tabs;
+      var strapline, tabs;
       tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'tab');
+      strapline = _.find(tabs, function(t) {
+        return t.active;
+      }).strapline;
       this.$el.html(this.template({
         thisView: this,
         filter: this.filter,
         resultsNumber: this.resultsNumber,
-        tabs: tabs
+        tabs: tabs,
+        strapline: strapline
       }));
       this.attachSubViews();
       return this;
@@ -1230,6 +1237,7 @@
       })(this));
       this.$el.html(this.template({
         lenses: lenses,
+        title: this.getLensTitle(),
         subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
       theSelect = this.$el.find('.select-box');
@@ -1264,6 +1272,14 @@
       return _.find(this.config[this.filter.get('subject')], function(obj) {
         return obj["default"] != null;
       });
+    };
+
+    LensSelectorView.prototype.getLensTitle = function() {
+      if (this.filter.get('subject') === 'biodiversity') {
+        return "For species";
+      } else if (this.filter.get('subject') === 'ecosystem') {
+        return "By provision";
+      }
     };
 
     return LensSelectorView;
