@@ -29,8 +29,7 @@ header {
     cursor: pointer; }
   header span {
     color: #fff;
-    display: block;
-    }
+    display: block; }
 
 .map-container {
   height: calc(100% - 51px); }
@@ -45,7 +44,7 @@ header {
   max-width: 715px;
   float: left;
   position: absolute;
-  top: 72px;
+  top: 50px;
   right: 0;
   z-index: 9999;
   background: #fff; }
