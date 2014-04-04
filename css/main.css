@@ -222,9 +222,9 @@ select option {
   height: 30px;
   color: #4dc0dd; }
 
-.tab-tagline {
+.tab-strapline {
   padding: 4px 0 4px 20px; }
-  .tab-tagline p {
+  .tab-strapline p {
     margin: 0;
     font-size: 0.85em;
     color: #929292; }
