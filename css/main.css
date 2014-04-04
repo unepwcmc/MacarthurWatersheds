@@ -18,7 +18,7 @@ h1, h2, h3 {
 header {
   z-index: 9999;
   background: #2A2B33;
-  padding: 15px;
+  padding: 16px;
   font-family: 'Dosis', sans-serif;
   border-bottom: 1px solid #E1E1E1; }
   header a {
@@ -32,7 +32,7 @@ header {
     display: block; }
 
 .map-container {
-  height: calc(100% - 71px); }
+  height: calc(100% - 73px); }
 
 #map {
   width: 100%;
