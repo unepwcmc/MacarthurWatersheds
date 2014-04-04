@@ -185,17 +185,26 @@ class Backbone.Views.MapView extends Backbone.View
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
-    range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
+    tab = @filter.get('tab')
     d = @querydata[id]
+    if tab == 'change'
+      range = @zeroValueIndex / @categories
+    else
+      range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
     if level == 'all'
       return yes
-    if level == 'high'
+    if level == 'increase'
+      return d[@styleValueField] >= @zeroValueIndex
+    if level == 'high' && tab != 'change'
       if d[@styleValueField] >= @min[@styleValueField] + range * 2
         return yes
+    if level == 'low' && tab == 'change'
+      if d[@styleValueField] >= @min[@styleValueField] + range * 2 and d[@styleValueField] < @zeroValueIndex
+        return yes      
     if level == 'medium'
       if d[@styleValueField] >= @min[@styleValueField] + range and d[@styleValueField] < @min[@styleValueField] + range * 2
         return yes
-    if level == 'low'
+    if level == 'low' && tab != 'change' or level == 'high' && tab == 'change'
       if d[@styleValueField] >= @min[@styleValueField] and d[@styleValueField] < @min[@styleValueField] + range
         return yes
     no

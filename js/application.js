@@ -90,22 +90,43 @@
         name: "Policy first"
       }
     ],
-    levels: [
-      {
-        selector: "all",
-        name: "All",
-        "default": true
-      }, {
-        selector: "high",
-        name: "High"
-      }, {
-        selector: "medium",
-        name: "Medium"
-      }, {
-        selector: "low",
-        name: "Low"
-      }
-    ],
+    levels: {
+      "default": [
+        {
+          selector: "all",
+          name: "All",
+          "default": true
+        }, {
+          selector: "high",
+          name: "High"
+        }, {
+          selector: "medium",
+          name: "Medium"
+        }, {
+          selector: "low",
+          name: "Low"
+        }
+      ],
+      change: [
+        {
+          selector: "all",
+          name: "All",
+          "default": true
+        }, {
+          selector: "increase",
+          name: "Increase"
+        }, {
+          selector: "low",
+          name: "Low"
+        }, {
+          selector: "medium",
+          name: "Medium"
+        }, {
+          selector: "high",
+          name: "High"
+        }
+      ]
+    },
     protectionLevels: [
       {
         selector: "all",
@@ -814,15 +835,28 @@
     };
 
     MapView.prototype.filterFeatureLevel = function(id) {
-      var d, level, range;
+      var d, level, range, tab;
       level = this.filter.get('level');
-      range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
+      tab = this.filter.get('tab');
       d = this.querydata[id];
+      if (tab === 'change') {
+        range = this.zeroValueIndex / this.categories;
+      } else {
+        range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
+      }
       if (level === 'all') {
         return true;
       }
-      if (level === 'high') {
+      if (level === 'increase') {
+        return d[this.styleValueField] >= this.zeroValueIndex;
+      }
+      if (level === 'high' && tab !== 'change') {
         if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2) {
+          return true;
+        }
+      }
+      if (level === 'low' && tab === 'change') {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2 && d[this.styleValueField] < this.zeroValueIndex) {
           return true;
         }
       }
@@ -831,7 +865,7 @@
           return true;
         }
       }
-      if (level === 'low') {
+      if (level === 'low' && tab !== 'change' || level === 'high' && tab === 'change') {
         if (d[this.styleValueField] >= this.min[this.styleValueField] && d[this.styleValueField] < this.min[this.styleValueField] + range) {
           return true;
         }
@@ -1281,6 +1315,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1292,6 +1327,7 @@
     __extends(LevelSelectorView, _super);
 
     function LevelSelectorView() {
+      this.setConfig = __bind(this.setConfig, this);
       return LevelSelectorView.__super__.constructor.apply(this, arguments);
     }
 
@@ -1303,12 +1339,19 @@
 
     LevelSelectorView.prototype.initialize = function(options) {
       LevelSelectorView.__super__.initialize.apply(this, arguments);
-      this.config = _.cloneDeep(MacArthur.CONFIG.levels);
+      this.listenTo(this.filter, 'change:tab', this.setConfig);
+      this.setConfig();
       this.levelType = 'level';
       if (this.filter.get('level') == null) {
         this.setDefaultLevel();
       }
       return this.render();
+    };
+
+    LevelSelectorView.prototype.setConfig = function() {
+      var l;
+      l = MacArthur.CONFIG.levels[this.filter.get('tab')] || MacArthur.CONFIG.levels['default'];
+      return this.config = _.cloneDeep(l);
     };
 
     return LevelSelectorView;
