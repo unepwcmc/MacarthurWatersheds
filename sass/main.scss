@@ -47,7 +47,7 @@ header {
 }
 
 .map-container {
-  height: calc(100% - 51px);
+  height: calc(100% - 71px);
 }
 
 #map {
@@ -247,9 +247,14 @@ select option {
   color: $blue;
 }
 
-//.selector {
-//  height: 200px;
-//}
+.tab-tagline {
+  padding: 4px 0 4px 20px;
+  p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #929292;
+  }
+}
 
 ul.tabs {
   list-style-type: none;

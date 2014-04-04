@@ -32,7 +32,7 @@ header {
     display: block; }
 
 .map-container {
-  height: calc(100% - 51px); }
+  height: calc(100% - 71px); }
 
 #map {
   width: 100%;
@@ -221,6 +221,13 @@ select option {
   width: 300px;
   height: 30px;
   color: #4dc0dd; }
+
+.tab-tagline {
+  padding: 4px 0 4px 20px; }
+  .tab-tagline p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #929292; }
 
 ul.tabs {
   list-style-type: none;

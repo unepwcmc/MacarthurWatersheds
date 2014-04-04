@@ -2,9 +2,19 @@ window.MacArthur ||= {}
 
 MacArthur.CONFIG =
   tabs: [
-    { selector: "now", name: "Now"}
-    { selector: "change", name: "Change"}
-    { selector: "future_threats", name: "Future Threats"}
+    { 
+      selector: "now"
+      name: "Now"
+      tagline: "Current status"
+    },{ 
+      selector: "change"
+      name: "Change"
+      tagline: "Change up to 2050"
+    },{ 
+      selector: "future_threats"
+      name: "Future Threats"
+      tagline: "Future threats from agricultural development"
+    }
   ],
   regions: [
     # latLngBounds(southWest, northEast)
