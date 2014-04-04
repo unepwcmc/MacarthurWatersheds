@@ -28,6 +28,14 @@ header {
     text-decoration: none;
     cursor: pointer; }
 
+section header {
+  background: none;
+  padding: 15px 0 15px 0; }
+
+.main {
+  width: 60%;
+  margin: 0 auto; }
+
 .map-container {
   height: calc(100% - 51px); }
 
