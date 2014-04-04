@@ -405,8 +405,6 @@ div.legend div.map-legend-gradient {
 }
 }
 
-header a {
-  &:last-child {
-    float: right;
-  }
+header a .about {
+  float: right;
 }

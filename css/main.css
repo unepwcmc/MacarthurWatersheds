@@ -358,5 +358,5 @@ div.legend div.map-legend-gradient {
     div.legend div.map-legend-gradient span:last-child {
       float: right; }
 
-header a:last-child {
+header a .about {
   float: right; }
