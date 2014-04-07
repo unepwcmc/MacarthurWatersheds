@@ -628,6 +628,7 @@
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.resultsNumber = options.resultsNumber;
+      this.parsedResults = 0;
       this.initBaseLayer();
       this.listenTo(this.filter, 'change:tab', this.resetQueryLayerStyle);
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
@@ -668,7 +669,7 @@
       regionCode = region.get('code');
       regionBounds = region.get('bounds');
       this.categories = 3;
-      this.resetWatershedSelectionCount();
+      this.unsetWatershedSelectionCount();
       this.collection = topojson.feature(geo, geo.objects[regionCode]);
       this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
       this.queryLayer = L.geoJson(this.collection, {
@@ -748,7 +749,8 @@
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q + "&callback=?", (function(_this) {
         return function(data) {
           _this.data = _this.sortDataBy(data.rows, 'value');
-          if (!(_this.data.length > 0)) {
+          _this.dataLenght = _this.data.length;
+          if (!(_this.dataLenght > 0)) {
             throw new Error("Data should not be empty, check your query");
           }
           _this.setMinMax();
@@ -756,7 +758,6 @@
             _this.setZeroValueIndex();
           }
           _this.querydata = _this.buildQuerydata(_this.data);
-          _this.resetWatershedSelectionCount(_this.data.length);
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
@@ -807,16 +808,8 @@
 
     MapView.prototype.updateQueryLayerStyle = function() {
       if (this.querydata != null) {
-        this.resetWatershedSelectionCount();
-        this.queryLayer.setStyle(this.queryPolyStyle);
-        this.resultsNumber.set('number', this.currentSelectionCount);
-        if (this.currentSelectionCount === 0) {
-          return this.unsetLegend();
-        } else {
-          if (!this.legend) {
-            return this.setLegend();
-          }
-        }
+        this.unsetWatershedSelectionCount();
+        return this.queryLayer.setStyle(this.queryPolyStyle);
       }
     };
 
@@ -1000,6 +993,10 @@
         fillOpacity = 0;
         fillColor = 0;
       }
+      this.parsedResults += 1;
+      if (this.parsedResults === this.dataLenght) {
+        this.setWatershedSelectionCount();
+      }
       return {
         weight: 0,
         opacity: 0,
@@ -1008,10 +1005,23 @@
       };
     };
 
-    MapView.prototype.resetWatershedSelectionCount = function(number) {
-      number || (number = 0);
-      this.currentSelectionCount = number;
-      return this.resultsNumber.set('number', number);
+    MapView.prototype.setWatershedSelectionCount = function() {
+      this.parsedResults = 0;
+      this.resultsNumber.set('number', this.currentSelectionCount);
+      if (this.currentSelectionCount === 0) {
+        this.unsetLegend();
+      } else {
+        if (!this.legend) {
+          this.setLegend();
+        }
+      }
+      return this.currentSelectionCount = 0;
+    };
+
+    MapView.prototype.unsetWatershedSelectionCount = function() {
+      this.parsedResults = 0;
+      this.currentSelectionCount = 0;
+      return this.resultsNumber.set('number', 0);
     };
 
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {

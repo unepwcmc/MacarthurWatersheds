@@ -17,6 +17,7 @@ class Backbone.Views.MapView extends Backbone.View
   initialize: (options) ->
     @filter = options.filter
     @resultsNumber = options.resultsNumber
+    @parsedResults = 0
     @initBaseLayer()
     @listenTo(@filter, 'change:tab', @resetQueryLayerStyle)
     @listenTo(@filter, 'change:query', @updateQueryLayer)
@@ -48,7 +49,7 @@ class Backbone.Views.MapView extends Backbone.View
     regionCode = region.get('code')
     regionBounds = region.get('bounds')
     @categories = 3
-    @resetWatershedSelectionCount()
+    @unsetWatershedSelectionCount()
     @collection = topojson.feature(geo, geo.objects[regionCode])
     @interiors = topojson.mesh(geo, geo.objects[regionCode])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
@@ -112,12 +113,12 @@ class Backbone.Views.MapView extends Backbone.View
     unless q? then return
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
       @data = @sortDataBy(data.rows, 'value')
-      unless @data.length > 0
+      @dataLenght = @data.length
+      unless @dataLenght > 0
         throw new Error("Data should not be empty, check your query")
       @setMinMax()
       if @filter.get('tab') == 'change' then @setZeroValueIndex()
       @querydata = @buildQuerydata @data
-      @resetWatershedSelectionCount @data.length
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
@@ -158,13 +159,8 @@ class Backbone.Views.MapView extends Backbone.View
   # This show-hides watersheds, but does not re-style the map
   updateQueryLayerStyle: =>
     if @querydata?
-      @resetWatershedSelectionCount()
+      @unsetWatershedSelectionCount()
       @queryLayer.setStyle @queryPolyStyle
-      @resultsNumber.set 'number', @currentSelectionCount
-      if @currentSelectionCount == 0
-        @unsetLegend()
-      else
-        unless @legend then @setLegend()
  
   resetQueryLayerStyle: =>
     @queryLayer.setStyle @basePolyStyle
@@ -290,6 +286,9 @@ class Backbone.Views.MapView extends Backbone.View
     else
       fillOpacity = 0
       fillColor = 0
+    @parsedResults += 1
+    if @parsedResults == @dataLenght
+      @setWatershedSelectionCount()
     {
       weight: 0
       opacity: 0
@@ -297,10 +296,19 @@ class Backbone.Views.MapView extends Backbone.View
       fillColor: fillColor
     }
 
-  resetWatershedSelectionCount: (number) ->
-    number or= 0
-    @currentSelectionCount = number
-    @resultsNumber.set 'number', number
+  setWatershedSelectionCount: ->
+    @parsedResults = 0
+    @resultsNumber.set 'number', @currentSelectionCount
+    if @currentSelectionCount == 0
+      @unsetLegend()
+    else
+      unless @legend then @setLegend()
+    @currentSelectionCount = 0
+
+  unsetWatershedSelectionCount: ->
+    @parsedResults = 0
+    @currentSelectionCount = 0
+    @resultsNumber.set 'number', 0
 
   formatToFirst2NonZeroDecimals: (number) ->
     number += ''
@@ -308,4 +316,3 @@ class Backbone.Views.MapView extends Backbone.View
 
   onClose: ->
     @remove()
-
