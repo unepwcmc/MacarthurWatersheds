@@ -18,7 +18,7 @@ h1, h2, h3 {
 header {
   z-index: 9999;
   background: #2A2B33;
-  padding: 15px;
+  padding: 16px;
   font-family: 'Dosis', sans-serif;
   border-bottom: 1px solid #E1E1E1; }
   header a {
@@ -26,10 +26,32 @@ header {
     font-weight: 700;
     color: #4dc0dd;
     text-decoration: none;
-    cursor: pointer; }
+    cursor: pointer;
+    letter-spacing: 0.015em; }
+    header a:hover, header a:active {
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -ms-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+      background: #2F88A3; }
+  header p {
+    color: #4dc0dd;
+    opacity: 0.7;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    font-size: 0.85em; }
+
+section header {
+  background: none;
+  padding: 15px 0 15px 0; }
+
+.main {
+  width: 60%;
+  margin: 0 auto; }
 
 .map-container {
-  height: calc(100% - 51px); }
+  height: calc(100% - 73px); }
 
 #map {
   width: 100%;
@@ -41,7 +63,7 @@ header {
   max-width: 715px;
   float: left;
   position: absolute;
-  top: 50px;
+  top: 71px;
   right: 0;
   z-index: 9999;
   background: #fff; }
@@ -49,7 +71,9 @@ header {
 div.filters {
   padding: 30px 20px;
   background: #fff;
-  border: 1px solid #FAFAFA;
+  border-bottom: 1px solid #FAFAFA;
+  border-right: 1px solid #FAFAFA;
+  border-left: 1px solid #FAFAFA;
   color: #888; }
   div.filters h1 {
     margin: 20px 0 10px 0;
@@ -92,7 +116,7 @@ div.subjects h1 {
 
 .region-chooser {
   width: 50%;
-  height: 325px;
+  height: 405px;
   color: #4dc0dd; }
   .region-chooser h1 {
     margin: 0;
@@ -128,7 +152,7 @@ ul.regions {
       background-size: 50%;
       background-position: center;
       margin: 0 auto 20px auto;
-      height: 150px; }
+      height: 220px; }
       ul.regions li div.region-area:hover, ul.regions li div.region-area:active {
         -webkit-transition: all 0.5s ease;
         -moz-transition: all 0.5s ease;
@@ -218,6 +242,14 @@ select option {
   width: 300px;
   height: 30px;
   color: #4dc0dd; }
+
+.tab-strapline {
+  margin: 30px 20px 0 20px; }
+  .tab-strapline p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #929292;
+    font-weight: 500; }
 
 ul.tabs {
   list-style-type: none;
@@ -357,3 +389,11 @@ div.legend div.map-legend-gradient {
     padding: 0 5px; }
     div.legend div.map-legend-gradient span:last-child {
       float: right; }
+
+header a.about {
+  float: right;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0;
+  font-size: 0.85em;
+  cursor: pointer; }
