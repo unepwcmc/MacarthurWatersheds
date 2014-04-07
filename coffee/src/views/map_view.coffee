@@ -5,7 +5,7 @@ class Backbone.Views.MapView extends Backbone.View
   template: Handlebars.templates['map']
 
   colorRange:
-    'change': ["#FF5C26", "#eee", "#A3D900"]
+    'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#FFDC73", "#FF5C26"]
     'future_threats': ["#FFDC73", "#FF5C26"]
 
@@ -19,7 +19,7 @@ class Backbone.Views.MapView extends Backbone.View
     @resultsNumber = options.resultsNumber
     @parsedResults = 0
     @initBaseLayer()
-    @listenTo(@filter, 'change:tab', @resetQueryLayerStyle)
+    @listenTo(@filter, 'change:tab', @fireTabChangeCallbacks)
     @listenTo(@filter, 'change:query', @updateQueryLayer)
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
@@ -31,9 +31,6 @@ class Backbone.Views.MapView extends Backbone.View
       row.rank = i
       row
     )
-
-  setZeroValueIndex: () ->
-    @zeroValueIndex = _.findIndex(@sortDataBy(@data, 'value'), (d) -> d.value >= 0)
 
   initBaseLayer: ->
     @mapHasData = no
@@ -117,8 +114,9 @@ class Backbone.Views.MapView extends Backbone.View
       unless @dataLenght > 0
         throw new Error("Data should not be empty, check your query")
       @setMinMax()
-      if @filter.get('tab') == 'change' then @setZeroValueIndex()
+      if @filter.get('tab') == 'change' then @setZeroValueIndexes()
       @querydata = @buildQuerydata @data
+      @setLinearScaleColour()
       @queryLayer = L.geoJson(@collection, {
         style: @queryPolyStyle
         onEachFeature: @bindPopup
@@ -160,6 +158,8 @@ class Backbone.Views.MapView extends Backbone.View
   updateQueryLayerStyle: =>
     if @querydata?
       @unsetWatershedSelectionCount()
+      #TODO: there might be some unnecessary calls here:
+      @setLinearScaleColour()
       @queryLayer.setStyle @queryPolyStyle
  
   resetQueryLayerStyle: =>
@@ -167,32 +167,35 @@ class Backbone.Views.MapView extends Backbone.View
 
   getColor: (feature) =>
     tab = @filter.get('tab')
+    rank = @querydata[feature][@styleValueField]
+    isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
     if tab == 'change'
-      domain = [@min[@styleValueField], @zeroValueIndex, @max[@styleValueField]]
-      range = @colorRange[tab]
+      if isZero?
+        return '#eee'
+      else if rank > @firstPositiveIndex
+        @colorPositive(rank)
+      else
+        @colorNegative(rank)
     else
-      domain = [@min[@styleValueField], @max[@styleValueField]]
-      range = @colorRange[tab]
-    color = d3.scale.linear().domain(domain).range(range)
-    color(@querydata[feature][@styleValueField])
+      @color(rank)
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
     tab = @filter.get('tab')
     d = @querydata[id]
     if tab == 'change'
-      range = @zeroValueIndex / @categories
+      range = @firstPositiveIndex / @categories
     else
       range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
     if level == 'all'
       return yes
     if level == 'increase'
-      return d[@styleValueField] >= @zeroValueIndex
+      return d[@styleValueField] >= @firstPositiveIndex
     if level == 'high' && tab != 'change'
       if d[@styleValueField] >= @min[@styleValueField] + range * 2
         return yes
     if level == 'low' && tab == 'change'
-      if d[@styleValueField] >= @min[@styleValueField] + range * 2 and d[@styleValueField] < @zeroValueIndex
+      if d[@styleValueField] >= @min[@styleValueField] + range * 2 and d[@styleValueField] < @firstPositiveIndex
         return yes      
     if level == 'medium'
       if d[@styleValueField] >= @min[@styleValueField] + range and d[@styleValueField] < @min[@styleValueField] + range * 2
@@ -313,6 +316,42 @@ class Backbone.Views.MapView extends Backbone.View
   formatToFirst2NonZeroDecimals: (number) ->
     number += ''
     number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/)
+
+  setZeroValueIndexes: () ->
+    sortedData = @sortDataBy(@data, 'value')
+    firstPositiveNonZeroIndex = null
+    @zeroValueIndexes = _.map(_.filter(sortedData, (d, i) ->
+      if d.value > 0 then firstPositiveNonZeroIndex = i
+      if d.value == 0
+        d.index = i
+      d.value == 0
+    ), (d) -> d.index)
+    @firstPositiveIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
+
+  setNegativeLinearScaleColour: (tab) ->
+    domain = [@min[@styleValueField], @firstPositiveIndex-1]
+    range = @colorRange[tab][0..2]
+    @colorNegative = d3.scale.linear().domain(domain).range(range)
+
+  setPositiveLinearScaleColour: (tab) ->
+    if @zeroValueIndexes?.length > 0
+      min = @zeroValueIndexes[0]
+      domain = [min, @max[@styleValueField]]
+      range = @colorRange[tab][-2..]
+      @colorPositive = d3.scale.linear().domain(domain).range(range)
+
+  setLinearScaleColour: ->
+    tab = @filter.get('tab')
+    if tab == 'change'
+      @setNegativeLinearScaleColour tab
+      @setPositiveLinearScaleColour tab
+    else
+      domain = [@min[@styleValueField], @max[@styleValueField]]
+      range = @colorRange[tab]
+      @color = d3.scale.linear().domain(domain).range(range)
+
+  fireTabChangeCallbacks: =>
+    @resetQueryLayerStyle()
 
   onClose: ->
     @remove()

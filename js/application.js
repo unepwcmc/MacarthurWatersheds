@@ -592,6 +592,7 @@
     __extends(MapView, _super);
 
     function MapView() {
+      this.fireTabChangeCallbacks = __bind(this.fireTabChangeCallbacks, this);
       this.queryPolyStyle = __bind(this.queryPolyStyle, this);
       this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
@@ -614,7 +615,7 @@
     MapView.prototype.template = Handlebars.templates['map'];
 
     MapView.prototype.colorRange = {
-      'change': ["#FF5C26", "#eee", "#A3D900"],
+      'change': ["#FF5C26", "#fff", "#A3D900"],
       'now': ["#FFDC73", "#FF5C26"],
       'future_threats': ["#FFDC73", "#FF5C26"]
     };
@@ -630,7 +631,7 @@
       this.resultsNumber = options.resultsNumber;
       this.parsedResults = 0;
       this.initBaseLayer();
-      this.listenTo(this.filter, 'change:tab', this.resetQueryLayerStyle);
+      this.listenTo(this.filter, 'change:tab', this.fireTabChangeCallbacks);
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
@@ -642,12 +643,6 @@
       return _.map(_.sortBy(data, field), function(row, i) {
         row.rank = i;
         return row;
-      });
-    };
-
-    MapView.prototype.setZeroValueIndex = function() {
-      return this.zeroValueIndex = _.findIndex(this.sortDataBy(this.data, 'value'), function(d) {
-        return d.value >= 0;
       });
     };
 
@@ -755,9 +750,10 @@
           }
           _this.setMinMax();
           if (_this.filter.get('tab') === 'change') {
-            _this.setZeroValueIndex();
+            _this.setZeroValueIndexes();
           }
           _this.querydata = _this.buildQuerydata(_this.data);
+          _this.setLinearScaleColour();
           _this.queryLayer = L.geoJson(_this.collection, {
             style: _this.queryPolyStyle,
             onEachFeature: _this.bindPopup
@@ -809,6 +805,7 @@
     MapView.prototype.updateQueryLayerStyle = function() {
       if (this.querydata != null) {
         this.unsetWatershedSelectionCount();
+        this.setLinearScaleColour();
         return this.queryLayer.setStyle(this.queryPolyStyle);
       }
     };
@@ -818,17 +815,23 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var color, domain, range, tab;
+      var isZero, rank, tab;
       tab = this.filter.get('tab');
+      rank = this.querydata[feature][this.styleValueField];
+      isZero = _.find(this.zeroValueIndexes, function(i) {
+        return rank === i;
+      });
       if (tab === 'change') {
-        domain = [this.min[this.styleValueField], this.zeroValueIndex, this.max[this.styleValueField]];
-        range = this.colorRange[tab];
+        if (isZero != null) {
+          return '#eee';
+        } else if (rank > this.firstPositiveIndex) {
+          return this.colorPositive(rank);
+        } else {
+          return this.colorNegative(rank);
+        }
       } else {
-        domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
-        range = this.colorRange[tab];
+        return this.color(rank);
       }
-      color = d3.scale.linear().domain(domain).range(range);
-      return color(this.querydata[feature][this.styleValueField]);
     };
 
     MapView.prototype.filterFeatureLevel = function(id) {
@@ -837,7 +840,7 @@
       tab = this.filter.get('tab');
       d = this.querydata[id];
       if (tab === 'change') {
-        range = this.zeroValueIndex / this.categories;
+        range = this.firstPositiveIndex / this.categories;
       } else {
         range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
       }
@@ -845,7 +848,7 @@
         return true;
       }
       if (level === 'increase') {
-        return d[this.styleValueField] >= this.zeroValueIndex;
+        return d[this.styleValueField] >= this.firstPositiveIndex;
       }
       if (level === 'high' && tab !== 'change') {
         if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2) {
@@ -853,7 +856,7 @@
         }
       }
       if (level === 'low' && tab === 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2 && d[this.styleValueField] < this.zeroValueIndex) {
+        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2 && d[this.styleValueField] < this.firstPositiveIndex) {
           return true;
         }
       }
@@ -1027,6 +1030,58 @@
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
       number += '';
       return number.match(/^-{0,1}[0-9]+\.*0*[1-9]{0,2}/);
+    };
+
+    MapView.prototype.setZeroValueIndexes = function() {
+      var firstPositiveNonZeroIndex, sortedData;
+      sortedData = this.sortDataBy(this.data, 'value');
+      firstPositiveNonZeroIndex = null;
+      this.zeroValueIndexes = _.map(_.filter(sortedData, function(d, i) {
+        if (d.value > 0) {
+          firstPositiveNonZeroIndex = i;
+        }
+        if (d.value === 0) {
+          d.index = i;
+        }
+        return d.value === 0;
+      }), function(d) {
+        return d.index;
+      });
+      return this.firstPositiveIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
+    };
+
+    MapView.prototype.setNegativeLinearScaleColour = function(tab) {
+      var domain, range;
+      domain = [this.min[this.styleValueField], this.firstPositiveIndex - 1];
+      range = this.colorRange[tab].slice(0, 3);
+      return this.colorNegative = d3.scale.linear().domain(domain).range(range);
+    };
+
+    MapView.prototype.setPositiveLinearScaleColour = function(tab) {
+      var domain, min, range, _ref;
+      if (((_ref = this.zeroValueIndexes) != null ? _ref.length : void 0) > 0) {
+        min = this.zeroValueIndexes[0];
+        domain = [min, this.max[this.styleValueField]];
+        range = this.colorRange[tab].slice(-2);
+        return this.colorPositive = d3.scale.linear().domain(domain).range(range);
+      }
+    };
+
+    MapView.prototype.setLinearScaleColour = function() {
+      var domain, range, tab;
+      tab = this.filter.get('tab');
+      if (tab === 'change') {
+        this.setNegativeLinearScaleColour(tab);
+        return this.setPositiveLinearScaleColour(tab);
+      } else {
+        domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
+        range = this.colorRange[tab];
+        return this.color = d3.scale.linear().domain(domain).range(range);
+      }
+    };
+
+    MapView.prototype.fireTabChangeCallbacks = function() {
+      return this.resetQueryLayerStyle();
     };
 
     MapView.prototype.onClose = function() {
