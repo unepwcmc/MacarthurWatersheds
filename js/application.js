@@ -133,14 +133,14 @@
     protectionLevels: [
       {
         selector: "high",
-        name: "Up to three thirds covered",
+        name: "66% -100% covered",
         "default": true
       }, {
         selector: "medium",
-        name: "Up to two thirds covered"
+        name: "33% - 66% covered"
       }, {
         selector: "low",
-        name: "Up to one third covered"
+        name: "0 -  33% covered"
       }
     ],
     pressureLevels: [
@@ -158,10 +158,6 @@
     ],
     agrCommDevLevels: [
       {
-        selector: "all",
-        name: "All",
-        "default": true
-      }, {
         selector: "high",
         name: "High"
       }, {
@@ -718,6 +714,14 @@
       return this.legend = false;
     };
 
+    MapView.prototype.getPopupText = function(w, isLake) {
+      if (isLake) {
+        return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
+      } else {
+        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
+      }
+    };
+
     MapView.prototype.bindPopup = function(feature, layer) {
       var id, popupOptions, w;
       id = layer.feature.properties.cartodb_id;
@@ -727,7 +731,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>", popupOptions);
+      return layer.bindPopup(this.getPopupText(w, feature.properties.lake), popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {
@@ -1372,9 +1376,38 @@
       this.config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels);
       this.levelType = 'agrCommDevLevel';
       if (this.filter.get(this.levelType) == null) {
-        this.setDefaultLevel();
+        this["default"] = true;
       }
       return this.render();
+    };
+
+    LevelSelectorAgrCommDevView.prototype.render = function() {
+      var levels, theSelect;
+      levels = _.map(this.config, (function(_this) {
+        return function(level) {
+          if (_this.filter.get(_this.levelType) === level.selector) {
+            level.selected = true;
+            _this["default"] = false;
+          } else {
+            level.selected = false;
+          }
+          return level;
+        };
+      })(this));
+      this.$el.html(this.template({
+        levels: levels,
+        "default": this["default"],
+        isChangeTab: this.isChangeTab
+      }));
+      theSelect = this.$el.find('.select-box');
+      return setTimeout((function(_this) {
+        return function() {
+          theSelect.customSelect();
+          return _this.$el.find('.customSelectInner').css({
+            'width': '100%'
+          });
+        };
+      })(this), 20);
     };
 
     return LevelSelectorAgrCommDevView;
@@ -1696,8 +1729,11 @@
       if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
+      }
+      if (tab === 'future_threats') {
+        return this.showOtherSelectors();
       }
       return false;
     };
@@ -1722,7 +1758,7 @@
     };
 
     FilterView.prototype.showAgrCommDevSelector = function() {
-      return this.filter.get('tab') === 'future_threats' && this.showOtherSelectors();
+      return this.filter.get('tab') === 'future_threats' && (this.filter.get('scenario') != null);
     };
 
     FilterView.prototype.showOtherSelectors = function() {
@@ -1731,8 +1767,11 @@
       if (tab === 'now') {
         return this.filter.get('subject') != null;
       }
-      if (tab === 'change' || tab === 'future_threats') {
+      if (tab === 'change') {
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
+      }
+      if (tab === 'future_threats') {
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null) && (this.filter.get('agrCommDevLevel') != null);
       }
       return false;
     };
@@ -1831,6 +1870,7 @@
     MainController.prototype.showSidePanel = function(err, geo, region) {
       var view;
       this.modalContainer.hideModal();
+      this.sidePanel.$el.addClass('active');
       this.filter.set({
         region: region
       });

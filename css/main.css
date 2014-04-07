@@ -64,9 +64,12 @@ section header {
   float: left;
   position: absolute;
   top: 71px;
+  overflow: auto;
   right: 0;
   z-index: 9999;
   background: #fff; }
+  #side-panel.active {
+    height: calc(100% - 73px); }
 
 div.filters {
   padding: 30px 20px;

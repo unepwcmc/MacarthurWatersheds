@@ -63,9 +63,9 @@ MacArthur.CONFIG =
     ]
   },
   protectionLevels: [
-    { selector: "high", name: "Up to three thirds covered" , default: true }
-    { selector: "medium", name: "Up to two thirds covered" }
-    { selector: "low", name: "Up to one third covered" }
+    { selector: "high", name: "66% -100% covered" , default: true }
+    { selector: "medium", name: "33% - 66% covered" }
+    { selector: "low", name: "0 -  33% covered" }
   ],
   pressureLevels: [
     { selector: "high", name: "High" , default: true }
@@ -73,7 +73,6 @@ MacArthur.CONFIG =
     { selector: "low", name: "Low" }
   ],
   agrCommDevLevels: [
-    { selector: "all", name: "All", default: true }
     { selector: "high", name: "High" }
     { selector: "medium", name: "Medium" }
     { selector: "low", name: "Low" }

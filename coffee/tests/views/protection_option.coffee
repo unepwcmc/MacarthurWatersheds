@@ -71,8 +71,8 @@ visible and populated with options', ->
   selection = protectionSelectorView.$el.find('select')
   assert.lengthOf selection, 1,
     "Expected the protection select to be visible"
-  assert.lengthOf selection.find('option'), 4,
-    "Expected the dropdown to have 4 selections: high, medium, low"
+  assert.lengthOf selection.find('option'), 3,
+    "Expected the dropdown to have 3 selections: high, medium, low"
 
 )
 

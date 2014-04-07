@@ -57,8 +57,9 @@ test('when the `change` tab selector has been clicked an `active` class
 )
 
 test('when the `Future Threats` tab selector is clicked,
-  and the `subject` is selected and the `scenario` is selected, then
-  the LensSelectorView and LevelSelectorAgrCommDevView are rendered', ->
+  and the `subject` is selected and the `scenario` is selected
+  and the AgrCommDev level is selected then
+  the LensSelectorView is rendered', ->
   resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
    'initialize', -> )
   filter = new Backbone.Models.Filter(
@@ -78,6 +79,7 @@ test('when the `Future Threats` tab selector is clicked,
 
   filter.set('subject', 'biodiversity')
   filter.set('scenario', 'mf2050')
+  filter.set('agrCommDevLevel', 'medium')
 
   try
     assert.isTrue(
