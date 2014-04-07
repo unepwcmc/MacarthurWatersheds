@@ -133,14 +133,14 @@
     protectionLevels: [
       {
         selector: "high",
-        name: "Up to three thirds covered",
+        name: "66% -100% covered",
         "default": true
       }, {
         selector: "medium",
-        name: "Up to two thirds covered"
+        name: "33% - 66% covered"
       }, {
         selector: "low",
-        name: "Up to one third covered"
+        name: "0 -  33% covered"
       }
     ],
     pressureLevels: [
