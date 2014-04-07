@@ -132,12 +132,9 @@
     },
     protectionLevels: [
       {
-        selector: "all",
-        name: "Completely covered by PA’s",
-        "default": true
-      }, {
         selector: "high",
-        name: "Up to three thirds covered"
+        name: "Up to three thirds covered",
+        "default": true
       }, {
         selector: "medium",
         name: "Up to two thirds covered"
@@ -876,13 +873,8 @@
     MapView.prototype.setProtectionFill = function(op, d) {
       var protectionLevel;
       protectionLevel = this.filter.get('protectionLevel');
-      if (protectionLevel === 'all') {
-        if (d.protectionPercentage !== 100) {
-          op = 0;
-        }
-      }
       if (protectionLevel === 'high') {
-        if (!(d.protectionPercentage >= 66 && d.protectionPercentage < 100)) {
+        if (!(d.protectionPercentage >= 66 && d.protectionPercentage <= 100)) {
           op = 0;
         }
       }

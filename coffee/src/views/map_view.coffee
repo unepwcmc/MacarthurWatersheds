@@ -207,11 +207,8 @@ class Backbone.Views.MapView extends Backbone.View
 
   setProtectionFill: (op, d) =>
     protectionLevel = @filter.get('protectionLevel')
-    if protectionLevel == 'all'
-      unless d.protectionPercentage == 100
-        op = 0 
     if protectionLevel == 'high'
-      unless d.protectionPercentage >= 66 and d.protectionPercentage < 100
+      unless d.protectionPercentage >= 66 and d.protectionPercentage <= 100
         op = 0 
     if protectionLevel == 'medium'
       unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
@@ -262,7 +259,7 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setPressureFill op, d
     if @filter.get('agrCommDevLevel')?
       op = @setAgrCommDevFill op, d 
-    if op == .9 then @currentSelectionCount += 1 
+    if op == .9 then @currentSelectionCount += 1
     return op
 
   baseLineStyle: (feature) =>

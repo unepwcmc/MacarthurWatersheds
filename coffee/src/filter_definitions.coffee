@@ -63,8 +63,7 @@ MacArthur.CONFIG =
     ]
   },
   protectionLevels: [
-    { selector: "all", name: "Completely covered by PA’s" , default: true }
-    { selector: "high", name: "Up to three thirds covered" }
+    { selector: "high", name: "Up to three thirds covered" , default: true }
     { selector: "medium", name: "Up to two thirds covered" }
     { selector: "low", name: "Up to one third covered" }
   ],
