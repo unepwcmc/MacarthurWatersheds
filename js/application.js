@@ -714,6 +714,14 @@
       return this.legend = false;
     };
 
+    MapView.prototype.getPopupText = function(w, isLake) {
+      if (isLake) {
+        return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
+      } else {
+        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
+      }
+    };
+
     MapView.prototype.bindPopup = function(feature, layer) {
       var id, popupOptions, w;
       id = layer.feature.properties.cartodb_id;
@@ -723,7 +731,7 @@
       popupOptions = {
         maxWidth: 200
       };
-      return layer.bindPopup("Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>", popupOptions);
+      return layer.bindPopup(this.getPopupText(w, feature.properties.lake), popupOptions);
     };
 
     MapView.prototype.updateQueryLayer = function() {

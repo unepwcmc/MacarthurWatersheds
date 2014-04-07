@@ -86,21 +86,24 @@ class Backbone.Views.MapView extends Backbone.View
   unsetLegend: =>
     if @legend then @legend.removeFrom @map
     @legend = no
-  
-  bindPopup: (feature, layer) =>
-    id = layer.feature.properties.cartodb_id
-    w = _.find(@data, (row) -> row.watershed_id == id)
-    popupOptions = {maxWidth: 200}
-    layer.bindPopup(
-      """
+
+  getPopupText: (w, isLake) ->
+    if isLake
+      return "<a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>"
+    else
+      return """
       Watershed id: #{w.name} <br>
       Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
       Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
       <a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>
-      """,
-      popupOptions
-    );
+      """
+
+  bindPopup: (feature, layer) =>
+    id = layer.feature.properties.cartodb_id
+    w = _.find(@data, (row) -> row.watershed_id == id)
+    popupOptions = {maxWidth: 200}
+    layer.bindPopup(@getPopupText(w, feature.properties.lake), popupOptions)
 
   # This re-styles the map with new data
   updateQueryLayer: =>
