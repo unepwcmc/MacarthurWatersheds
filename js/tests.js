@@ -532,7 +532,7 @@
     filter.set('protection', true);
     selection = protectionSelectorView.$el.find('select');
     assert.lengthOf(selection, 1, "Expected the protection select to be visible");
-    return assert.lengthOf(selection.find('option'), 4, "Expected the dropdown to have 4 selections: high, medium, low");
+    return assert.lengthOf(selection.find('option'), 3, "Expected the dropdown to have 3 selections: high, medium, low");
   });
 
   test('when the filter has protection set to true, the query on the selector object is NOT updated', function() {
@@ -710,7 +710,7 @@
     return resultsNumberRenderStub.restore();
   });
 
-  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected, then the LensSelectorView and LevelSelectorAgrCommDevView are rendered', function() {
+  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected and the AgrCommDev level is selected then the LensSelectorView is rendered', function() {
     var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, resultsNumberRenderStub, tabView;
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
@@ -726,6 +726,7 @@
     tabView.$el.find('li.future_threats-tab').trigger('click');
     filter.set('subject', 'biodiversity');
     filter.set('scenario', 'mf2050');
+    filter.set('agrCommDevLevel', 'medium');
     try {
       assert.isTrue(lensSelectorRenderSpy.callCount > lensSelectorRenderCalles, "Expected the lensSelectorView to be called");
       assert.isTrue(levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles, "Expected the levelSelectorAgrCommDevView to be called");

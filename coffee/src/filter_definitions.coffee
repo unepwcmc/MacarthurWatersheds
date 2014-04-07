@@ -73,7 +73,6 @@ MacArthur.CONFIG =
     { selector: "low", name: "Low" }
   ],
   agrCommDevLevels: [
-    { selector: "all", name: "All", default: true }
     { selector: "high", name: "High" }
     { selector: "medium", name: "Medium" }
     { selector: "low", name: "Low" }

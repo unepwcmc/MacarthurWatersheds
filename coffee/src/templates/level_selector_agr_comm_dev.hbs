@@ -1,6 +1,7 @@
 <h1>Agricultural commodity development</h1>
 
 <select id="agr-comm-select" class='select-box'>
+  <option value="" disabled {{#if default}}selected{{/if}}>Select a level</option>
   {{# each levels}}
   <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
   {{/each}}
