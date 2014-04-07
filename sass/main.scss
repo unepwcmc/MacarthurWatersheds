@@ -81,9 +81,13 @@ section {
   float: left;
   position: absolute;
   top: 71px;
+  overflow: auto;
   right: 0;
   z-index: 9999;
   background: #fff;
+  &.active {
+    height: calc(100% - 73px);
+  }
 }
 
 div.filters {
