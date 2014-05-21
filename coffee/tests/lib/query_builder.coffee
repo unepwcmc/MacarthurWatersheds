@@ -164,8 +164,10 @@ test('if the tab is set to `future_threats` and the subject
    'initialize', -> )
   config = MacArthur.CONFIG
   regions = new Backbone.Collections.RegionCollection config.regions
+  scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
   filter = new Backbone.Models.Filter(
     region: regions.models[0]
+    scale: scales.models[0]
     tab: 'future_threats'
     subject: config.subjects[0].selector
     agrCommDevLevel: config.agrCommDevLevels[0].selector
