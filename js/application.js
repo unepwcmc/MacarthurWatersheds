@@ -32,6 +32,15 @@
         bounds: [[6, 110], [35, 90]]
       }
     ],
+    scales: [
+      {
+        code: "broadscale",
+        name: "Global"
+      }, {
+        code: "regional",
+        name: "Regional"
+      }
+    ],
     subjects: [
       {
         selector: "biodiversity",
@@ -249,12 +258,24 @@
     }
 
     QueryBuilder.prototype.buildQuery = function() {
-      var regionCode;
+      var regionCode, scaleCode;
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
-        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'";
+        scaleCode = this.filter.get('scale').get('code');
+        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND d.is_broadscale = '" + (this.isBroadscale(scaleCode)) + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'\n";
       } else {
         return this.filter.get('query');
+      }
+    };
+
+    QueryBuilder.prototype.isBroadscale = function(scale) {
+      if (scale !== 'broadscale' && scale !== 'global') {
+        throw new Error("'" + scale + "': wrong scale name!");
+      }
+      if (scale === 'broadscale') {
+        return true;
+      } else {
+        return false;
       }
     };
 
@@ -411,6 +432,43 @@
     RegionCollection.prototype.model = Backbone.Models.Region;
 
     return RegionCollection;
+
+  })(Backbone.Collection);
+
+}).call(this);
+
+(function() {
+  var _base, _base1,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Models || (_base.Models = {});
+
+  (_base1 = window.Backbone).Collections || (_base1.Collections = {});
+
+  Backbone.Models.Scale = (function(_super) {
+    __extends(Scale, _super);
+
+    function Scale() {
+      return Scale.__super__.constructor.apply(this, arguments);
+    }
+
+    return Scale;
+
+  })(Backbone.Model);
+
+  Backbone.Collections.ScaleCollection = (function(_super) {
+    __extends(ScaleCollection, _super);
+
+    function ScaleCollection() {
+      return ScaleCollection.__super__.constructor.apply(this, arguments);
+    }
+
+    ScaleCollection.prototype.model = Backbone.Models.Scale;
+
+    return ScaleCollection;
 
   })(Backbone.Collection);
 
@@ -1188,6 +1246,61 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.ScaleChooserView = (function(_super) {
+    __extends(ScaleChooserView, _super);
+
+    function ScaleChooserView() {
+      this.triggerChooseScale = __bind(this.triggerChooseScale, this);
+      return ScaleChooserView.__super__.constructor.apply(this, arguments);
+    }
+
+    ScaleChooserView.prototype.template = Handlebars.templates['scale_chooser'];
+
+    ScaleChooserView.prototype.className = 'modal scale-chooser';
+
+    ScaleChooserView.prototype.events = {
+      "click .scales .scale-area": "triggerChooseScale"
+    };
+
+    ScaleChooserView.prototype.initialize = function(options) {
+      this.scales = options.scales;
+      return this.render();
+    };
+
+    ScaleChooserView.prototype.render = function() {
+      this.$el.html(this.template({
+        scales: this.scales.toJSON()
+      }));
+      return this;
+    };
+
+    ScaleChooserView.prototype.triggerChooseScale = function(event) {
+      var scale, scaleCode;
+      scaleCode = $(event.target).attr('data-scale-code');
+      scale = this.scales.find(function(scale) {
+        return scale.get('code') === scaleCode;
+      });
+      return this.trigger('scaleChosen', scale);
+    };
+
+    ScaleChooserView.prototype.onClose = function() {};
+
+    return ScaleChooserView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1818,9 +1931,11 @@
     function MainController() {
       this.showSidePanel = __bind(this.showSidePanel, this);
       this.getGeometries = __bind(this.getGeometries, this);
+      this.chooseScale = __bind(this.chooseScale, this);
       this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
       this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+      this.scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
       this.filter = new Backbone.Models.Filter();
       this.resultsNumber = new Backbone.Models.ResultsNumber();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
@@ -1853,26 +1968,48 @@
       return this.changeStateOn({
         event: 'regionChosen',
         publisher: regionChooserView,
-        newState: _.partialRight(this.getGeometries, this.showSidePanel)
+        newState: this.chooseScale
       });
     };
 
-    MainController.prototype.getGeometries = function(region, callback) {
+    MainController.prototype.chooseScale = function(region) {
+      var scaleChooserView;
+      this.modalContainer.hideModal();
+      scaleChooserView = new Backbone.Views.ScaleChooserView({
+        scales: this.scales
+      });
+      this.modalContainer.showModal(scaleChooserView);
+
+      /*
+        @changeStateOn maps events published by other objects to
+        controller states
+       */
+      return this.changeStateOn({
+        event: 'scaleChosen',
+        publisher: scaleChooserView,
+        newState: _.partialRight(this.getGeometries, region, this.showSidePanel)
+      });
+    };
+
+    MainController.prototype.getGeometries = function(scale, region, callback) {
       var regionCode;
       regionCode = region.get('code');
       return $.getJSON("../../../data/" + regionCode + ".topo.json", (function(_this) {
         return function(geo) {
-          return callback(null, geo, region);
+          return callback(null, geo, region, scale);
         };
       })(this));
     };
 
-    MainController.prototype.showSidePanel = function(err, geo, region) {
+    MainController.prototype.showSidePanel = function(err, geo, region, scale) {
       var view;
       this.modalContainer.hideModal();
       this.sidePanel.$el.addClass('active');
       this.filter.set({
         region: region
+      });
+      this.filter.set({
+        scale: scale
       });
       view = new Backbone.Views.TabView({
         filter: this.filter,

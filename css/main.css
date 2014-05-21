@@ -117,11 +117,11 @@ div.subjects h1 {
   text-transform: uppercase;
   font-size: 1em; }
 
-.region-chooser {
+.region-chooser, .scale-chooser {
   width: 50%;
   height: 405px;
   color: #4dc0dd; }
-  .region-chooser h1 {
+  .region-chooser h1, .scale-chooser h1 {
     margin: 0;
     text-align: center;
     background: #2A2B33;

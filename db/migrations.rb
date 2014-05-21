@@ -33,7 +33,8 @@ tables_columns = {"region" => {"code" => "varchar"},
                                   "metric" => "varchar",
                                   "scenario" => "varchar",
                                   "value" => "double precision",
-                                  "conservation" => "boolean"
+                                  "conservation" => "boolean",
+                                  "is_broadscale" => "boolean"
                                   },
                   "protection" => {"watershed_id" => "int",
                                    "percentage" => "double precision"

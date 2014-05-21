@@ -90,8 +90,8 @@ def self.datapoint
                   column = "#{subject}_#{td}_#{met}_#{scen}_#{cons}_#{lens}"
                   cons_boolean = cons == 'cons' ? 'true' : 'false'
                   sql = <<-SQL
-                    INSERT INTO macarthur_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value) \
-                    SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision) \
+                    INSERT INTO macarthur_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value, is_broadscale) \
+                    SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision), false \
                     FROM macarthur_#{subject}_original_data od \
                     LEFT JOIN
                     macarthur_watershed ws \

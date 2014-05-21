@@ -22,6 +22,10 @@ MacArthur.CONFIG =
     { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ] }
     { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ] }
   ]
+  scales: [
+    { code: "broadscale", name: "Global"}
+    { code: "regional", name: "Regional"}
+  ]
   subjects: [
     { selector: "biodiversity", name: "Biodiversity importance"}
     { selector: "ecosystem", name: "Ecosystem function importance"}
