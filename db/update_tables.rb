@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require '../src/cartodb/cartodb_query.rb'
+require 'open-uri'
 
 
 
@@ -12,9 +13,7 @@ SCENARIO = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
 CONSERVATION = ['nocons']
 REGIONS = ['WAN', 'MEK', 'GLR']
 
-def self.regions 
 
-end
 
 def self.geometry_data
  REGIONS.each do |region|
@@ -41,6 +40,19 @@ def self.geometry_data
     SQL
     puts sql
     CartodbQuery.run(sql)
+end
+
+def self.download_geometries
+  REGIONS.each do |region|
+    query = download_query(region)
+    query.gsub!("\n","")
+    puts query
+    encoded_url = URI::encode(query)
+    geojson_geometry = open(encoded_url).read
+    File.open("../lib/geometries/#{region}.geojson", 'w+') do |file|
+      puts file.write(geojson_geometry)
+    end
+  end
 end
 
 def self.lens
@@ -125,6 +137,13 @@ def other_values filter, type, column
     CartodbQuery.run(sql)
 end
 
+def download_query region
+  cartodb_config = YAML.load_file('../config/cartodb_config.yml')
+  api_key = cartodb_config["api_key"]
+  host = cartodb_config["host"]
+  "#{host}/api/v2/sql?q=SELECT w.* FROM macarthur_watershed w LEFT JOIN macarthur_region r ON w.region_id = r.cartodb_id WHERE r.code = '#{region}' &format=geojson&api_key=#{api_key}"
+end
+
 ARGV.each do|action|
   if action == 'geometry_data'
     geometry_data
@@ -136,5 +155,7 @@ ARGV.each do|action|
     protection 
   elsif action == 'pressure'
     pressure
+  elsif action == 'download'
+    download_geometries
   end
 end
