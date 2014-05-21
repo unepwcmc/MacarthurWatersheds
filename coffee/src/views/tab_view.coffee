@@ -22,6 +22,8 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
       resultsNumber: @resultsNumber
       tabs: tabs
       strapline: strapline
+      selectedScaleName: @getSelectedScaleName()
+      unSelectedScaleName: @getUnSelectedScaleName()
     ))
     @attachSubViews()
     return @
@@ -34,6 +36,15 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     @resetFilters()
     @filter.set('tab', tabName)
     @render()
+
+  getSelectedScaleName: ->
+    @filter.get('scale').get('name')
+
+  getUnSelectedScaleName: ->
+    selectedScaleName = @getSelectedScaleName()
+    scaleOptions = MacArthur.CONFIG.scales
+    idx = _.findIndex scaleOptions, (o) -> o.name != selectedScaleName
+    scaleOptions[idx].name
 
   resetFilters: ->
     @filter.unset('subject')

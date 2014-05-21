@@ -516,7 +516,9 @@
         filter: this.filter,
         resultsNumber: this.resultsNumber,
         tabs: tabs,
-        strapline: strapline
+        strapline: strapline,
+        selectedScaleName: this.getSelectedScaleName(),
+        unSelectedScaleName: this.getUnSelectedScaleName()
       }));
       this.attachSubViews();
       return this;
@@ -533,6 +535,20 @@
       this.resetFilters();
       this.filter.set('tab', tabName);
       return this.render();
+    };
+
+    TabView.prototype.getSelectedScaleName = function() {
+      return this.filter.get('scale').get('name');
+    };
+
+    TabView.prototype.getUnSelectedScaleName = function() {
+      var idx, scaleOptions, selectedScaleName;
+      selectedScaleName = this.getSelectedScaleName();
+      scaleOptions = MacArthur.CONFIG.scales;
+      idx = _.findIndex(scaleOptions, function(o) {
+        return o.name !== selectedScaleName;
+      });
+      return scaleOptions[idx].name;
     };
 
     TabView.prototype.resetFilters = function() {

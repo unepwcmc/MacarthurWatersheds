@@ -553,7 +553,15 @@ function program2(depth0,data) {
   if (stack1 = helpers.strapline) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.strapline); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</p>\n</div>\n\n";
+    + "</p>\n</div>\n\n<div class=\"scale-info\">\n  <p>Displaying data at a ";
+  if (stack1 = helpers.selectedScaleName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.selectedScaleName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + " level. To change to a ";
+  if (stack1 = helpers.unSelectedScaleName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.unSelectedScaleName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + " level, <a href=\"/\">go back</a>.</p>\n</div>\n\n";
   options = {hash:{
     'filter': ((depth0 && depth0.filter)),
     'resultsNumber': ((depth0 && depth0.resultsNumber))
