@@ -1,0 +1,9 @@
+<h1>Welcome to the Watershed exploration tool</h1>
+<h2>Which level of data would you like to see?</h2>
+<ul class="scales">
+  {{#each scales}}
+    <li>
+      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}">{{name}}</div>
+    </li>
+  {{/each}}
+</ul>

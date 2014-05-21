@@ -1,6 +1,6 @@
-<h1>Levels</h1>
+<h1>Level of {{#if isChangeTab}}Change{{else}}Importance{{/if}}</h1>
 
-<select id="levels-select">
+<select id="levels-select" class='select-box'>
   {{# each levels}}
   <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
   {{/each}}

@@ -1,5 +1,5 @@
-<select id="pressure-select">
-  {{# each pressureLevels}}
+<select id="pressure-select" class='select-box'>
+  {{# each levels}}
   <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
   {{/each}}
 </select>

@@ -1,7 +1,9 @@
-<h1>Lenses</h1>
+<div class="selector">
+	<h1>{{title}}</h1>
 
-<select id="lens-select">
-  {{# each lenses}}
-  <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
-  {{/each}}
-</select>
+	<select id="lens-select" class='select-box'>
+	  {{# each lenses}}
+	  <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+	  {{/each}}
+	</select>
+</div>

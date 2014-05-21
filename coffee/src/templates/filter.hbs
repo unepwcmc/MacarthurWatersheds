@@ -1,16 +1,38 @@
-
-<h1>Filter View</h1>
+<div class="results-number">
+  {{addSubViewTo thisView 'ResultsNumberView' resultsNumber=resultsNumber}}
+</div>
 
 <div class="subjects">
   <ul>
     {{# each subjects}}
-    <li data-subject="{{selector}}">{{name}}</li>
+    <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{name}}</li>
     {{/each}}
   </ul>
 </div>
 
+{{#if showScenarioGroup}}
+  <div class="{{#if showAgrCommDevSelector}}scenario-container highlight-section{{/if}}">
+  {{#if showScenarioSelector}}
+    {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
+  {{/if}}
+  {{#if showAgrCommDevSelector}}
+    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
+  {{/if}}
+  </div>
+{{else}}
+  {{#if showScenarioSelector}}
+    {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
+  {{/if}}
+  {{#if showAgrCommDevSelector}}
+    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
+  {{/if}}
+{{/if}}
+
 {{#if showLensSelector}}
   {{addSubViewTo thisView 'LensSelectorView' filter=filter}}
+{{/if}}
+
+{{#if showOtherSelectors}}
   {{addSubViewTo thisView 'LevelSelectorView' filter=filter}}
   {{addSubViewTo thisView 'ProtectionOptionView' filter=filter}}
   {{addSubViewTo thisView 'PressureOptionView' filter=filter}}

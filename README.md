@@ -53,6 +53,20 @@ data_to_populate is:
 	lens
 	bd(bd datapoint)
 
+## Exporting watershed geometries
+These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data), but presently one needs to regenerate them every time the data changes on cartodb:
+
+  * export one geojson file per watershed from the [macarthur_watershed table](https://carbon-tool.cartodb.com/tables/macarthur_watershed/table) into [data/json](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data/json) and name them with the corresponding watershed code.
+  * if not installed: `npm install -g topojson`
+  * then, from within the `data` directory:
+  ```sh
+  topojson -o GLR.topo.json -p -q 20000 -- json/GLR.geojson
+
+  topojson -o MEK.topo.json -p -q 20000 -- json/MEK.geojson 
+  
+  topojson -o WAN.topo.json -p -q 20000 -- json/WAN.geojson 
+  ```
+
 
 ## Serving files
 Althought we don't actually have a 'server' component, you still need to serve
@@ -77,3 +91,26 @@ do:
 
 ### Tests
 Tests are written in mocha with chai and sinon, and stored in coffee/tests. Run them by opening [/tests.html](http://localhost:8080/tests.html) in your browser
+
+
+###Deployment###
+
+The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/config, like this:
+
+	Host ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
+	User ubuntu
+	HostName ec2-46-51-154-19.eu-west-1.compute.amazonaws.com
+	IdentityFile <- EC2 pem key location ->
+
+  ```sh
+    git checkout production
+    git merge master
+    gulp minify
+  ```
+  
+Then run cap deploy.
+
+
+### d3.js dependency
+
+The app relies a bare-bones d3 custom build. If, in the future, some more d3 dependent code is added and things brake, it could mean a new build is needed!

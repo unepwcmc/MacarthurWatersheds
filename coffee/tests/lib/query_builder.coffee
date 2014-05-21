@@ -121,3 +121,71 @@ test('if the filter lens is set with the correct subject,
 
   assert.isTrue queryBuiler.hasRequiredFilters()
 )
+
+test('if the tab is set to `change` and the filter lens is set, 
+  but the scenario is not, hasRequiredFilters still returns true', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: MacArthur.CONFIG.subjects[1].selector
+    lens: MacArthur.CONFIG.lenses.ecosystem[0].selector
+    tab: 'change'
+  )
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+
+  assert.isTrue queryBuiler.hasRequiredFilters()
+)
+
+test('if the tab is set to `change` and the filter lens is set, 
+  but the scenario is not, `buildQuery` should not be called', ->
+
+  filter = new Backbone.Models.Filter(
+    subject: MacArthur.CONFIG.subjects[1].selector
+    lens: MacArthur.CONFIG.lenses.ecosystem[0].selector
+    tab: 'change'
+  )
+  buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+
+  queryBuiler.updateFilterQuery()
+
+  try
+    assert.strictEqual(
+      buildQuerySpy.callCount, 0,
+      "Expected the buildQuery not to be called"
+    )
+
+  finally
+    buildQuerySpy.restore()
+)
+
+test('if the tab is set to `future_threats` and the subject 
+  is set, `buildQuery` should be called', ->
+  resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
+   'initialize', -> )
+  config = MacArthur.CONFIG
+  regions = new Backbone.Collections.RegionCollection config.regions
+  scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  filter = new Backbone.Models.Filter(
+    region: regions.models[0]
+    scale: scales.models[0]
+    tab: 'future_threats'
+    subject: config.subjects[0].selector
+    agrCommDevLevel: config.agrCommDevLevels[0].selector
+    lens: config.lenses[config.subjects[1].selector][0].selector
+    level: config.levels.default[0].selector
+  )
+  buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
+  queryBuiler = new MacArthur.QueryBuilder(filter)
+  tabView = new Backbone.Views.TabView( filter: filter )
+  filter.set('subject', config.subjects[1].selector)
+
+  try
+    assert.strictEqual(
+      buildQuerySpy.callCount, 1,
+      "Expected the buildQuery to be called after updateFilterQuery"
+    )
+
+  finally
+    buildQuerySpy.restore()
+  resultsNumberRenderStub.restore()
+)

@@ -1,0 +1,452 @@
+$background-grey: #EBEBEB;
+$dark-grey: #E1E1E1;
+$blue: #4dc0dd;
+$hover: #2F88A3;
+$dark-blue: #2A2B33;
+
+@import 'mixin';
+
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	margin: 0;
+  height: 100%;
+}
+
+h1, h2, h3 {
+	font-family: 'Dosis', sans-serif;
+	font-weight: 500;
+}
+
+header {
+  z-index: 9999;
+	background: $dark-blue;
+	padding: 16px;
+	font-family: 'Dosis', sans-serif;
+  border-bottom: 1px solid $dark-grey;
+  a {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: $blue;
+    text-decoration: none;
+    cursor: pointer;
+    letter-spacing: 0.015em;
+    &:hover, &:active {
+      @include transition(all, 0.5s, ease);
+      background: $hover;
+    }
+  }
+  p{
+  color: $blue;
+  opacity: 0.7;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  font-size: 0.85em;
+  }
+}
+
+section {
+  header{
+    background: none;
+    padding: 15px 0 15px 0;
+  }
+}
+.main {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.map-container {
+  height: calc(100% - 73px);
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  float: left;
+}
+
+#side-panel {
+  width: 25%;
+  max-width: 715px;
+  float: left;
+  position: absolute;
+  top: 71px;
+  overflow: auto;
+  right: 0;
+  z-index: 9999;
+  background: #fff;
+  &.active {
+    height: calc(100% - 73px);
+  }
+}
+
+div.filters {
+  padding: 30px 20px;
+  background: #fff;
+  border-bottom: 1px solid #FAFAFA;
+  border-right: 1px solid #FAFAFA;
+  border-left: 1px solid #FAFAFA;
+  color: #888;
+  h1 {
+    margin: 20px 0 10px 0;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.035em;
+  }
+
+  h2 {
+    font-size: 1em;
+  }
+}
+
+div.subjects {
+  ul {
+    margin: 0;
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    margin: auto;
+    li {
+      padding: 10px 10px;
+      width: 100%;
+      background: $blue;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      @include border-radius(5px);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+      &:hover, &.active {
+        @include transition(all, 0.5s, ease);
+        background: $hover;
+      }
+    }
+  }
+  h1 {
+    text-transform: uppercase;
+    font-size: 1em;
+  }
+}
+
+.region-chooser, .scale-chooser {
+  width: 50%;
+  height: 405px;
+  color: $blue;
+    h1 {
+  	margin: 0;
+  	text-align: center;
+  	background: $dark-blue;
+  	padding: 10px 0;
+  	color: #fff;
+  }
+}
+
+.modal {
+  z-index: 101;
+  background: #fff;
+  position: fixed;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+ul.regions {
+	margin: auto;
+	padding: 5%;
+	list-style-type: none;
+	width: 100%;
+	li {
+    float: left;
+    width: 30%;
+    margin-right: 5%;
+    &:last-child {
+      margin-bottom: 0;
+      margin-right: 0;
+    }
+    div.region-area {
+      background-repeat: no-repeat;
+      background-size: 50%;
+      background-position: center;
+      margin: 0 auto 20px auto;
+      height: 220px;
+      &:hover, &:active {
+        @include transition(all, 0.5s, ease);
+        opacity: 0.7;
+      }
+    }
+    div.region-area.region-link {
+      padding: 5px 10px;
+      background: $blue;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      height: 100%;
+      @include border-radius(5px);
+      &:hover, &:active {
+        @include transition(all, 0.5s, ease);
+        background: $hover;
+        opacity: 1;
+      }
+    }
+	}
+}
+
+.disabler {
+  z-index: 100;
+  position: fixed;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.1;
+}
+
+select option {
+  width: 300px;
+}
+
+.customSelect {
+/* This is the default class that is used */
+/* Put whatever custom styles you want here */
+  background: transparent;
+  border: 1px solid $blue;
+  display: inline-block;
+  width: 100%;
+  padding: 0 10px;
+  background-image: url(/imgs/icon_macarthur.png);
+  background-position-x: 295px;
+  background-repeat: no-repeat;
+  background-position-y: 12px;
+  background-size: 4%;
+  @include border-radius(5px);
+  line-height: 30px;
+}
+.customSelect.customSelectHover {
+/* Styles for when the select box is hovered */
+  background-color: $blue;
+  background-image: url(/imgs/icon_macarthur_white.png);
+  .customSelectInner {
+    color: #fff;
+  }
+}
+.customSelect.customSelectOpen {
+/* Styles for when the select box is open */
+  background-color: $blue;
+  background-image: url(/imgs/icon_macarthur_white.png);
+  .customSelectInner {
+    color: #fff;
+  }
+}
+.customSelect.customSelectFocus {
+/* Styles for when the select box is in focus */
+  background-color: $blue;
+  color: #fff;
+  background-image: url(/imgs/icon_macarthur.png);
+  .customSelectInner {
+    color: #fff;
+  }
+}
+.customSelectInner {
+/* You can style the inner box too */
+  display: inline-block;
+  width: 300px;
+  height: 30px;
+  color: $blue;
+}
+
+.tab-strapline {
+  margin: 30px 20px 0 20px;
+  p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #929292;
+    font-weight: 500;
+  }
+}
+
+ul.tabs {
+  list-style-type: none;
+  background: $dark-blue;
+  color: #fff;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  li {
+    padding:10px;
+    float: left;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.85em;
+    width: 25%;
+    text-align: center;
+    border-top: 1px solid #43434A;
+    border-left: 1px solid #43434A;
+    border-right: 1px solid #43434A;
+    &:first-child {
+      border-right: none;
+    }
+    &:last-child {
+      border-left: none;
+      width: 50%;
+    }
+
+    &:hover, &.active {
+      background: #131418;
+      color: $blue;
+      @include transition(all, 0.5s, ease);
+    }
+  }
+}
+
+div.selector {
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  &:first-child h1 {
+    margin: 30px 0 10px 0;
+  }
+}
+
+div.secondary-filter {
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  h2 {
+    margin-top: 30px;
+  }
+}
+
+div.highlight-section {
+  background: #f7f7f7;
+  padding: 10px;
+  @include border-radius(5px);
+}
+
+div.scenario-container {
+  margin-top: 30px;
+  h1 {
+    margin-top: 0;
+  }
+  div:last-child h1 {
+    margin-top: 20px;
+  }
+  .customSelect {
+    background-position-x: 270px;
+    background-position-y: 12px;
+  }
+}
+
+p.scenario-help {
+  font-size: 0.75em;
+  margin-top: 0;
+}
+
+p.scenario-help a {
+  color: #bbb;
+  &:hover, &:active {
+    color: $blue;
+    @include transition(all, 0.5s, ease)
+  }
+}
+
+div.match-count {
+  margin-bottom: 30px;
+  p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #bbb;
+    span.watershed-number {
+      font-weight: 600;
+      color: #888;
+      font-size: 1.5em;
+      padding-right: 2px;
+    }
+  }
+}
+
+.legend {
+  border: 1px solid #eee;
+  @include border-radius(5px);
+  background-color: white;
+  padding: 7px;
+  .map-legend-text {
+    width: 160px;
+    div:first-child {
+      float: left;
+    }
+    div:last-child {
+      float: right;
+    }
+  }
+  .map-legend-gradient {
+    height: 20px;
+    width: 160px;
+    &.nogradient.now {
+      background: url("/imgs/legend_gradient_now.png");
+    }
+    &.nogradient.change {
+      background: url("/imgs/legend_gradient_change.png");
+    }
+    &.nogradient.future_threats {
+      background: url("/imgs/legend_gradient_future_threats.png");
+    }
+  }
+}
+
+div.legend div.map-legend-text h3 {
+  font-family: 'Open Sans', sans-serif;
+  color: #888;
+  font-weight: 600;
+  font-size: 1em;
+  line-height: 1em;
+  text-transform: none;
+  height: 100%;
+  overflow: hidden;
+  padding: 0 0 7px 0;
+  margin: 0;
+}
+
+div.legend div.map-legend-gradient {
+  overflow: hidden;
+  span {
+  font-family: 'Open Sans', sans-serif;
+  color: #000;
+  opacity: 0.3;
+  font-weight: 700;
+  line-height: 1em;
+  text-transform: uppercase;
+  line-height: 20px;
+  padding: 0 5px;
+  &:last-child {
+    float: right;
+  }
+}
+}
+
+header{
+  a.about {
+    float: right;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0;
+    font-size: 0.85em;
+    cursor: pointer;
+  }
+}

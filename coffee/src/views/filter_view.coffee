@@ -7,17 +7,27 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
   events:
     "click .subjects li": "setSubject"
 
+  attributes:
+    class: "filters" 
+
   initialize: (options) ->
     @filter = options.filter
+    @resultsNumber = options.resultsNumber
     @listenTo(@filter, 'change', @render)
     @render()
 
   render: ->
+    subjects = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'subject')
     @$el.html(@template(
       thisView: @
-      subjects: MacArthur.CONFIG.subjects
-      showLensSelector: @filter.get('subject')?
+      subjects: subjects
+      showLensSelector: @showLensSelector()
+      showScenarioGroup: @showScenarioGroup()
+      showScenarioSelector: @showScenarioSelector()
+      showOtherSelectors: @showOtherSelectors()
+      showAgrCommDevSelector: @showAgrCommDevSelector()
       filter: @filter
+      resultsNumber: @resultsNumber
     ))
     @attachSubViews()
     return @
@@ -29,4 +39,38 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
   onClose: ->
     @closeSubViews()
     @stopListening()
+
+  showLensSelector: ->
+    tab = @filter.get('tab')
+    if tab == 'now'
+      return @filter.get('subject')?
+    if tab == 'change'
+      return @filter.get('subject')? and @filter.get('scenario')?
+    if tab == 'future_threats'
+      return @showOtherSelectors()
+    no
+
+  showScenarioGroup: ->
+    tab = @filter.get('tab')
+    if tab == 'future_threats' then yes else no
+
+  showScenarioSelector: ->
+    tab = @filter.get('tab')
+    if tab == 'change' or tab == 'future_threats'
+      return @filter.get('subject')?
+    no
+
+  showAgrCommDevSelector: ->
+    @filter.get('tab') == 'future_threats' and @filter.get('scenario')?
+
+  showOtherSelectors: ->
+    tab = @filter.get('tab')
+    if tab == 'now'
+      return @filter.get('subject')?
+    if tab == 'change'
+      return @filter.get('subject')? and @filter.get('scenario')?
+    if tab == 'future_threats'
+      return @filter.get('subject')? and @filter.get('scenario')? and
+      @filter.get('agrCommDevLevel')?
+    no
     

@@ -1,0 +1,15 @@
+<ul class="tabs">
+  {{# each tabs}}
+  <li data-subject="{{selector}}" class="{{selector}}-tab {{#if active}}active{{/if}}">{{name}}</li>
+  {{/each}}
+</ul>
+
+<div class="tab-strapline">
+  <p>{{strapline}}</p>
+</div>
+
+<div class="scale-info">
+  <p>Displaying data at a {{selectedScaleName}} level. To change to a {{unSelectedScaleName}} level, <a href="/">go back</a>.</p>
+</div>
+
+{{addSubViewTo thisView 'FilterView' filter=filter resultsNumber=resultsNumber}}

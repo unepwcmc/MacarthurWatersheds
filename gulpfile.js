@@ -6,17 +6,26 @@ var uglify = require('gulp-uglify');
 var handlebars = require('gulp-handlebars');
 var declare = require('gulp-declare');
 var plumber = require('gulp-plumber');
+var sass = require('gulp-sass');
 
 var paths = {
   application: [
-    'coffee/src/filter_definitions.coffee',
-    'coffee/src/models/filter.coffee',
+    'coffee/src/filter_definitions.coffee', 
+    'coffee/src/models/filter.coffee', 
+    'coffee/src/models/results_number.coffee', 
     'coffee/src/lib/map_builder.coffee',
     'coffee/src/lib/query_builder.coffee',
-    'coffee/src/collections/region_collection.coffee', 
+    'coffee/src/collections/region_collection.coffee',
+    'coffee/src/collections/scale_collection.coffee',
+    'coffee/src/views/tab_view.coffee',
+    'coffee/src/views/base_selector_view.coffee',
     'coffee/src/views/map_view.coffee',
+    'coffee/src/views/results_number_view.coffee',
     'coffee/src/views/region_chooser_view.coffee',
+    'coffee/src/views/scale_chooser_view.coffee',
+    'coffee/src/views/scenario_selector_view.coffee',
     'coffee/src/views/lens_selector_view.coffee',
+    'coffee/src/views/level_selector_agr_comm_dev_view.coffee',
     'coffee/src/views/level_selector_view.coffee',
     'coffee/src/views/pressure_option_view.coffee',
     'coffee/src/views/pressure_selector_view.coffee',
@@ -28,6 +37,7 @@ var paths = {
   ],
   templates: 'coffee/src/templates/*.hbs',
   tests: 'coffee/tests/**/*.coffee',
+  sass: 'sass/**/*.scss',
   images: 'client/img/**/*'
 };
 
@@ -59,13 +69,20 @@ gulp.task('templates', function() {
     .pipe(gulp.dest('js/'));
 });
 
+gulp.task('sass', function () {
+  gulp.src(paths.sass)
+    .pipe(plumber())
+    .pipe(sass())
+    .pipe(gulp.dest('css/'));
+});
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
   gulp.watch(paths.application, ['application']);
   gulp.watch(paths.tests, ['tests']);
   gulp.watch(paths.templates, ['templates']);
+  gulp.watch(paths.sass, ['sass']);
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['application', 'templates', 'tests', 'watch']);
+gulp.task('default', ['application', 'templates', 'tests', 'watch', 'sass']);

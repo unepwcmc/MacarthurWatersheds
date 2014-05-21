@@ -3,19 +3,20 @@ window.Backbone.Views ||= {}
 
 class Backbone.Views.LensSelectorView extends Backbone.View
   template: Handlebars.templates['lens_selector']
-  config: _.cloneDeep(MacArthur.CONFIG.lenses)
 
   events:
     "change #lens-select": "setLens"
 
   initialize: (options) ->
+    @config = _.cloneDeep(MacArthur.CONFIG.lenses)
     @filter = options.filter
-    @filter.on('change:subject', @setDefaultLens)
+    @listenTo(@filter, 'change:subject', @setDefaultLens)
     unless @filter.get('lens')?
       @setDefaultLens()
     @render()
 
   render: ->
+    subject = @filter.get('subject')
     lenses = _.map(@config[@filter.get('subject')], (lens) => 
       if @filter.get('lens') is lens.selector
         lens.selected = true
@@ -25,7 +26,18 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     )
     @$el.html(@template(
       lenses: lenses
+      title: @getLensTitle()
+      subject: subject.charAt(0).toUpperCase() + subject.slice(1)
     ))
+
+    # SORRY
+    theSelect = @$el.find('.select-box')
+    setTimeout(=>
+      theSelect.customSelect()
+      @$el.find('.customSelectInner').css({'width': '100%'})
+    , 20)
+    # /SORRY
+    
     return @
 
   setLens: (event) ->
@@ -33,11 +45,19 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     @filter.set('lens', lensName)
 
   onClose: ->
+    @remove()
 
   setDefaultLens: =>
-    @filter.set('lens', @getDefaultFilter().selector)
+    if @filter.get('subject')?
+      @filter.set('lens', @getDefaultFilter().selector)
 
   getDefaultFilter: ->
     _.find(@config[@filter.get('subject')], (obj) -> 
       return obj.default?
     )
+
+  getLensTitle: ->
+    if @filter.get('subject') == 'biodiversity'
+      return "For species"
+    else if @filter.get('subject') == 'ecosystem'
+      return "By provision"
