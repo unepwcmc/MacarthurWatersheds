@@ -55,11 +55,11 @@ describe 'On MacArthur watershed' do
     check = JSON.parse(query)["rows"][0]
     Integer(check['count']).should ==(456)
   end
-  it 'Gets 7 columns' do
+  it 'Gets 8 columns' do
     sql = "SELECT * FROM MacArthur_watershed limit 0"
     query = CartodbQuery.run(sql)
     check = JSON.parse(query)["fields"]
-    Integer(check.count).should ==(7)
+    Integer(check.count).should ==(8)
   end
 end
 
