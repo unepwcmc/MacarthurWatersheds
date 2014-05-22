@@ -7,6 +7,7 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
 
   events:
     "click .scales .scale-area": "triggerChooseScale"
+    "click .back a": "goBack"
 
   initialize: (options) ->
     @scales = options.scales
@@ -15,14 +16,24 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
   render: ->
     @$el.html(@template(
       scales: @scales.toJSON()
+      regionName: @getRegionName()
     ))
     return @
+
+  getRegionName: ->
+    regionCode = Backbone.history.fragment.split(':')[1]
+    regionOptions = MacArthur.CONFIG.regions
+    _.find(regionOptions, (o) -> o.code == regionCode).name
 
   triggerChooseScale: (event) =>
     scaleCode = $(event.target).attr('data-scale-code')
     Backbone.appRouter.navigate(
       "#{Backbone.history.fragment}/scale:#{scaleCode}", {trigger: true}
     )
+
+  goBack: (e) ->
+    e.preventDefault()
+    Backbone.appRouter.navigate('/', {trigger: true})
 
   onClose: ->
     

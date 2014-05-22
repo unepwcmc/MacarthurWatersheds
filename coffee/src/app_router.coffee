@@ -18,8 +18,10 @@ class Backbone.Router.AppRouter extends Backbone.Router
     @sidePanel = options.sidePanel
     @map = options.map
     @resultsNumber = options.resultsNumber
+    @geoms = {}
 
   showRegionChooser: =>
+    @modalContainer.hideModal()
     @sidePanel.$el.removeClass('active')
     regionChooserView = new Backbone.Views.RegionChooserView({regions: @regions})
     @modalContainer.showModal(regionChooserView)
@@ -31,17 +33,31 @@ class Backbone.Router.AppRouter extends Backbone.Router
     @modalContainer.showModal(scaleChooserView)
 
   showSidePanel: (regionCode, scaleCode) =>
-    $.getJSON("../../../data/#{regionCode}.topo.json", (geo) =>
+    init = (geo) =>
       @modalContainer.hideModal()
       region = @regions.find( (region) -> region.get('code') == regionCode )
       scale = @scales.find( (scale) -> scale.get('code') == scaleCode )
       @sidePanel.$el.addClass('active')
       @filter.set(region: region)
       @filter.set(scale: scale)
-      @sideView = new Backbone.Views.TabView(
-        filter: @filter
-        resultsNumber: @resultsNumber
-      )
+      @sideView = @setSideView()
       @sidePanel.showView(@sideView)
-      @map.initQueryLayer(geo, region)
+      @map.initQueryLayer(geo, region, scale)
+      @geo = geo
+
+    geom = @geoms["#{regionCode}_#{scaleCode}"]
+    if geom
+      init(geom)
+    else 
+      $.getJSON("../../../data/#{regionCode}_#{scaleCode}.topo.json", (geo) =>
+        init(geo)
+        @geoms["#{regionCode}_#{scaleCode}"] = geo
+      )
+    @currentRegionCode = regionCode
+
+  setSideView: =>
+    if @sideView then @sideView.close()
+    @sideView = new Backbone.Views.TabView(
+      filter: @filter
+      resultsNumber: @resultsNumber
     )

@@ -47,8 +47,9 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     idx = _.findIndex scaleOptions, (o) -> o.name != selectedScaleName
     scaleOptions[idx].name
 
-  goBack: (e) ->
+  goBack: (e) =>
     e.preventDefault()
+    @resetFilters()
     Backbone.appRouter.navigate(
       Backbone.history.fragment.split('/')[0], {trigger: true}
     )

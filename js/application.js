@@ -262,15 +262,15 @@
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
         scaleCode = this.filter.get('scale').get('code');
-        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND d.is_broadscale = '" + (this.isBroadscale(scaleCode)) + "' \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'\n";
+        return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND w.is_broadscale = " + (this.isBroadscale(scaleCode)) + " \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'\n";
       } else {
         return this.filter.get('query');
       }
     };
 
     QueryBuilder.prototype.isBroadscale = function(scale) {
-      if (scale !== 'broadscale' && scale !== 'global') {
-        throw new Error("'" + scale + "': wrong scale name!");
+      if (scale !== 'broadscale' && scale !== 'regional') {
+        throw new Error("'" + scale + "': wrong scale name! Expected broadscale or regional");
       }
       if (scale === 'broadscale') {
         return true;
@@ -488,6 +488,7 @@
     __extends(TabView, _super);
 
     function TabView() {
+      this.goBack = __bind(this.goBack, this);
       this.setTab = __bind(this.setTab, this);
       return TabView.__super__.constructor.apply(this, arguments);
     }
@@ -554,6 +555,7 @@
 
     TabView.prototype.goBack = function(e) {
       e.preventDefault();
+      this.resetFilters();
       return Backbone.appRouter.navigate(Backbone.history.fragment.split('/')[0], {
         trigger: true
       });
@@ -733,22 +735,29 @@
       }).addTo(this.map);
     };
 
-    MapView.prototype.initQueryLayer = function(geo, region) {
-      var regionBounds, regionCode;
+    MapView.prototype.initQueryLayer = function(geo, region, scale) {
+      var regionBounds, regionCode, scaleCode;
+      if (this.queryLayer) {
+        this.map.removeLayer(this.queryLayer);
+      }
+      if (this.queryLayerInteriors) {
+        this.map.removeLayer(this.queryLayerInteriors);
+      }
       this.region = region;
+      this.scale = scale;
       regionCode = region.get('code');
+      scaleCode = scale.get('code');
       regionBounds = region.get('bounds');
       this.categories = 3;
       this.unsetWatershedSelectionCount();
-      this.collection = topojson.feature(geo, geo.objects[regionCode]);
-      this.interiors = topojson.mesh(geo, geo.objects[regionCode]);
+      this.collection = topojson.feature(geo, geo.objects["" + regionCode + "_" + scaleCode]);
+      this.interiors = topojson.mesh(geo, geo.objects["" + regionCode + "_" + scaleCode]);
       this.queryLayer = L.geoJson(this.collection, {
         style: this.basePolyStyle
       }).addTo(this.map);
       this.queryLayerInteriors = L.geoJson(this.interiors, {
         style: this.baseLineStyle
       }).addTo(this.map);
-      this.queryLayer;
       this.map.fitBounds(regionBounds);
       return this.map.on('zoomend', (function(_this) {
         return function() {
@@ -1290,7 +1299,8 @@
     ScaleChooserView.prototype.className = 'modal scale-chooser';
 
     ScaleChooserView.prototype.events = {
-      "click .scales .scale-area": "triggerChooseScale"
+      "click .scales .scale-area": "triggerChooseScale",
+      "click .back a": "goBack"
     };
 
     ScaleChooserView.prototype.initialize = function(options) {
@@ -1300,15 +1310,32 @@
 
     ScaleChooserView.prototype.render = function() {
       this.$el.html(this.template({
-        scales: this.scales.toJSON()
+        scales: this.scales.toJSON(),
+        regionName: this.getRegionName()
       }));
       return this;
+    };
+
+    ScaleChooserView.prototype.getRegionName = function() {
+      var regionCode, regionOptions;
+      regionCode = Backbone.history.fragment.split(':')[1];
+      regionOptions = MacArthur.CONFIG.regions;
+      return _.find(regionOptions, function(o) {
+        return o.code === regionCode;
+      }).name;
     };
 
     ScaleChooserView.prototype.triggerChooseScale = function(event) {
       var scaleCode;
       scaleCode = $(event.target).attr('data-scale-code');
       return Backbone.appRouter.navigate("" + Backbone.history.fragment + "/scale:" + scaleCode, {
+        trigger: true
+      });
+    };
+
+    ScaleChooserView.prototype.goBack = function(e) {
+      e.preventDefault();
+      return Backbone.appRouter.navigate('/', {
         trigger: true
       });
     };
@@ -2003,6 +2030,7 @@
     __extends(AppRouter, _super);
 
     function AppRouter() {
+      this.setSideView = __bind(this.setSideView, this);
       this.showSidePanel = __bind(this.showSidePanel, this);
       this.showScaleChooser = __bind(this.showScaleChooser, this);
       this.showRegionChooser = __bind(this.showRegionChooser, this);
@@ -2022,11 +2050,13 @@
       this.modalContainer = options.modalContainer;
       this.sidePanel = options.sidePanel;
       this.map = options.map;
-      return this.resultsNumber = options.resultsNumber;
+      this.resultsNumber = options.resultsNumber;
+      return this.geoms = {};
     };
 
     AppRouter.prototype.showRegionChooser = function() {
       var regionChooserView;
+      this.modalContainer.hideModal();
       this.sidePanel.$el.removeClass('active');
       regionChooserView = new Backbone.Views.RegionChooserView({
         regions: this.regions
@@ -2045,7 +2075,8 @@
     };
 
     AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {
-      return $.getJSON("../../../data/" + regionCode + ".topo.json", (function(_this) {
+      var geom, init;
+      init = (function(_this) {
         return function(geo) {
           var region, scale;
           _this.modalContainer.hideModal();
@@ -2062,14 +2093,34 @@
           _this.filter.set({
             scale: scale
           });
-          _this.sideView = new Backbone.Views.TabView({
-            filter: _this.filter,
-            resultsNumber: _this.resultsNumber
-          });
+          _this.sideView = _this.setSideView();
           _this.sidePanel.showView(_this.sideView);
-          return _this.map.initQueryLayer(geo, region);
+          _this.map.initQueryLayer(geo, region, scale);
+          return _this.geo = geo;
         };
-      })(this));
+      })(this);
+      geom = this.geoms["" + regionCode + "_" + scaleCode];
+      if (geom) {
+        init(geom);
+      } else {
+        $.getJSON("../../../data/" + regionCode + "_" + scaleCode + ".topo.json", (function(_this) {
+          return function(geo) {
+            init(geo);
+            return _this.geoms["" + regionCode + "_" + scaleCode] = geo;
+          };
+        })(this));
+      }
+      return this.currentRegionCode = regionCode;
+    };
+
+    AppRouter.prototype.setSideView = function() {
+      if (this.sideView) {
+        this.sideView.close();
+      }
+      return this.sideView = new Backbone.Views.TabView({
+        filter: this.filter,
+        resultsNumber: this.resultsNumber
+      });
     };
 
     return AppRouter;

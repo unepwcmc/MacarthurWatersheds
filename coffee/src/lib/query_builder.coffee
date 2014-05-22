@@ -23,7 +23,7 @@ class window.MacArthur.QueryBuilder
         ON pressure.watershed_id = w.cartodb_id 
         #{@buildComprovValueClause()} 
         WHERE r.code = '#{regionCode}' 
-        AND d.is_broadscale = '#{@isBroadscale(scaleCode)}' 
+        AND w.is_broadscale = #{@isBroadscale(scaleCode)} 
         AND #{@buildSubjectClause()} 
         AND #{@buildLensClause()}
         AND #{@buildMetricClause()} 
@@ -35,8 +35,8 @@ class window.MacArthur.QueryBuilder
       @filter.get('query')
   
   isBroadscale: (scale) ->
-    if scale not in ['broadscale', 'global']
-      throw new Error("'#{scale}': wrong scale name!")
+    if scale not in ['broadscale', 'regional']
+      throw new Error("'#{scale}': wrong scale name! Expected broadscale or regional")
     if scale == 'broadscale' then yes else no
 
   includeComprovValueClause: ->
