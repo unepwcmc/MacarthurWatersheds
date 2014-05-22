@@ -32,7 +32,8 @@ var paths = {
     'coffee/src/views/protection_option_view.coffee',
     'coffee/src/views/protection_selector_view.coffee',
     'coffee/src/views/filter_view.coffee',
-    'coffee/src/controllers/main_controller.coffee'
+    'coffee/src/controllers/main_controller.coffee',
+    'coffee/src/app_router.coffee'
   ],
   templates: 'coffee/src/templates/*.hbs',
   tests: 'coffee/tests/**/*.coffee',

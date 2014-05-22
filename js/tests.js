@@ -2,32 +2,13 @@
   suite('Main Controller');
 
   test('The application starts by showing the choose region view and a map', function() {
-    var chooseRegionActionStub, controller, showMapActionStub;
-    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    var controller, showMapActionStub;
     showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     controller = new Backbone.Controllers.MainController();
     try {
-      assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
       return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
     } finally {
-      chooseRegionActionStub.restore();
       showMapActionStub.restore();
-    }
-  });
-
-  test('on initialize, the controller creates a side panel after the map', function() {
-    var chooseRegionActionStub, controller, showMapActionStub;
-    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
-    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
-    $('body').append('<div id="map">');
-    controller = new Backbone.Controllers.MainController();
-    try {
-      return assert.lengthOf($('body').find('#side-panel'), 1, "Expected to side a #side-panel");
-    } finally {
-      chooseRegionActionStub.restore();
-      showMapActionStub.restore();
-      $('body').remove('#map');
-      $('body').remove('#side-panel');
     }
   });
 
@@ -598,21 +579,6 @@
     return assert.strictEqual(view.$el.find(".regions .region-area.region-link[data-region-code='MEK']").text(), "Mekong");
   });
 
-  test("when a region is clicked, it triggers the 'regionChosen' event with the corresponding region model", function() {
-    var eventArg, regions, spy, view;
-    regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
-    view = new Backbone.Views.RegionChooserView({
-      regions: regions
-    });
-    spy = sinon.spy();
-    view.on("regionChosen", spy);
-    view.$el.find(".regions .region-area.region-link[data-region-code='MEK']").trigger('click');
-    assert.isTrue(spy.calledOnce, "Expected regionChosen to be triggered");
-    eventArg = spy.getCall(0).args[0];
-    assert.strictEqual(eventArg.constructor.name, "Region", "Expected the event to send a Region model");
-    return assert.strictEqual(eventArg.get('name'), 'Mekong', "Expected the event to be trigger with the right Region");
-  });
-
 }).call(this);
 
 (function() {
@@ -648,21 +614,6 @@
     });
     assert.strictEqual(view.$el.find(".scales .scale-area.scale-link[data-scale-code='broadscale']").text(), "Global");
     return assert.strictEqual(view.$el.find(".scales .scale-area.scale-link[data-scale-code='regional']").text(), "Regional");
-  });
-
-  test("when a scale is clicked, it triggers the 'scaleChosen' event with the corresponding scale model", function() {
-    var eventArg, scales, spy, view;
-    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
-    view = new Backbone.Views.ScaleChooserView({
-      scales: scales
-    });
-    spy = sinon.spy();
-    view.on("scaleChosen", spy);
-    view.$el.find(".scales .scale-area.scale-link[data-scale-code='broadscale']").trigger('click');
-    assert.isTrue(spy.calledOnce, "Expected scaleChosen to be triggered");
-    eventArg = spy.getCall(0).args[0];
-    assert.strictEqual(eventArg.constructor.name, "Scale", "Expected the event to send a Scale model");
-    return assert.strictEqual(eventArg.get('name'), 'Global', "Expected the event to be trigger with the right Scale");
   });
 
 }).call(this);

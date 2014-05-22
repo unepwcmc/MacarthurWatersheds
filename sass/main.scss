@@ -86,8 +86,10 @@ section {
   right: 0;
   z-index: 9999;
   background: #fff;
+  display: none;
   &.active {
     height: calc(100% - 73px);
+    display: block;
   }
 }
 

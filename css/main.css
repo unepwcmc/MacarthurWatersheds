@@ -67,9 +67,11 @@ section header {
   overflow: auto;
   right: 0;
   z-index: 9999;
-  background: #fff; }
+  background: #fff;
+  display: none; }
   #side-panel.active {
-    height: calc(100% - 73px); }
+    height: calc(100% - 73px);
+    display: block; }
 
 div.filters {
   padding: 30px 20px;

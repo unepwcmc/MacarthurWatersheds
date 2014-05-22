@@ -24,9 +24,17 @@ def self.geometry_data
     puts sql
     CartodbQuery.run(sql)
     sql = <<-SQL 
-      INSERT INTO macarthur_watershed(the_geom, name,region_id)
-      SELECT ws.the_geom, ws_id, mr.cartodb_id 
+      INSERT INTO macarthur_watershed(the_geom, name,region_id, is_broadscale)
+      SELECT ws.the_geom, ws_id, mr.cartodb_id, true
       FROM #{region} ws, macarthur_region mr
+      WHERE mr.code = '#{region}'
+    SQL
+    puts sql
+    CartodbQuery.run(sql)
+    sql = <<-SQL 
+      INSERT INTO macarthur_watershed(the_geom, name, region_id, is_broadscale)
+      SELECT ws.the_geom, cell_id, mr.cartodb_id, false
+      FROM regional_ws_#{region} ws, macarthur_region mr
       WHERE mr.code = '#{region}'
     SQL
     puts sql
@@ -44,13 +52,16 @@ end
 
 def self.download_geometries
   REGIONS.each do |region|
-    query = download_query(region)
-    query.gsub!("\n","")
-    puts query
-    encoded_url = URI::encode(query)
-    geojson_geometry = open(encoded_url).read
-    File.open("../lib/geometries/#{region}.geojson", 'w+') do |file|
-      puts file.write(geojson_geometry)
+    ['broadscale', 'regional'].each do |scale|
+      is_broadscale = scale == 'broadscale'
+      query = download_query(region, is_broadscale)
+      query.gsub!("\n","")
+      puts query
+      encoded_url = URI::encode(query)
+      geojson_geometry = open(encoded_url).read
+      File.open("../data/json/#{region}_#{scale}.geojson", 'w+') do |file|
+        puts file.write(geojson_geometry)
+      end
     end
   end
 end
@@ -90,8 +101,8 @@ def self.datapoint
                   column = "#{subject}_#{td}_#{met}_#{scen}_#{cons}_#{lens}"
                   cons_boolean = cons == 'cons' ? 'true' : 'false'
                   sql = <<-SQL
-                    INSERT INTO macarthur_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value, is_broadscale) \
-                    SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision), false \
+                    INSERT INTO macarthur_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value) \
+                    SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision) \
                     FROM macarthur_#{subject}_original_data od \
                     LEFT JOIN
                     macarthur_watershed ws \
@@ -137,11 +148,11 @@ def other_values filter, type, column
     CartodbQuery.run(sql)
 end
 
-def download_query region
+def download_query region, is_broadscale
   cartodb_config = YAML.load_file('../config/cartodb_config.yml')
   api_key = cartodb_config["api_key"]
   host = cartodb_config["host"]
-  "#{host}/api/v2/sql?q=SELECT w.* FROM macarthur_watershed w LEFT JOIN macarthur_region r ON w.region_id = r.cartodb_id WHERE r.code = '#{region}' &format=geojson&api_key=#{api_key}"
+  "#{host}/api/v2/sql?q=SELECT w.* FROM macarthur_watershed w LEFT JOIN macarthur_region r ON w.region_id = r.cartodb_id WHERE r.code = '#{region}' AND is_broadscale = #{is_broadscale} &format=geojson&api_key=#{api_key}"
 end
 
 ARGV.each do|action|
