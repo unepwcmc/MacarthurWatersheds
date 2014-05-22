@@ -20,8 +20,9 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
 
   triggerChooseScale: (event) =>
     scaleCode = $(event.target).attr('data-scale-code')
-    scale = @scales.find( (scale) -> scale.get('code') == scaleCode )
-    @trigger('scaleChosen', scale)
+    Backbone.appRouter.navigate(
+      "#{Backbone.history.fragment}/scale:#{scaleCode}", {trigger: true}
+    )
 
   onClose: ->
     

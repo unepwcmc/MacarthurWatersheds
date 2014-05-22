@@ -495,7 +495,8 @@
     TabView.prototype.template = Handlebars.templates['tab'];
 
     TabView.prototype.events = {
-      "click ul.tabs li": "setTab"
+      "click ul.tabs li": "setTab",
+      "click .scale-info a": "goBack"
     };
 
     TabView.prototype.initialize = function(options) {
@@ -549,6 +550,13 @@
         return o.name !== selectedScaleName;
       });
       return scaleOptions[idx].name;
+    };
+
+    TabView.prototype.goBack = function(e) {
+      e.preventDefault();
+      return Backbone.appRouter.navigate(Backbone.history.fragment.split('/')[0], {
+        trigger: true
+      });
     };
 
     TabView.prototype.resetFilters = function() {
@@ -1244,12 +1252,11 @@
     };
 
     RegionChooserView.prototype.triggerChooseRegion = function(event) {
-      var region, regionCode;
+      var regionCode;
       regionCode = $(event.target).attr('data-region-code');
-      region = this.regions.find(function(region) {
-        return region.get('code') === regionCode;
+      return Backbone.appRouter.navigate("region:" + regionCode, {
+        trigger: true
       });
-      return this.trigger('regionChosen', region);
     };
 
     RegionChooserView.prototype.onClose = function() {};
@@ -1299,12 +1306,11 @@
     };
 
     ScaleChooserView.prototype.triggerChooseScale = function(event) {
-      var scale, scaleCode;
+      var scaleCode;
       scaleCode = $(event.target).attr('data-scale-code');
-      scale = this.scales.find(function(scale) {
-        return scale.get('code') === scaleCode;
+      return Backbone.appRouter.navigate("" + Backbone.history.fragment + "/scale:" + scaleCode, {
+        trigger: true
       });
-      return this.trigger('scaleChosen', scale);
     };
 
     ScaleChooserView.prototype.onClose = function() {};
@@ -1933,8 +1939,10 @@
     };
 
     ModalContainer.prototype.hideModal = function() {
-      $('body').find('.disabler').remove();
-      return this.view.close();
+      if (this.view) {
+        $('body').find('.disabler').remove();
+        return this.view.close();
+      }
     };
 
     return ModalContainer;
@@ -1945,98 +1953,34 @@
     __extends(MainController, _super);
 
     function MainController() {
-      this.showSidePanel = __bind(this.showSidePanel, this);
-      this.getGeometries = __bind(this.getGeometries, this);
-      this.chooseScale = __bind(this.chooseScale, this);
-      this.chooseRegion = __bind(this.chooseRegion, this);
       this.showMap = __bind(this.showMap, this);
       this.regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
       this.scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
       this.filter = new Backbone.Models.Filter();
       this.resultsNumber = new Backbone.Models.ResultsNumber();
       this.queryBuilder = new window.MacArthur.QueryBuilder(this.filter);
-      this.modalContainer = new ModalContainer;
+      this.modalContainer = new ModalContainer();
       this.sidePanel = new Backbone.Diorama.ManagedRegion();
       this.sidePanel.$el.attr('id', 'side-panel');
       this.sidePanel.$el.insertAfter('#map');
-      this.showMap();
-      this.chooseRegion();
-      this.appRouter = new Backbone.Router.AppRouter({
-        regions: this.regions
+      this.map = this.showMap();
+      Backbone.appRouter = new Backbone.Router.AppRouter({
+        regions: this.regions,
+        scales: this.scales,
+        modalContainer: this.modalContainer,
+        filter: this.filter,
+        sidePanel: this.sidePanel,
+        map: this.map,
+        resultsNumber: this.resultsNumber
       });
       Backbone.history.start();
     }
 
     MainController.prototype.showMap = function() {
-      return this.map = new Backbone.Views.MapView({
+      return new Backbone.Views.MapView({
         filter: this.filter,
         resultsNumber: this.resultsNumber
       });
-    };
-
-    MainController.prototype.chooseRegion = function() {
-      var regionChooserView;
-      regionChooserView = new Backbone.Views.RegionChooserView({
-        regions: this.regions
-      });
-      this.modalContainer.showModal(regionChooserView);
-
-      /*
-        @changeStateOn maps events published by other objects to
-        controller states
-       */
-      return this.changeStateOn({
-        event: 'regionChosen',
-        publisher: regionChooserView,
-        newState: this.chooseScale
-      });
-    };
-
-    MainController.prototype.chooseScale = function(region) {
-      var scaleChooserView;
-      this.modalContainer.hideModal();
-      scaleChooserView = new Backbone.Views.ScaleChooserView({
-        scales: this.scales
-      });
-      this.modalContainer.showModal(scaleChooserView);
-
-      /*
-        @changeStateOn maps events published by other objects to
-        controller states
-       */
-      return this.changeStateOn({
-        event: 'scaleChosen',
-        publisher: scaleChooserView,
-        newState: _.partialRight(this.getGeometries, region, this.showSidePanel)
-      });
-    };
-
-    MainController.prototype.getGeometries = function(scale, region, callback) {
-      var regionCode;
-      regionCode = region.get('code');
-      return $.getJSON("../../../data/" + regionCode + ".topo.json", (function(_this) {
-        return function(geo) {
-          return callback(null, geo, region, scale);
-        };
-      })(this));
-    };
-
-    MainController.prototype.showSidePanel = function(err, geo, region, scale) {
-      var view;
-      this.modalContainer.hideModal();
-      this.sidePanel.$el.addClass('active');
-      this.filter.set({
-        region: region
-      });
-      this.filter.set({
-        scale: scale
-      });
-      view = new Backbone.Views.TabView({
-        filter: this.filter,
-        resultsNumber: this.resultsNumber
-      });
-      this.sidePanel.showView(view);
-      return this.map.initQueryLayer(geo, region);
     };
 
     return MainController;
@@ -2059,25 +2003,73 @@
     __extends(AppRouter, _super);
 
     function AppRouter() {
-      this.gotoRegion = __bind(this.gotoRegion, this);
+      this.showSidePanel = __bind(this.showSidePanel, this);
+      this.showScaleChooser = __bind(this.showScaleChooser, this);
+      this.showRegionChooser = __bind(this.showRegionChooser, this);
       return AppRouter.__super__.constructor.apply(this, arguments);
     }
 
     AppRouter.prototype.routes = {
-      ':region/': 'gotoRegion'
+      '': 'showRegionChooser',
+      'region::region': 'showScaleChooser',
+      'region::region/scale::scale': 'showSidePanel'
     };
 
     AppRouter.prototype.initialize = function(options) {
-      return this.regions = options.regions;
+      this.regions = options.regions;
+      this.scales = options.scales;
+      this.filter = options.filter;
+      this.modalContainer = options.modalContainer;
+      this.sidePanel = options.sidePanel;
+      this.map = options.map;
+      return this.resultsNumber = options.resultsNumber;
     };
 
-    AppRouter.prototype.gotoRegion = function(region_code) {
-      var region;
-      region = this.regions.find(function(region) {
-        return region.get('code') === region_code;
+    AppRouter.prototype.showRegionChooser = function() {
+      var regionChooserView;
+      this.sidePanel.$el.removeClass('active');
+      regionChooserView = new Backbone.Views.RegionChooserView({
+        regions: this.regions
       });
-      console.log('router.gotoRegion', region);
-      return this.trigger('regionChosen', region);
+      return this.modalContainer.showModal(regionChooserView);
+    };
+
+    AppRouter.prototype.showScaleChooser = function(regionCode) {
+      var scaleChooserView;
+      this.sidePanel.$el.removeClass('active');
+      this.modalContainer.hideModal();
+      scaleChooserView = new Backbone.Views.ScaleChooserView({
+        scales: this.scales
+      });
+      return this.modalContainer.showModal(scaleChooserView);
+    };
+
+    AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {
+      return $.getJSON("../../../data/" + regionCode + ".topo.json", (function(_this) {
+        return function(geo) {
+          var region, scale;
+          _this.modalContainer.hideModal();
+          region = _this.regions.find(function(region) {
+            return region.get('code') === regionCode;
+          });
+          scale = _this.scales.find(function(scale) {
+            return scale.get('code') === scaleCode;
+          });
+          _this.sidePanel.$el.addClass('active');
+          _this.filter.set({
+            region: region
+          });
+          _this.filter.set({
+            scale: scale
+          });
+          _this.sideView = new Backbone.Views.TabView({
+            filter: _this.filter,
+            resultsNumber: _this.resultsNumber
+          });
+          _this.sidePanel.showView(_this.sideView);
+          return _this.map.initQueryLayer(geo, region);
+        };
+      })(this));
     };
 
     return AppRouter;

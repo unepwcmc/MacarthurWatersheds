@@ -6,13 +6,14 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
 
   events:
     "click ul.tabs li": "setTab"
+    "click .scale-info a": "goBack"
 
   initialize: (options) ->
     @config = _.cloneDeep(MacArthur.CONFIG.tabs)
     @filter = options.filter
     @resultsNumber = options.resultsNumber
     @render()
-
+    
   render: ->
     tabs = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'tab')
     strapline = _.find(tabs, (t) -> t.active).strapline
@@ -45,6 +46,13 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     scaleOptions = MacArthur.CONFIG.scales
     idx = _.findIndex scaleOptions, (o) -> o.name != selectedScaleName
     scaleOptions[idx].name
+
+  goBack: (e) ->
+    e.preventDefault()
+    Backbone.appRouter.navigate(
+      Backbone.history.fragment.split('/')[0], {trigger: true}
+    )
+    
 
   resetFilters: ->
     @filter.unset('subject')
