@@ -60,11 +60,17 @@ These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersh
   * if not installed: `npm install -g topojson`
   * then, from within the `data` directory:
   ```sh
-  topojson -o GLR.topo.json -p -q 20000 -- json/GLR.geojson
+  topojson -o GLR_true.topo.json -p -q 20000 -- json/GLR_true.geojson
 
-  topojson -o MEK.topo.json -p -q 20000 -- json/MEK.geojson 
+  topojson -o MEK_true.topo.json -p -q 20000 -- json/MEK_true.geojson 
+ 
+  topojson -o WAN_true.topo.json -p -q 20000 -- json/WAN_true.geojson 
   
-  topojson -o WAN.topo.json -p -q 20000 -- json/WAN.geojson 
+  topojson -o GLR_false.topo.json -p -q 20000 -- json/GLR_false.geojson
+
+  topojson -o MEK_false.topo.json -p -q 20000 -- json/MEK_false.geojson 
+  
+  topojson -o WAN_false.topo.json -p -q 20000 -- json/WAN_false.geojson 
   ```
 
 
