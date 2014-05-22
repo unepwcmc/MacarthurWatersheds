@@ -1,9 +1,14 @@
-<h1>Welcome to the Watershed exploration tool</h1>
-<h2>Which level of data would you like to see?</h2>
-<ul class="scales">
-  {{#each scales}}
-    <li>
-      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}">{{name}}</div>
-    </li>
-  {{/each}}
-</ul>
+<header><h1>Welcome to the Watershed exploration tool</h1></header>
+<div class="scales">
+	<div class="scale-copy">
+		<p>You have chosen the <strong>Mekong</strong> region.</p>
+		<p>Which level of data would you like to see?</p>
+	</div>
+	<ul class="scales">
+	  {{#each scales}}
+	    <li>
+	      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}">{{name}}</div>
+	    </li>
+	  {{/each}}
+	</ul>
+</div>

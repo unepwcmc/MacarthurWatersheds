@@ -3,6 +3,7 @@ $dark-grey: #E1E1E1;
 $blue: #4dc0dd;
 $hover: #2F88A3;
 $dark-blue: #2A2B33;
+$secondary-info: #929292;
 
 @import 'mixin';
 
@@ -142,21 +143,27 @@ div.subjects {
 }
 
 .region-chooser, .scale-chooser {
-  width: 50%;
-  height: 405px;
-  color: $blue;
+  width: 40%;
+  height: 340px;
+  header {
+    padding: 10px 0;
+    background: $dark-blue;
+  }
     h1 {
   	margin: 0;
-  	text-align: center;
-  	background: $dark-blue;
-  	padding: 10px 0;
-  	color: #fff;
+    text-align: center;
+    color: #fff;
+    opacity: 0.8;
+    text-transform: uppercase;
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
   }
 }
 
 .modal {
   z-index: 101;
-  background: #fff;
+  background: #f7f7f7;
   position: fixed;
   margin: auto;
   top: 0;
@@ -167,7 +174,7 @@ div.subjects {
 
 ul.regions {
 	margin: auto;
-	padding: 5%;
+	padding: 0 5% 5%;
 	list-style-type: none;
 	width: 100%;
 	li {
@@ -180,10 +187,10 @@ ul.regions {
     }
     div.region-area {
       background-repeat: no-repeat;
-      background-size: 50%;
+      background-size: 60%;
       background-position: center;
       margin: 0 auto 20px auto;
-      height: 220px;
+      height: 150px;
       &:hover, &:active {
         @include transition(all, 0.5s, ease);
         opacity: 0.7;
@@ -194,9 +201,12 @@ ul.regions {
       background: $blue;
       color: #fff;
       text-align: center;
-      margin-bottom: 10px;
       cursor: pointer;
       height: 100%;
+      font-size: 0.75em;
+      text-transform: uppercase;
+      font-weight: 600;
+      word-spacing: 0.025em;
       @include border-radius(5px);
       &:hover, &:active {
         @include transition(all, 0.5s, ease);
@@ -205,6 +215,42 @@ ul.regions {
       }
     }
 	}
+}
+
+ul.scales {
+  margin: auto;
+  overflow: hidden;
+  padding: 0;
+  width: 73.75%;
+}
+
+ul.scales li {
+  padding: 5px 10px;
+  background: $blue;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  height: 100%;
+  float: left;
+  width: 200px;
+  margin-right: 5%;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  font-weight: 600;
+  word-spacing: 0.025em;
+  @include border-radius(5px);
+  &:last-child {
+    margin-right: 0;
+  }
+  &:hover, &:active {
+    @include transition(all, 0.5s, ease);
+    background: $hover;
+    opacity: 1;
+  }
+  div {
+    font-size: 1.25em;
+  }
 }
 
 .disabler {
@@ -277,7 +323,7 @@ select option {
   p {
     margin: 0;
     font-size: 0.85em;
-    color: #929292;
+    color: $secondary-info;
     font-weight: 500;
   }
 }
@@ -449,4 +495,37 @@ header{
     font-size: 0.85em;
     cursor: pointer;
   }
+}
+
+div.scale-info {
+  margin: 20px 20px 0 20px;
+  background-color: #E8F6FA;
+  padding: 10px;
+  @include border-radius(5px);
+  p {
+    margin: 0;
+    color: $secondary-info;
+    font-size: 0.85em;
+  }
+}
+
+div.scale-copy, div.region-copy {
+  margin: 20px auto;
+  text-align: center;
+  p {
+    font-size: 1.25em;
+    margin: 0 0 5px 0;
+    color: $secondary-info;
+    strong {
+      color: $blue;
+    }
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+}
+
+div.scales {
+  margin: 70px 0;
 }

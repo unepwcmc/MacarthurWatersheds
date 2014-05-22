@@ -118,19 +118,24 @@ div.subjects h1 {
   font-size: 1em; }
 
 .region-chooser, .scale-chooser {
-  width: 50%;
-  height: 405px;
-  color: #4dc0dd; }
+  width: 40%;
+  height: 340px; }
+  .region-chooser header, .scale-chooser header {
+    padding: 10px 0;
+    background: #2A2B33; }
   .region-chooser h1, .scale-chooser h1 {
     margin: 0;
     text-align: center;
-    background: #2A2B33;
-    padding: 10px 0;
-    color: #fff; }
+    color: #fff;
+    opacity: 0.8;
+    text-transform: uppercase;
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.05em; }
 
 .modal {
   z-index: 101;
-  background: #fff;
+  background: #f7f7f7;
   position: fixed;
   margin: auto;
   top: 0;
@@ -140,7 +145,7 @@ div.subjects h1 {
 
 ul.regions {
   margin: auto;
-  padding: 5%;
+  padding: 0 5% 5%;
   list-style-type: none;
   width: 100%; }
   ul.regions li {
@@ -152,10 +157,10 @@ ul.regions {
       margin-right: 0; }
     ul.regions li div.region-area {
       background-repeat: no-repeat;
-      background-size: 50%;
+      background-size: 60%;
       background-position: center;
       margin: 0 auto 20px auto;
-      height: 220px; }
+      height: 150px; }
       ul.regions li div.region-area:hover, ul.regions li div.region-area:active {
         -webkit-transition: all 0.5s ease;
         -moz-transition: all 0.5s ease;
@@ -168,9 +173,12 @@ ul.regions {
       background: #4dc0dd;
       color: #fff;
       text-align: center;
-      margin-bottom: 10px;
       cursor: pointer;
       height: 100%;
+      font-size: 0.75em;
+      text-transform: uppercase;
+      font-weight: 600;
+      word-spacing: 0.025em;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
       -ms-border-radius: 5px;
@@ -183,6 +191,44 @@ ul.regions {
         transition: all 0.5s ease;
         background: #2F88A3;
         opacity: 1; }
+
+ul.scales {
+  margin: auto;
+  overflow: hidden;
+  padding: 0;
+  width: 73.75%; }
+
+ul.scales li {
+  padding: 5px 10px;
+  background: #4dc0dd;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  height: 100%;
+  float: left;
+  width: 200px;
+  margin-right: 5%;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  font-weight: 600;
+  word-spacing: 0.025em;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px; }
+  ul.scales li:last-child {
+    margin-right: 0; }
+  ul.scales li:hover, ul.scales li:active {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    background: #2F88A3;
+    opacity: 1; }
+  ul.scales li div {
+    font-size: 1.25em; }
 
 .disabler {
   z-index: 100;
@@ -400,3 +446,31 @@ header a.about {
   letter-spacing: 0;
   font-size: 0.85em;
   cursor: pointer; }
+
+div.scale-info {
+  margin: 20px 20px 0 20px;
+  background-color: #E8F6FA;
+  padding: 10px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px; }
+  div.scale-info p {
+    margin: 0;
+    color: #929292;
+    font-size: 0.85em; }
+
+div.scale-copy, div.region-copy {
+  margin: 20px auto;
+  text-align: center; }
+  div.scale-copy p, div.region-copy p {
+    font-size: 1.25em;
+    margin: 0 0 5px 0;
+    color: #929292; }
+    div.scale-copy p strong, div.region-copy p strong {
+      color: #4dc0dd; }
+    div.scale-copy p:last-child, div.region-copy p:last-child {
+      margin: 0; }
+
+div.scales {
+  margin: 70px 0; }
