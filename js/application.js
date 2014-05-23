@@ -1359,17 +1359,12 @@
 
     ScaleChooserView.prototype.goBack = function(e) {
       e.preventDefault();
-      this.resetFilters();
       return Backbone.appRouter.navigate('/', {
         trigger: true
       });
     };
 
     ScaleChooserView.prototype.onClose = function() {};
-
-    ScaleChooserView.prototype.resetFilters = function() {
-      return this.filter.unset('scale');
-    };
 
     return ScaleChooserView;
 

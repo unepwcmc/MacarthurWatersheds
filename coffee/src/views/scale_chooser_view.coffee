@@ -33,11 +33,7 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
 
   goBack: (e) ->
     e.preventDefault()
-    @resetFilters()
     Backbone.appRouter.navigate('/', {trigger: true})
 
   onClose: ->
-
-  resetFilters: ->
-    @filter.unset('scale')
     
