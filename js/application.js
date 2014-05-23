@@ -280,7 +280,6 @@
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
         scaleCode = this.filter.get('scale').get('code');
-        console.log('isBroadscale ', this.isBroadscale(scaleCode));
         return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND w.is_broadscale = " + (this.isBroadscale(scaleCode)) + " \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'\n";
       } else {
         return this.filter.get('query');
@@ -408,7 +407,6 @@
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
-      console.log('updateFilterQuery');
       if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabLacksSelections())) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
@@ -508,6 +506,7 @@
     __extends(TabView, _super);
 
     function TabView() {
+      this.hideGoBack = __bind(this.hideGoBack, this);
       this.goBack = __bind(this.goBack, this);
       this.setTab = __bind(this.setTab, this);
       return TabView.__super__.constructor.apply(this, arguments);
@@ -517,7 +516,8 @@
 
     TabView.prototype.events = {
       "click ul.tabs li": "setTab",
-      "click .scale-info a": "goBack"
+      "click .scale-info a": "goBack",
+      "click i.fa": "hideGoBack"
     };
 
     TabView.prototype.initialize = function(options) {
@@ -582,6 +582,10 @@
       return Backbone.appRouter.navigate(Backbone.history.fragment.split('/')[0], {
         trigger: true
       });
+    };
+
+    TabView.prototype.hideGoBack = function(e) {
+      return $(e.currentTarget).closest('div').hide();
     };
 
     TabView.prototype.resetFilters = function() {
@@ -1464,11 +1468,9 @@
       this.config = _.cloneDeep(MacArthur.CONFIG.lenses);
       this.filter = options.filter;
       this.listenTo(this.filter, 'change:subject', this.setDefaultLens);
-      console.log('xxxxxxxxxxxxxxxxxxx LensSelectorView', this.filter.get('lens'));
       if (this.filter.get('lens') == null) {
         this.setDefaultLens();
       }
-      console.log('-------------------- LensSelectorView', this.filter.get('lens'));
       return this.render();
     };
 
@@ -1514,7 +1516,6 @@
 
     LensSelectorView.prototype.setDefaultLens = function() {
       if (this.filter.get('subject') != null) {
-        console.log('setDefaultLens ', this.filter.get('subject'));
         return this.filter.set('lens', this.getDefaultFilter().selector);
       }
     };
