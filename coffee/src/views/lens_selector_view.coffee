@@ -11,8 +11,10 @@ class Backbone.Views.LensSelectorView extends Backbone.View
     @config = _.cloneDeep(MacArthur.CONFIG.lenses)
     @filter = options.filter
     @listenTo(@filter, 'change:subject', @setDefaultLens)
+    console.log 'xxxxxxxxxxxxxxxxxxx LensSelectorView', @filter.get('lens')
     unless @filter.get('lens')?
       @setDefaultLens()
+    console.log '-------------------- LensSelectorView', @filter.get('lens')
     @render()
 
   render: ->
@@ -49,6 +51,7 @@ class Backbone.Views.LensSelectorView extends Backbone.View
 
   setDefaultLens: =>
     if @filter.get('subject')?
+      console.log 'setDefaultLens ', @filter.get('subject')
       @filter.set('lens', @getDefaultFilter().selector)
 
   getDefaultFilter: ->

@@ -9,6 +9,7 @@ class window.MacArthur.QueryBuilder
     if @hasRequiredFilters()
       regionCode = @filter.get('region').get('code')
       scaleCode = @filter.get('scale').get('code')
+      console.log 'isBroadscale ', @isBroadscale(scaleCode)
   
       """
         SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,
@@ -129,6 +130,7 @@ class window.MacArthur.QueryBuilder
     yes
 
   updateFilterQuery: (model, event) =>
+    console.log 'updateFilterQuery'
     unless @filter.changedAttributes().query? or 
     @isFromProtection() or @isFromPressure() or @tabLacksSelections()
       @filter.set( 'query', @buildQuery(@filter) )

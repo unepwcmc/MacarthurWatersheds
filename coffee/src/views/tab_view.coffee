@@ -30,6 +30,8 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     return @
 
   onClose: ->
+    @closeSubViews()
+    @stopListening()
 
   setTab: (event) =>
     tabName = $(event.target).attr('data-subject')

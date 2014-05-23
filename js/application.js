@@ -87,21 +87,38 @@
         }
       ]
     },
-    scenarios: [
-      {
-        selector: "mf2050",
-        name: "Markets first"
-      }, {
-        selector: "susf2050",
-        name: "Sustainability first"
-      }, {
-        selector: "secf2050",
-        name: "Security first"
-      }, {
-        selector: "polf2050",
-        name: "Policy first"
-      }
-    ],
+    scenarios: {
+      broadscale: [
+        {
+          selector: "mf2050",
+          name: "Markets first"
+        }, {
+          selector: "susf2050",
+          name: "Sustainability first"
+        }, {
+          selector: "secf2050",
+          name: "Security first"
+        }, {
+          selector: "polf2050",
+          name: "Policy first"
+        }
+      ],
+      regional: [
+        {
+          selector: "sl2050",
+          name: "Sleeping Lions"
+        }, {
+          selector: "ll2050",
+          name: "Lone Leopards"
+        }, {
+          selector: "hz2050",
+          name: "Herd of Zebra"
+        }, {
+          selector: "ia2050",
+          name: "Industrious Ants"
+        }
+      ]
+    },
     levels: {
       "default": [
         {
@@ -182,10 +199,11 @@
     ]
   };
 
-  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural) {
-    var collection_name;
+  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural, scale) {
+    var collection_name, option;
     collection_name = plural || ("" + name + "s");
-    return _.map(MacArthur.CONFIG[collection_name], function(element) {
+    option = MacArthur.CONFIG[collection_name][scale] || MacArthur.CONFIG[collection_name];
+    return _.map(option, function(element) {
       if (filter.get(name) === element.selector) {
         element.active = true;
       } else {
@@ -262,6 +280,7 @@
       if (this.hasRequiredFilters()) {
         regionCode = this.filter.get('region').get('code');
         scaleCode = this.filter.get('scale').get('code');
+        console.log('isBroadscale ', this.isBroadscale(scaleCode));
         return "SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,\npressure.value as pressure_index " + (this.includeComprovValueClause()) + ",\nw.name, w.lake \nFROM macarthur_region r \nRIGHT JOIN macarthur_watershed w ON r.cartodb_id = w.region_id \nLEFT JOIN macarthur_datapoint d ON d.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nLEFT JOIN macarthur_protection p ON p.watershed_id = w.cartodb_id \nLEFT JOIN macarthur_pressure pressure \nON pressure.watershed_id = w.cartodb_id \n" + (this.buildComprovValueClause()) + " \nWHERE r.code = '" + regionCode + "' \nAND w.is_broadscale = " + (this.isBroadscale(scaleCode)) + " \nAND " + (this.buildSubjectClause()) + " \nAND " + (this.buildLensClause()) + "\nAND " + (this.buildMetricClause()) + " \nAND " + (this.buildScenarioClause()) + " \nAND type_data = 'value'\n";
       } else {
         return this.filter.get('query');
@@ -389,6 +408,7 @@
     };
 
     QueryBuilder.prototype.updateFilterQuery = function(model, event) {
+      console.log('updateFilterQuery');
       if (!((this.filter.changedAttributes().query != null) || this.isFromProtection() || this.isFromPressure() || this.tabLacksSelections())) {
         return this.filter.set('query', this.buildQuery(this.filter));
       }
@@ -526,7 +546,10 @@
       return this;
     };
 
-    TabView.prototype.onClose = function() {};
+    TabView.prototype.onClose = function() {
+      this.closeSubViews();
+      return this.stopListening();
+    };
 
     TabView.prototype.setTab = function(event) {
       var tabName;
@@ -737,6 +760,7 @@
 
     MapView.prototype.initQueryLayer = function(geo, region, scale) {
       var regionBounds, regionCode, scaleCode;
+      this.querydata = null;
       if (this.queryLayer) {
         this.map.removeLayer(this.queryLayer);
       }
@@ -1335,12 +1359,17 @@
 
     ScaleChooserView.prototype.goBack = function(e) {
       e.preventDefault();
+      this.resetFilters();
       return Backbone.appRouter.navigate('/', {
         trigger: true
       });
     };
 
     ScaleChooserView.prototype.onClose = function() {};
+
+    ScaleChooserView.prototype.resetFilters = function() {
+      return this.filter.unset('scale');
+    };
 
     return ScaleChooserView;
 
@@ -1377,8 +1406,9 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var defaultOption, scenarios, theSelect;
-      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario');
+      var defaultOption, scale, scenarios, theSelect;
+      scale = this.filter.get('scale').get('code');
+      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario', null, scale);
       defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
         filter: this.filter,
@@ -1439,9 +1469,11 @@
       this.config = _.cloneDeep(MacArthur.CONFIG.lenses);
       this.filter = options.filter;
       this.listenTo(this.filter, 'change:subject', this.setDefaultLens);
+      console.log('xxxxxxxxxxxxxxxxxxx LensSelectorView', this.filter.get('lens'));
       if (this.filter.get('lens') == null) {
         this.setDefaultLens();
       }
+      console.log('-------------------- LensSelectorView', this.filter.get('lens'));
       return this.render();
     };
 
@@ -1487,6 +1519,7 @@
 
     LensSelectorView.prototype.setDefaultLens = function() {
       if (this.filter.get('subject') != null) {
+        console.log('setDefaultLens ', this.filter.get('subject'));
         return this.filter.set('lens', this.getDefaultFilter().selector);
       }
     };

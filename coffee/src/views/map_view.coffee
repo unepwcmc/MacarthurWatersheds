@@ -42,6 +42,7 @@ class Backbone.Views.MapView extends Backbone.View
     }).addTo(@map)
 
   initQueryLayer: (geo, region, scale) ->
+    @querydata = null
     if @queryLayer then @map.removeLayer(@queryLayer)
     if @queryLayerInteriors then @map.removeLayer(@queryLayerInteriors)
     @region = region

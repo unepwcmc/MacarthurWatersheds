@@ -263,15 +263,17 @@
   });
 
   test('in the change tab, if the subject filter is set, but not the scenario, no LensSelector subview is created', function() {
-    var LensSelectorConstructorSpy, filter, filterView, resultsNumberRenderStub;
+    var LensSelectorConstructorSpy, filter, filterView, resultsNumberRenderStub, scales;
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
     filter = new Backbone.Models.Filter();
+    filter.set('scale', 'broadscale');
     filterView = new Backbone.Views.FilterView({
       filter: filter
     });
     filter.set('tab', 'change');
-    filter.set('subject', 'biodiversity');
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    filter.set('scale', scales.models[0]);
     try {
       assert.strictEqual(LensSelectorConstructorSpy.callCount, 0, "Expected a new LensSelectorView not to be created");
     } finally {
@@ -606,25 +608,17 @@
 (function() {
   suite('Scale Chooser View');
 
-  test('.render presents a list of the two scales', function() {
-    var scales, view;
-    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
-    view = new Backbone.Views.ScaleChooserView({
-      scales: scales
-    });
-    assert.strictEqual(view.$el.find(".scales .scale-area.scale-link[data-scale-code='broadscale']").text(), "Global");
-    return assert.strictEqual(view.$el.find(".scales .scale-area.scale-link[data-scale-code='regional']").text(), "Regional");
-  });
-
 }).call(this);
 
 (function() {
   suite('Scenario View');
 
   test('in the Future Threats tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
-    var filter, scenarioView, selector;
-    selector = MacArthur.CONFIG.scenarios[1].selector;
+    var filter, scales, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios['broadscale'][1].selector;
     filter = new Backbone.Models.Filter();
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    filter.set('scale', scales.models[0]);
     scenarioView = new Backbone.Views.ScenarioSelectorView({
       filter: filter
     });
@@ -636,9 +630,11 @@
   });
 
   test('in the Change tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
-    var filter, scenarioView, selector;
-    selector = MacArthur.CONFIG.scenarios[1].selector;
+    var filter, scales, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios['regional'][1].selector;
     filter = new Backbone.Models.Filter();
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    filter.set('scale', scales.models[1]);
     scenarioView = new Backbone.Views.ScenarioSelectorView({
       filter: filter
     });

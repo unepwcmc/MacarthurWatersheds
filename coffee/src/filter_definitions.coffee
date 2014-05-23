@@ -45,12 +45,20 @@ MacArthur.CONFIG =
       { selector: "regprov", name: "Regulating functions provision" }
     ]
   },
-  scenarios: [
-    { selector: "mf2050", name: "Markets first" }
-    { selector: "susf2050", name: "Sustainability first" }
-    { selector: "secf2050", name: "Security first" }
-    { selector: "polf2050", name: "Policy first" }
-  ],
+  scenarios: 
+    broadscale: [
+      { selector: "mf2050", name: "Markets first" }
+      { selector: "susf2050", name: "Sustainability first" }
+      { selector: "secf2050", name: "Security first" }
+      { selector: "polf2050", name: "Policy first" }
+    ]
+    regional: [
+      { selector: "sl2050", name: "Sleeping Lions" }
+      { selector: "ll2050", name: "Lone Leopards" }
+      { selector: "hz2050", name: "Herd of Zebra" }
+      { selector: "ia2050", name: "Industrious Ants" }
+    ]
+  ,
   levels: {
     default: [
       { selector: "all", name: "All", default: true }
@@ -83,9 +91,10 @@ MacArthur.CONFIG =
     { selector: "negative", name: "Decrease" }
   ]
 
-MacArthur.getFilterOptionsWithSelectedSet = (filter, name, plural) ->
+MacArthur.getFilterOptionsWithSelectedSet = (filter, name, plural, scale) ->
   collection_name = plural or "#{name}s"
-  _.map(MacArthur.CONFIG[collection_name], (element) ->
+  option = MacArthur.CONFIG[collection_name][scale] or MacArthur.CONFIG[collection_name]
+  _.map(option, (element) ->
     if filter.get(name) is element.selector
       element.active = true
     else
