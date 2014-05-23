@@ -5,11 +5,12 @@
 </ul>
 
 <div class="tab-strapline">
-  <p>{{strapline}}</p>
+  <p><i class="fa fa-info-circle"></i>{{strapline}}</p>
 </div>
 
 <div class="scale-info">
   <p>Displaying data at a {{selectedScaleName}} level. To change to a {{unSelectedScaleName}} level, <a href="/">go back</a>.</p>
+  <i class="fa fa-times"></i>
 </div>
 
 {{addSubViewTo thisView 'FilterView' filter=filter resultsNumber=resultsNumber}}

@@ -1,9 +1,13 @@
 $background-grey: #EBEBEB;
+$step-count: #ddd;
 $dark-grey: #E1E1E1;
 $blue: #4dc0dd;
 $hover: #2F88A3;
 $dark-blue: #2A2B33;
-$secondary-info: #929292;
+$lighter-grey-text: #929292;
+$light-blue-border: #DCEDF2;
+$blue-notification: #C4D7DC;
+$border-grey: #f2f2f2;
 
 @import 'mixin';
 
@@ -79,6 +83,7 @@ section {
 #side-panel {
   width: 25%;
   max-width: 715px;
+  min-width: 360px;
   float: left;
   position: absolute;
   top: 71px;
@@ -96,9 +101,9 @@ section {
 div.filters {
   padding: 30px 20px;
   background: #fff;
-  border-bottom: 1px solid #FAFAFA;
-  border-right: 1px solid #FAFAFA;
-  border-left: 1px solid #FAFAFA;
+  border-bottom: 1px solid $border-grey;
+  border-right: 1px solid $border-grey;
+  border-left: 1px solid $border-grey;
   color: #888;
   h1 {
     margin: 20px 0 10px 0;
@@ -113,6 +118,13 @@ div.filters {
 }
 
 div.subjects {
+  border-top: 1px solid $border-grey;
+  padding-top: 30px;
+  h1 {
+    font-size: 0.85em;
+    color: $lighter-grey-text;
+    margin-top: 0;
+  }
   ul {
     margin: 0;
     list-style-type: none;
@@ -121,6 +133,10 @@ div.subjects {
     margin: auto;
     li {
       padding: 10px 10px;
+      font-size: 0.75em;
+      word-spacing: 0.025em;
+      text-transform: uppercase;
+      font-weight: 600;
       width: 100%;
       background: $blue;
       color: #fff;
@@ -145,8 +161,8 @@ div.subjects {
 }
 
 .region-chooser, .scale-chooser {
-  width: 40%;
-  height: 340px;
+  width: 570px;
+  height: 350px;
   header {
     padding: 10px 0;
     background: $dark-blue;
@@ -176,9 +192,10 @@ div.subjects {
 
 ul.regions {
 	margin: auto;
-	padding: 0 5% 5%;
+	padding: 0 5%;
 	list-style-type: none;
 	width: 100%;
+  overflow: hidden;
 	li {
     float: left;
     width: 30%;
@@ -191,12 +208,9 @@ ul.regions {
       background-repeat: no-repeat;
       background-size: 60%;
       background-position: center;
-      margin: 0 auto 20px auto;
+      margin: 0 auto 10px auto;
       height: 150px;
-      &:hover, &:active {
-        @include transition(all, 0.5s, ease);
-        opacity: 0.7;
-      }
+      opacity: 0.7;
     }
     div.region-area.region-link {
       padding: 5px 10px;
@@ -210,10 +224,16 @@ ul.regions {
       font-weight: 600;
       word-spacing: 0.025em;
       @include border-radius(5px);
-      &:hover, &:active {
+      opacity: 1;
+    }
+    &:hover, &:active {
+      div.region-area {
+        @include transition(all, 0.5s, ease);
+        opacity: 1;
+      }
+      div.region-area.region-link {
         @include transition(all, 0.5s, ease);
         background: $hover;
-        opacity: 1;
       }
     }
 	}
@@ -223,7 +243,7 @@ ul.scales {
   margin: auto;
   overflow: hidden;
   padding: 0;
-  width: 73.75%;
+  width: 420px;
 }
 
 ul.scales li {
@@ -236,7 +256,7 @@ ul.scales li {
   height: 100%;
   float: left;
   width: 200px;
-  margin-right: 5%;
+  margin-right: 20px;
   font-size: 0.75em;
   text-transform: uppercase;
   font-weight: 600;
@@ -249,9 +269,6 @@ ul.scales li {
     @include transition(all, 0.5s, ease);
     background: $hover;
     opacity: 1;
-  }
-  div {
-    font-size: 1.25em;
   }
 }
 
@@ -325,7 +342,7 @@ select option {
   p {
     margin: 0;
     font-size: 0.85em;
-    color: $secondary-info;
+    color: $lighter-grey-text;
     font-weight: 500;
   }
 }
@@ -502,12 +519,36 @@ header{
 div.scale-info {
   margin: 20px 20px 0 20px;
   background-color: #E8F6FA;
-  padding: 10px;
   @include border-radius(5px);
+  overflow: hidden;
+  color: $lighter-grey-text;
   p {
     margin: 0;
-    color: $secondary-info;
     font-size: 0.85em;
+    float: left;
+    width: 90%;
+    padding: 10px;
+    a {
+      color: $blue;
+      &:hover, &.active {
+      color: $hover;
+      @include transition(all, 0.5s, ease);
+      }
+    }
+  }
+  i {
+    display: block;
+    width: 10%;
+    float: right;
+    text-align: center;
+    line-height: 38px;
+    padding: 10px;
+    border-left: 1px solid $light-blue-border;
+    color: $blue;
+    &:hover, &.active {
+      color: $hover;
+      @include transition(all, 0.5s, ease);
+    }
   }
 }
 
@@ -515,9 +556,9 @@ div.scale-copy, div.region-copy {
   margin: 20px auto;
   text-align: center;
   p {
-    font-size: 1.25em;
+    font-size: 1em;
     margin: 0 0 5px 0;
-    color: $secondary-info;
+    color: $lighter-grey-text;
     strong {
       color: $blue;
     }
@@ -529,5 +570,67 @@ div.scale-copy, div.region-copy {
 }
 
 div.scales {
-  margin: 70px 0;
+  margin: 80px 0;
+}
+
+div.tab-strapline {
+  p i {
+    padding-right: 5px;
+  }
+}
+
+div.back {
+  width: 30px;
+  position: absolute;
+  left: 20px;
+  top: 160px;
+  i {
+    color: $blue;
+    font-size: 30px;
+    &:hover, &:active {
+      @include transition(all, 0.5s, ease);
+      color: $hover;
+      opacity: 1;
+    }
+  }
+}
+
+div.step-count {
+  width: 25px;
+  margin: auto;
+  padding: 10px 0 20px 0;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  &#region {
+    div.circle.active {
+      float: left;
+      padding-right: 5px;
+    }
+    div.circle.inactive {
+      float: right;
+    }
+  }
+  &#scale {
+    div.circle.active {
+      float: right;
+    }
+    div.circle.inactive {
+      float: left;
+      padding-right: 5px;
+    }
+  }
+  div.circle {
+    height: 10px;
+    width: 10px;
+    @include border-radius(100px);
+    &.active {
+      background: $step-count;
+    }
+    &.inactive {
+      border: 1px solid $step-count;
+    }
+  }
 }
