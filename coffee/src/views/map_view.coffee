@@ -41,17 +41,21 @@ class Backbone.Views.MapView extends Backbone.View
       attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms & Feedback</a>'
     }).addTo(@map)
 
-  initQueryLayer: (geo, region) ->
+  initQueryLayer: (geo, region, scale) ->
+    @querydata = null
+    if @queryLayer then @map.removeLayer(@queryLayer)
+    if @queryLayerInteriors then @map.removeLayer(@queryLayerInteriors)
     @region = region
+    @scale = scale
     regionCode = region.get('code')
+    scaleCode = scale.get('code')
     regionBounds = region.get('bounds')
     @categories = 3
     @unsetWatershedSelectionCount()
-    @collection = topojson.feature(geo, geo.objects[regionCode])
-    @interiors = topojson.mesh(geo, geo.objects[regionCode])
+    @collection = topojson.feature(geo, geo.objects["#{regionCode}_#{scaleCode}"])
+    @interiors = topojson.mesh(geo, geo.objects["#{regionCode}_#{scaleCode}"])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
-    @queryLayer
     @map.fitBounds regionBounds
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 

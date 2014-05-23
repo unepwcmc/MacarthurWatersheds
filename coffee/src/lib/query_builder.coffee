@@ -8,6 +8,7 @@ class window.MacArthur.QueryBuilder
   buildQuery: ->
     if @hasRequiredFilters()
       regionCode = @filter.get('region').get('code')
+      scaleCode = @filter.get('scale').get('code')
   
       """
         SELECT DISTINCT d.watershed_id, d.value, percentage as protection_percentage,
@@ -22,15 +23,22 @@ class window.MacArthur.QueryBuilder
         ON pressure.watershed_id = w.cartodb_id 
         #{@buildComprovValueClause()} 
         WHERE r.code = '#{regionCode}' 
+        AND w.is_broadscale = #{@isBroadscale(scaleCode)} 
         AND #{@buildSubjectClause()} 
         AND #{@buildLensClause()}
         AND #{@buildMetricClause()} 
         AND #{@buildScenarioClause()} 
         AND type_data = 'value'
+
       """
     else
       @filter.get('query')
   
+  isBroadscale: (scale) ->
+    if scale not in ['broadscale', 'regional']
+      throw new Error("'#{scale}': wrong scale name! Expected broadscale or regional")
+    if scale == 'broadscale' then yes else no
+
   includeComprovValueClause: ->
     if @filter.get('tab') == 'future_threats'
       ", comprov_value "

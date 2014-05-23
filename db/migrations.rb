@@ -26,14 +26,15 @@ tables_columns = {"region" => {"code" => "varchar"},
                             },
                   "watershed" => {"region_id" => "int",
                                   "name" => "varchar",
-                                  "lake" => "boolean"},
+                                  "lake" => "boolean",
+                                  "is_broadscale" => "boolean"},
                   "datapoint" => {"watershed_id" => "int",
                                   "lens_id" => "int",
                                   "type_data" => "varchar",
                                   "metric" => "varchar",
                                   "scenario" => "varchar",
                                   "value" => "double precision",
-                                  "conservation" => "boolean"
+                                  "conservation" => "boolean"                                  
                                   },
                   "protection" => {"watershed_id" => "int",
                                    "percentage" => "double precision"
