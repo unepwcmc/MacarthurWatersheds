@@ -20,8 +20,7 @@ class Backbone.Views.RegionChooserView extends Backbone.View
 
   triggerChooseRegion: (event) =>
     regionCode = $(event.target).attr('data-region-code')
-    region = @regions.find( (region) -> region.get('code') == regionCode )
-    @trigger('regionChosen', region)
+    Backbone.appRouter.navigate("region:" + regionCode, {trigger: true})
 
   onClose: ->
     

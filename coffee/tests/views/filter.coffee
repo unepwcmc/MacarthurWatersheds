@@ -85,9 +85,11 @@ test('in the change tab, if the subject filter is set, but not the scenario,
 
   filter = new Backbone.Models.Filter()
 
+  filter.set('scale', 'broadscale')
   filterView = new Backbone.Views.FilterView( filter: filter )
   filter.set('tab', 'change')
-  filter.set('subject', 'biodiversity')
+  scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  filter.set('scale', scales.models[0])
 
   try
     assert.strictEqual(

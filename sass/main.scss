@@ -1,8 +1,13 @@
 $background-grey: #EBEBEB;
+$step-count: #ddd;
 $dark-grey: #E1E1E1;
 $blue: #4dc0dd;
 $hover: #2F88A3;
 $dark-blue: #2A2B33;
+$lighter-grey-text: #929292;
+$light-blue-border: #DCEDF2;
+$blue-notification: #C4D7DC;
+$border-grey: #f2f2f2;
 
 @import 'mixin';
 
@@ -78,6 +83,7 @@ section {
 #side-panel {
   width: 25%;
   max-width: 715px;
+  min-width: 360px;
   float: left;
   position: absolute;
   top: 71px;
@@ -85,17 +91,19 @@ section {
   right: 0;
   z-index: 9999;
   background: #fff;
+  display: none;
   &.active {
     height: calc(100% - 73px);
+    display: block;
   }
 }
 
 div.filters {
   padding: 30px 20px;
   background: #fff;
-  border-bottom: 1px solid #FAFAFA;
-  border-right: 1px solid #FAFAFA;
-  border-left: 1px solid #FAFAFA;
+  border-bottom: 1px solid $border-grey;
+  border-right: 1px solid $border-grey;
+  border-left: 1px solid $border-grey;
   color: #888;
   h1 {
     margin: 20px 0 10px 0;
@@ -110,6 +118,13 @@ div.filters {
 }
 
 div.subjects {
+  border-top: 1px solid $border-grey;
+  padding-top: 30px;
+  h1 {
+    font-size: 0.85em;
+    color: $lighter-grey-text;
+    margin-top: 0;
+  }
   ul {
     margin: 0;
     list-style-type: none;
@@ -118,6 +133,10 @@ div.subjects {
     margin: auto;
     li {
       padding: 10px 10px;
+      font-size: 0.75em;
+      word-spacing: 0.025em;
+      text-transform: uppercase;
+      font-weight: 600;
       width: 100%;
       background: $blue;
       color: #fff;
@@ -141,22 +160,28 @@ div.subjects {
   }
 }
 
-.region-chooser {
-  width: 50%;
-  height: 405px;
-  color: $blue;
+.region-chooser, .scale-chooser {
+  width: 570px;
+  height: 350px;
+  header {
+    padding: 10px 0;
+    background: $dark-blue;
+  }
     h1 {
   	margin: 0;
-  	text-align: center;
-  	background: $dark-blue;
-  	padding: 10px 0;
-  	color: #fff;
+    text-align: center;
+    color: #fff;
+    opacity: 0.8;
+    text-transform: uppercase;
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
   }
 }
 
 .modal {
   z-index: 101;
-  background: #fff;
+  background: #f7f7f7;
   position: fixed;
   margin: auto;
   top: 0;
@@ -167,9 +192,10 @@ div.subjects {
 
 ul.regions {
 	margin: auto;
-	padding: 5%;
+	padding: 0 5%;
 	list-style-type: none;
 	width: 100%;
+  overflow: hidden;
 	li {
     float: left;
     width: 30%;
@@ -180,31 +206,70 @@ ul.regions {
     }
     div.region-area {
       background-repeat: no-repeat;
-      background-size: 50%;
+      background-size: 60%;
       background-position: center;
-      margin: 0 auto 20px auto;
-      height: 220px;
-      &:hover, &:active {
-        @include transition(all, 0.5s, ease);
-        opacity: 0.7;
-      }
+      margin: 0 auto 10px auto;
+      height: 150px;
+      opacity: 0.7;
     }
     div.region-area.region-link {
       padding: 5px 10px;
       background: $blue;
       color: #fff;
       text-align: center;
-      margin-bottom: 10px;
       cursor: pointer;
       height: 100%;
+      font-size: 0.75em;
+      text-transform: uppercase;
+      font-weight: 600;
+      word-spacing: 0.025em;
       @include border-radius(5px);
-      &:hover, &:active {
+      opacity: 1;
+    }
+    &:hover, &:active {
+      div.region-area {
+        @include transition(all, 0.5s, ease);
+        opacity: 1;
+      }
+      div.region-area.region-link {
         @include transition(all, 0.5s, ease);
         background: $hover;
-        opacity: 1;
       }
     }
 	}
+}
+
+ul.scales {
+  margin: auto;
+  overflow: hidden;
+  padding: 0;
+  width: 420px;
+}
+
+ul.scales li {
+  padding: 5px 10px;
+  background: $blue;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  height: 100%;
+  float: left;
+  width: 200px;
+  margin-right: 20px;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  font-weight: 600;
+  word-spacing: 0.025em;
+  @include border-radius(5px);
+  &:last-child {
+    margin-right: 0;
+  }
+  &:hover, &:active {
+    @include transition(all, 0.5s, ease);
+    background: $hover;
+    opacity: 1;
+  }
 }
 
 .disabler {
@@ -277,7 +342,7 @@ select option {
   p {
     margin: 0;
     font-size: 0.85em;
-    color: #929292;
+    color: $lighter-grey-text;
     font-weight: 500;
   }
 }
@@ -448,5 +513,124 @@ header{
     letter-spacing: 0;
     font-size: 0.85em;
     cursor: pointer;
+  }
+}
+
+div.scale-info {
+  margin: 20px 20px 0 20px;
+  background-color: #E8F6FA;
+  @include border-radius(5px);
+  overflow: hidden;
+  color: $lighter-grey-text;
+  p {
+    margin: 0;
+    font-size: 0.85em;
+    float: left;
+    width: 90%;
+    padding: 10px;
+    a {
+      color: $blue;
+      &:hover, &.active {
+      color: $hover;
+      @include transition(all, 0.5s, ease);
+      }
+    }
+  }
+  i {
+    display: block;
+    width: 10%;
+    float: right;
+    text-align: center;
+    line-height: 38px;
+    padding: 10px;
+    border-left: 1px solid $light-blue-border;
+    color: $blue;
+    &:hover, &.active {
+      color: $hover;
+      @include transition(all, 0.5s, ease);
+    }
+  }
+}
+
+div.scale-copy, div.region-copy {
+  margin: 20px auto;
+  text-align: center;
+  p {
+    font-size: 1em;
+    margin: 0 0 5px 0;
+    color: $lighter-grey-text;
+    strong {
+      color: $blue;
+    }
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+}
+
+div.scales {
+  margin: 80px 0;
+}
+
+div.tab-strapline {
+  p i {
+    padding-right: 5px;
+  }
+}
+
+div.back {
+  width: 30px;
+  position: absolute;
+  left: 20px;
+  top: 160px;
+  i {
+    color: $blue;
+    font-size: 30px;
+    &:hover, &:active {
+      @include transition(all, 0.5s, ease);
+      color: $hover;
+      opacity: 1;
+    }
+  }
+}
+
+div.step-count {
+  width: 25px;
+  margin: auto;
+  padding: 10px 0 20px 0;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  &#region {
+    div.circle.active {
+      float: left;
+      padding-right: 5px;
+    }
+    div.circle.inactive {
+      float: right;
+    }
+  }
+  &#scale {
+    div.circle.active {
+      float: right;
+    }
+    div.circle.inactive {
+      float: left;
+      padding-right: 5px;
+    }
+  }
+  div.circle {
+    height: 10px;
+    width: 10px;
+    @include border-radius(100px);
+    &.active {
+      background: $step-count;
+    }
+    &.inactive {
+      border: 1px solid $step-count;
+    }
   }
 }

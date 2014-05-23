@@ -2,32 +2,13 @@
   suite('Main Controller');
 
   test('The application starts by showing the choose region view and a map', function() {
-    var chooseRegionActionStub, controller, showMapActionStub;
-    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
+    var controller, showMapActionStub;
     showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
     controller = new Backbone.Controllers.MainController();
     try {
-      assert.isTrue(chooseRegionActionStub.calledOnce, "Expected the chooseRegion action to be called");
       return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
     } finally {
-      chooseRegionActionStub.restore();
       showMapActionStub.restore();
-    }
-  });
-
-  test('on initialize, the controller creates a side panel after the map', function() {
-    var chooseRegionActionStub, controller, showMapActionStub;
-    chooseRegionActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "chooseRegion", function() {});
-    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
-    $('body').append('<div id="map">');
-    controller = new Backbone.Controllers.MainController();
-    try {
-      return assert.lengthOf($('body').find('#side-panel'), 1, "Expected to side a #side-panel");
-    } finally {
-      chooseRegionActionStub.restore();
-      showMapActionStub.restore();
-      $('body').remove('#map');
-      $('body').remove('#side-panel');
     }
   });
 
@@ -188,12 +169,14 @@
   });
 
   test('if the tab is set to `future_threats` and the subject is set, `buildQuery` should be called', function() {
-    var buildQuerySpy, config, filter, queryBuiler, regions, resultsNumberRenderStub, tabView;
+    var buildQuerySpy, config, filter, queryBuiler, regions, resultsNumberRenderStub, scales, tabView;
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     config = MacArthur.CONFIG;
     regions = new Backbone.Collections.RegionCollection(config.regions);
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
     filter = new Backbone.Models.Filter({
       region: regions.models[0],
+      scale: scales.models[0],
       tab: 'future_threats',
       subject: config.subjects[0].selector,
       agrCommDevLevel: config.agrCommDevLevels[0].selector,
@@ -280,15 +263,17 @@
   });
 
   test('in the change tab, if the subject filter is set, but not the scenario, no LensSelector subview is created', function() {
-    var LensSelectorConstructorSpy, filter, filterView, resultsNumberRenderStub;
+    var LensSelectorConstructorSpy, filter, filterView, resultsNumberRenderStub, scales;
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     LensSelectorConstructorSpy = sinon.spy(Backbone.Views, 'LensSelectorView');
     filter = new Backbone.Models.Filter();
+    filter.set('scale', 'broadscale');
     filterView = new Backbone.Views.FilterView({
       filter: filter
     });
     filter.set('tab', 'change');
-    filter.set('subject', 'biodiversity');
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    filter.set('scale', scales.models[0]);
     try {
       assert.strictEqual(LensSelectorConstructorSpy.callCount, 0, "Expected a new LensSelectorView not to be created");
     } finally {
@@ -536,7 +521,7 @@
   });
 
   test('when the filter has protection set to true, the query on the selector object is NOT updated', function() {
-    var buildQuerySpy, filter, protectionOptionView, protectionSelectorView, queryBuilder, regions;
+    var buildQuerySpy, filter, protectionOptionView, protectionSelectorView, queryBuilder, regions, scales;
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity',
       protection: false
@@ -548,7 +533,9 @@
       filter: filter
     });
     regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
     filter.set('region', regions.models[0]);
+    filter.set('scale', scales.models[0]);
     filter.set('lens', 'allsp');
     buildQuerySpy = sinon.spy(MacArthur.QueryBuilder.prototype, 'buildQuery');
     queryBuilder = new MacArthur.QueryBuilder(filter);
@@ -594,21 +581,6 @@
     return assert.strictEqual(view.$el.find(".regions .region-area.region-link[data-region-code='MEK']").text(), "Mekong");
   });
 
-  test("when a region is clicked, it triggers the 'regionChosen' event with the corresponding region model", function() {
-    var eventArg, regions, spy, view;
-    regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
-    view = new Backbone.Views.RegionChooserView({
-      regions: regions
-    });
-    spy = sinon.spy();
-    view.on("regionChosen", spy);
-    view.$el.find(".regions .region-area.region-link[data-region-code='MEK']").trigger('click');
-    assert.isTrue(spy.calledOnce, "Expected regionChosen to be triggered");
-    eventArg = spy.getCall(0).args[0];
-    assert.strictEqual(eventArg.constructor.name, "Region", "Expected the event to send a Region model");
-    return assert.strictEqual(eventArg.get('name'), 'Mekong', "Expected the event to be trigger with the right Region");
-  });
-
 }).call(this);
 
 (function() {
@@ -634,12 +606,19 @@
 }).call(this);
 
 (function() {
+  suite('Scale Chooser View');
+
+}).call(this);
+
+(function() {
   suite('Scenario View');
 
   test('in the Future Threats tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
-    var filter, scenarioView, selector;
-    selector = MacArthur.CONFIG.scenarios[1].selector;
+    var filter, scales, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios['broadscale'][1].selector;
     filter = new Backbone.Models.Filter();
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    filter.set('scale', scales.models[0]);
     scenarioView = new Backbone.Views.ScenarioSelectorView({
       filter: filter
     });
@@ -651,9 +630,11 @@
   });
 
   test('in the Change tab, if the subject filter is set, and a scenario is selected, the filter should be set accordingly', function() {
-    var filter, scenarioView, selector;
-    selector = MacArthur.CONFIG.scenarios[1].selector;
+    var filter, scales, scenarioView, selector;
+    selector = MacArthur.CONFIG.scenarios['regional'][1].selector;
     filter = new Backbone.Models.Filter();
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    filter.set('scale', scales.models[1]);
     scenarioView = new Backbone.Views.ScenarioSelectorView({
       filter: filter
     });
@@ -670,10 +651,12 @@
   suite('Tab View');
 
   test('when the `change` tab selector and the `subject` selector have been clicked, the view re-renders and the scenario subview is rendered', function() {
-    var filter, filterView, resultsNumberRenderStub, scenarioRenderSpy, tabView;
+    var filter, filterView, resultsNumberRenderStub, scales, scenarioRenderSpy, tabView;
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
-      subject: 'biodiversity'
+      subject: 'biodiversity',
+      scale: scales.models[0]
     });
     scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView.prototype, 'render');
     tabView = new Backbone.Views.TabView({
@@ -693,10 +676,12 @@
   });
 
   test('when the `change` tab selector has been clicked an `active` class is set on it and removed from all other siblings', function() {
-    var activeTab, filter, resultsNumberRenderStub, tabView;
+    var activeTab, filter, resultsNumberRenderStub, scales, tabView;
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
-      subject: 'biodiversity'
+      subject: 'biodiversity',
+      scale: scales.models[0]
     });
     tabView = new Backbone.Views.TabView({
       filter: filter
@@ -711,10 +696,12 @@
   });
 
   test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected and the AgrCommDev level is selected then the LensSelectorView is rendered', function() {
-    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, resultsNumberRenderStub, tabView;
+    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, resultsNumberRenderStub, scales, tabView;
+    scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
-      subject: 'biodiversity'
+      subject: 'biodiversity',
+      scale: scales.models[0]
     });
     lensSelectorRenderSpy = sinon.spy(Backbone.Views.LensSelectorView.prototype, 'render');
     levelSelectorAgrCommDevRenderSpy = sinon.spy(Backbone.Views.LevelSelectorAgrCommDevView.prototype, 'render');

@@ -87,7 +87,9 @@ object is NOT updated', ->
   protectionSelectorView = new Backbone.Views.ProtectionSelectorView( filter: filter )
 
   regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
+  scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
   filter.set('region', regions.models[0])
+  filter.set('scale', scales.models[0])
   filter.set('lens', 'allsp')
   buildQuerySpy = sinon.spy(MacArthur.QueryBuilder::, 'buildQuery')
   queryBuilder = new MacArthur.QueryBuilder(filter)

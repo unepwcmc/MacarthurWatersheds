@@ -3,10 +3,13 @@ suite 'Scenario View'
 test('in the Future Threats tab, if the subject filter is set, and a scenario
  is selected, the filter should be set accordingly', ->
 
-  selector = MacArthur.CONFIG.scenarios[1].selector
+  selector = MacArthur.CONFIG.scenarios['broadscale'][1].selector
   filter = new Backbone.Models.Filter()
+  scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  filter.set('scale', scales.models[0])
 
   scenarioView = new Backbone.Views.ScenarioSelectorView( filter: filter )
+  
   filter.set('tab', 'future_threats')
   filter.set('subject', 'biodiversity')
 
@@ -21,8 +24,11 @@ test('in the Future Threats tab, if the subject filter is set, and a scenario
 test('in the Change tab, if the subject filter is set, and a scenario
  is selected, the filter should be set accordingly', ->
 
-  selector = MacArthur.CONFIG.scenarios[1].selector
+  selector = MacArthur.CONFIG.scenarios['regional'][1].selector
   filter = new Backbone.Models.Filter()
+  scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  filter.set('scale', scales.models[1])
+
   scenarioView = new Backbone.Views.ScenarioSelectorView( filter: filter )
 
   filter.set('tab', 'change')
