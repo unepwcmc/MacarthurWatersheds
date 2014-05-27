@@ -19,7 +19,7 @@ var paths = {
     'lib/lodash/dist/lodash.compat.js',
     'lib/backbone/backbone.js',
     'lib/handlebars/handlebars.js',
-    'lib/leaflet/leaflet.js',
+    'lib/leaflet/leaflet-src.js',
     'lib/diorama.js',
     'js/templates.js',
     'js/application.js',
