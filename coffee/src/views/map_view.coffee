@@ -50,13 +50,15 @@ class Backbone.Views.MapView extends Backbone.View
     regionCode = region.get('code')
     scaleCode = scale.get('code')
     regionBounds = region.get('bounds')
+    regionCentre = region.get('centre')
     @categories = 3
     @unsetWatershedSelectionCount()
     @collection = topojson.feature(geo, geo.objects["#{regionCode}_#{scaleCode}"])
     @interiors = topojson.mesh(geo, geo.objects["#{regionCode}_#{scaleCode}"])
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
-    @map.fitBounds regionBounds
+    #@map.fitBounds regionBounds {animate: false}
+    @map.setView(regionCentre, 4, {animate: false});
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
   getLegendGradientElement: (tab) ->

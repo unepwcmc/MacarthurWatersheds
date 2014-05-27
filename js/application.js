@@ -21,15 +21,18 @@
       {
         code: "WAN",
         name: "Andes",
-        bounds: [[-22, -57], [14, -83]]
+        bounds: [[-22, -57], [14, -83]],
+        centre: [-4, -55]
       }, {
         code: "GLR",
         name: "African Great Lakes",
-        bounds: [[-18, 30], [10, 40]]
+        bounds: [[-18, 30], [10, 40]],
+        centre: [-3, 46]
       }, {
         code: "MEK",
         name: "Mekong",
-        bounds: [[6, 110], [35, 90]]
+        bounds: [[6, 110], [35, 90]],
+        centre: [19, 118]
       }
     ],
     scales: [
@@ -763,7 +766,7 @@
     };
 
     MapView.prototype.initQueryLayer = function(geo, region, scale) {
-      var regionBounds, regionCode, scaleCode;
+      var regionBounds, regionCentre, regionCode, scaleCode;
       this.querydata = null;
       if (this.queryLayer) {
         this.map.removeLayer(this.queryLayer);
@@ -776,6 +779,7 @@
       regionCode = region.get('code');
       scaleCode = scale.get('code');
       regionBounds = region.get('bounds');
+      regionCentre = region.get('centre');
       this.categories = 3;
       this.unsetWatershedSelectionCount();
       this.collection = topojson.feature(geo, geo.objects["" + regionCode + "_" + scaleCode]);
@@ -786,7 +790,9 @@
       this.queryLayerInteriors = L.geoJson(this.interiors, {
         style: this.baseLineStyle
       }).addTo(this.map);
-      this.map.fitBounds(regionBounds);
+      this.map.setView(regionCentre, 4, {
+        animate: false
+      });
       return this.map.on('zoomend', (function(_this) {
         return function() {
           return _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
