@@ -43,10 +43,11 @@ You will need to run:
 
 ## Importing data
 We have created a script that populates the tables using the original data.
-You should run (this will also regenerate the topojson files, but the node env must be set):
+You should run:
 ```sh
   ruby ./db/update_tables.rb
 ```
+This will also regenerate the topojson files, but the node env must be set.
 
 ## Exporting watershed geometries
 These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data), but presently one needs to regenerate them every time the data changes on cartodb:
