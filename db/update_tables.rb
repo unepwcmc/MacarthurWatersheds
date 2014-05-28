@@ -85,7 +85,7 @@ end
 
 def datapoint
   broadscale_scenario = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
-  regional_scenario = ['bas', 'sl2050', 'll2050', 'hz2050', 'ia2050']
+  regional_scenario = ['bas', 'sc1', 'sc2', 'sc3', 'sc4']
   datapoint_query broadscale_scenario, 'true'
   datapoint_query regional_scenario, 'false'
 end
@@ -129,22 +129,26 @@ def self.datapoint_query scenario, is_broadscale
  end
 end
 
-def pressure
-  other_values('pressure', 'value', 'value')
+def pressure_protection
+  protection = {table_preffix: 'protection', type: 'percentage', column: 'percent_wdpa_filter'}
+  pressure = {table_preffix: 'pressure', type: 'value', column: 'value'}
+  tables_to_populate = [pressure, protection]
+  region = {broadscale: true, regional: false}
+  region.each do |k,v|
+    tables_to_populate.each do |table|
+      other_values table[:table_preffix], table[:type], table[:column], k, v
+    end
+  end
 end
 
-
-def protection
-  other_values('protection', 'percentage', 'percent_wdpa_filter')
-end
-
-def other_values filter, type, column
+def other_values table_preffix, type, column, table_suffix, is_broadscale
     sql = <<-SQL 
-      INSERT INTO macarthur_#{filter}(watershed_id, #{type})
+      INSERT INTO macarthur_#{table_preffix}_#{table_suffix}(watershed_id, #{type})
       SELECT w.cartodb_id, cast(#{column} as double precision)
-      FROM macarthur_original_#{filter} p
+      FROM macarthur_original_#{table_preffix} p
       LEFT JOIN macarthur_watershed w
       ON p.field_name = w.name
+      WHERE is_broadscale = #{is_broadscale}
     SQL
     puts sql
     CartodbQuery.run(sql)
@@ -182,10 +186,8 @@ ARGV.each do|action|
     lens
   elsif action == 'datapoint'
     datapoint
-  elsif action == 'protection'
-    protection 
-  elsif action == 'pressure'
-    pressure
+  elsif action == 'pressure_protection'
+    pressure_protection 
   elsif action == 'download'
     download_geometries
   elsif action == 'delete'
@@ -197,8 +199,7 @@ ARGV.each do|action|
     geometry_data
     lens
     datapoint
-    protection
-    pressure
+    pressure_protection
     download_geometries
     topojson
   end
