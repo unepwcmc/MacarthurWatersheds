@@ -85,7 +85,7 @@ end
 
 def datapoint
   broadscale_scenario = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
-  regional_scenario = ['sc1', 'sc2', 'sc3', 'sc4']
+  regional_scenario = ['bas', 's1_2050', 's2_2050', 's3_2050', 's4_2050']
   datapoint_query broadscale_scenario, 'true'
   datapoint_query regional_scenario, 'false'
 end
@@ -143,9 +143,9 @@ end
 
 def other_values table_preffix, type, column, table_suffix, is_broadscale
     sql = <<-SQL 
-      INSERT INTO macarthur_#{table_preffix}_#{table_suffix}(watershed_id, #{type})
+      INSERT INTO macarthur_#{table_preffix}(watershed_id, #{type})
       SELECT w.cartodb_id, cast(#{column} as double precision)
-      FROM macarthur_original_#{table_preffix} p
+      FROM macarthur_original_#{table_preffix}_#{table_suffix} p
       LEFT JOIN macarthur_watershed w
       ON p.field_name = w.name
       WHERE is_broadscale = #{is_broadscale}

@@ -109,46 +109,46 @@
       regional: {
         WAN: [
           {
-            selector: "sc1",
+            selector: "s1_2050",
             name: "Scenario 1"
           }, {
-            selector: "sc2",
+            selector: "s2_2050",
             name: "Scenario 2"
           }, {
-            selector: "sc3",
+            selector: "s3_2050",
             name: "Scenario 3"
           }, {
-            selector: "sc4",
+            selector: "s4_2050",
             name: "Scenario 4"
           }
         ],
         GLR: [
           {
-            selector: "sc1",
+            selector: "s1_2050",
             name: "Sleeping Lions"
           }, {
-            selector: "sc2",
+            selector: "s2_2050",
             name: "Lone Leopards"
           }, {
-            selector: "sc3",
+            selector: "s3_2050",
             name: "Herd of Zebra"
           }, {
-            selector: "sc4",
+            selector: "s4_2050",
             name: "Industrious Ants"
           }
         ],
         MEK: [
           {
-            selector: "sc1",
+            selector: "s1_2050",
             name: "Scenario 1"
           }, {
-            selector: "sc2",
+            selector: "s2_2050",
             name: "Scenario 2"
           }, {
-            selector: "sc3",
+            selector: "s3_2050",
             name: "Scenario 3"
           }, {
-            selector: "sc4",
+            selector: "s4_2050",
             name: "Scenario 4"
           }
         ]
@@ -157,9 +157,9 @@
     scenariosPdfs: {
       broadscale: "http://www.unep.org/geo/geo4.asp",
       regional: {
-        WAN: "http://cgspace.cgiar.org/handle/10568/34864",
+        WAN: "",
         GLR: "http://cgspace.cgiar.org/handle/10568/34864",
-        MEK: "http://cgspace.cgiar.org/handle/10568/34864"
+        MEK: ""
       }
     },
     levels: {
