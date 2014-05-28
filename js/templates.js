@@ -434,7 +434,7 @@ function program1(depth0,data) {
   buffer += "<header><h1>Welcome to the Watershed exploration tool</h1></header>\n<div class=\"region-copy\"><p>Select a region to start exploring</p></div>\n<ul class=\"regions\">\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.regions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n<div class=\"step-count\" id=\"region\"><div class=\"circle active\"></div><div class=\"circle inactive\"></div></div>\n";
+  buffer += "\n</ul>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["results_number"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -477,7 +477,7 @@ function program1(depth0,data) {
     + "</strong> region.</p>\n		<p>Which level of data would you like to see?</p>\n	</div>\n	<div class=\"back\"><a href=\"\"><i class=\"fa fa-angle-left\"></i></a></div>\n	<ul class=\"scales\">\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scales), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n</div>\n<div class=\"step-count\" id=\"scale\"><div class=\"circle inactive\"></div><div class=\"circle active\"></div></div>\n";
+  buffer += "\n	</ul>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scenario_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
