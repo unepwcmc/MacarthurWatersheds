@@ -28,9 +28,8 @@ class Backbone.Router.AppRouter extends Backbone.Router
 
   showScaleChooser: (regionCode) =>
     @sidePanel.$el.removeClass('active')
-    @modalContainer.hideModal()
     scaleChooserView = new Backbone.Views.ScaleChooserView({scales: @scales})
-    @modalContainer.showModal(scaleChooserView)
+    #@modalContainer.showModal(scaleChooserView)
 
   showSidePanel: (regionCode, scaleCode) =>
     init = (geo) =>

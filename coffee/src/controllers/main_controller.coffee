@@ -4,16 +4,18 @@ window.Backbone.Controllers ||= {}
 class ModalContainer
   constructor: ->
     @disabler = $('<div class="disabler"></div>')
+    @views = []
 
   showModal: (view) ->
-    @view = view
+    @views.push view
     $('body').prepend(@disabler)
-    $('body').append(@view.$el)
+    $('body').append(view.$el)
 
   hideModal: ->
-    if @view
-      $('body').find('.disabler').remove()
-      @view.close()
+    $('body').find('.disabler').remove()
+    for view in @views
+      view.close()
+    @views = []
 
 class Backbone.Controllers.MainController extends Backbone.Diorama.Controller
   constructor: ->

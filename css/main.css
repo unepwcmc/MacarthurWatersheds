@@ -133,7 +133,9 @@ div.subjects {
 
 .region-chooser, .scale-chooser {
   width: 570px;
-  height: 350px; }
+  height: 350px;
+  -webkit-transition: width 0.6s, left 0.6s, opacity 0.6s, -webkit-transform 0.6s;
+  transition: width 1s, left 0.6s, opacity 0.6s, transform 0.6s; }
   .region-chooser header, .scale-chooser header {
     padding: 10px 0;
     background: #2A2B33; }
@@ -146,6 +148,14 @@ div.subjects {
     font-size: 1.25em;
     font-weight: 700;
     letter-spacing: 0.05em; }
+  .region-chooser.slip-out, .scale-chooser.slip-out {
+    width: 0;
+    left: -570px;
+    opacity: 0; }
+  .region-chooser.slip-in, .scale-chooser.slip-in {
+    width: 570;
+    left: -570px;
+    opacity: 1; }
 
 .modal {
   z-index: 101;
@@ -155,7 +165,7 @@ div.subjects {
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0; }
+  right: 570px; }
 
 ul.regions {
   margin: auto;

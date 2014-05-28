@@ -1297,9 +1297,10 @@
     RegionChooserView.prototype.triggerChooseRegion = function(event) {
       var regionCode;
       regionCode = $(event.target).attr('data-region-code');
-      return Backbone.appRouter.navigate("region:" + regionCode, {
+      Backbone.appRouter.navigate("region:" + regionCode, {
         trigger: true
       });
+      return this.$el.addClass('slip-out');
     };
 
     RegionChooserView.prototype.onClose = function() {};
@@ -1992,19 +1993,24 @@
   ModalContainer = (function() {
     function ModalContainer() {
       this.disabler = $('<div class="disabler"></div>');
+      this.views = [];
     }
 
     ModalContainer.prototype.showModal = function(view) {
-      this.view = view;
+      this.views.push(view);
       $('body').prepend(this.disabler);
-      return $('body').append(this.view.$el);
+      return $('body').append(view.$el);
     };
 
     ModalContainer.prototype.hideModal = function() {
-      if (this.view) {
-        $('body').find('.disabler').remove();
-        return this.view.close();
+      var view, _i, _len, _ref;
+      $('body').find('.disabler').remove();
+      _ref = this.views;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        view = _ref[_i];
+        view.close();
       }
+      return this.views = [];
     };
 
     return ModalContainer;
@@ -2102,11 +2108,9 @@
     AppRouter.prototype.showScaleChooser = function(regionCode) {
       var scaleChooserView;
       this.sidePanel.$el.removeClass('active');
-      this.modalContainer.hideModal();
-      scaleChooserView = new Backbone.Views.ScaleChooserView({
+      return scaleChooserView = new Backbone.Views.ScaleChooserView({
         scales: this.scales
       });
-      return this.modalContainer.showModal(scaleChooserView);
     };
 
     AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {

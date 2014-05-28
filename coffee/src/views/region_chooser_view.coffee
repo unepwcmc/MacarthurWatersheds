@@ -21,6 +21,7 @@ class Backbone.Views.RegionChooserView extends Backbone.View
   triggerChooseRegion: (event) =>
     regionCode = $(event.target).attr('data-region-code')
     Backbone.appRouter.navigate("region:" + regionCode, {trigger: true})
+    @$el.addClass('slip-out')
 
   onClose: ->
     
