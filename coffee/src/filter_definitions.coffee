@@ -52,13 +52,67 @@ MacArthur.CONFIG =
       { selector: "secf2050", name: "Security first" }
       { selector: "polf2050", name: "Policy first" }
     ]
-    regional: [
-      { selector: "sl2050", name: "Sleeping Lions" }
-      { selector: "ll2050", name: "Lone Leopards" }
-      { selector: "hz2050", name: "Herd of Zebra" }
-      { selector: "ia2050", name: "Industrious Ants" }
-    ]
-  ,
+    regional:
+      WAN: [
+        {
+          selector: "s1_2050"
+          name: "Scenario 1"
+        }
+        {
+          selector: "s2_2050"
+          name: "Scenario 2"
+        }
+        {
+          selector: "s3_2050"
+          name: "Scenario 3"
+        }
+        {
+          selector: "s4_2050"
+          name: "Scenario 4"
+        }
+      ]
+      GLR: [
+        {
+          selector: "s1_2050"
+          name: "Sleeping Lions"
+        }
+        {
+          selector: "s2_2050"
+          name: "Lone Leopards"
+        }
+        {
+          selector: "s3_2050"
+          name: "Herd of Zebra"
+        }
+        {
+          selector: "s4_2050"
+          name: "Industrious Ants"
+        }
+      ]
+      MEK: [
+        {
+          selector: "s1_2050"
+          name: "Scenario 1"
+        }
+        {
+          selector: "s2_2050"
+          name: "Scenario 2"
+        }
+        {
+          selector: "s3_2050"
+          name: "Scenario 3"
+        }
+        {
+          selector: "s4_2050"
+          name: "Scenario 4"
+        }
+      ]
+  scenariosPdfs:
+    broadscale: "http://www.unep.org/geo/geo4.asp"
+    regional:
+      WAN: ""
+      GLR: "http://cgspace.cgiar.org/handle/10568/34864"
+      MEK: ""
   levels: {
     default: [
       { selector: "all", name: "All", default: true }
@@ -91,11 +145,13 @@ MacArthur.CONFIG =
     { selector: "negative", name: "Decrease" }
   ]
 
-MacArthur.getFilterOptionsWithSelectedSet = (filter, name, plural, scale) ->
-  collection_name = plural or "#{name}s"
-  option = MacArthur.CONFIG[collection_name][scale] or MacArthur.CONFIG[collection_name]
+MacArthur.getFilterOptionsWithSelectedSet = (filter, options) ->
+  collection_name = options.plural or "#{options.name}s"
+  option = MacArthur.CONFIG[collection_name][options.scale]?[options.region] or 
+    MacArthur.CONFIG[collection_name][options.scale] or 
+    MacArthur.CONFIG[collection_name]
   _.map(option, (element) ->
-    if filter.get(name) is element.selector
+    if filter.get(options.name) is element.selector
       element.active = true
     else
       element.active = false

@@ -106,21 +106,61 @@
           name: "Policy first"
         }
       ],
-      regional: [
-        {
-          selector: "sl2050",
-          name: "Sleeping Lions"
-        }, {
-          selector: "ll2050",
-          name: "Lone Leopards"
-        }, {
-          selector: "hz2050",
-          name: "Herd of Zebra"
-        }, {
-          selector: "ia2050",
-          name: "Industrious Ants"
-        }
-      ]
+      regional: {
+        WAN: [
+          {
+            selector: "s1_2050",
+            name: "Scenario 1"
+          }, {
+            selector: "s2_2050",
+            name: "Scenario 2"
+          }, {
+            selector: "s3_2050",
+            name: "Scenario 3"
+          }, {
+            selector: "s4_2050",
+            name: "Scenario 4"
+          }
+        ],
+        GLR: [
+          {
+            selector: "s1_2050",
+            name: "Sleeping Lions"
+          }, {
+            selector: "s2_2050",
+            name: "Lone Leopards"
+          }, {
+            selector: "s3_2050",
+            name: "Herd of Zebra"
+          }, {
+            selector: "s4_2050",
+            name: "Industrious Ants"
+          }
+        ],
+        MEK: [
+          {
+            selector: "s1_2050",
+            name: "Scenario 1"
+          }, {
+            selector: "s2_2050",
+            name: "Scenario 2"
+          }, {
+            selector: "s3_2050",
+            name: "Scenario 3"
+          }, {
+            selector: "s4_2050",
+            name: "Scenario 4"
+          }
+        ]
+      }
+    },
+    scenariosPdfs: {
+      broadscale: "http://www.unep.org/geo/geo4.asp",
+      regional: {
+        WAN: "",
+        GLR: "http://cgspace.cgiar.org/handle/10568/34864",
+        MEK: ""
+      }
     },
     levels: {
       "default": [
@@ -202,12 +242,12 @@
     ]
   };
 
-  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural, scale) {
-    var collection_name, option;
-    collection_name = plural || ("" + name + "s");
-    option = MacArthur.CONFIG[collection_name][scale] || MacArthur.CONFIG[collection_name];
+  MacArthur.getFilterOptionsWithSelectedSet = function(filter, options) {
+    var collection_name, option, _ref;
+    collection_name = options.plural || ("" + options.name + "s");
+    option = ((_ref = MacArthur.CONFIG[collection_name][options.scale]) != null ? _ref[options.region] : void 0) || MacArthur.CONFIG[collection_name][options.scale] || MacArthur.CONFIG[collection_name];
     return _.map(option, function(element) {
-      if (filter.get(name) === element.selector) {
+      if (filter.get(options.name) === element.selector) {
         element.active = true;
       } else {
         element.active = false;
@@ -531,8 +571,11 @@
     };
 
     TabView.prototype.render = function() {
-      var strapline, tabs;
-      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'tab');
+      var options, strapline, tabs;
+      options = {
+        name: 'tab'
+      };
+      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
       strapline = _.find(tabs, function(t) {
         return t.active;
       }).strapline;
@@ -1411,14 +1454,25 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var defaultOption, scale, scenarios, theSelect;
+      var conf, defaultOption, options, pdf, region, scale, scenarioDescription, scenarios, theSelect;
       scale = this.filter.get('scale').get('code');
-      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario', null, scale);
+      region = this.filter.get('region').get('code');
+      options = {
+        name: 'scenario',
+        scale: scale,
+        region: region
+      };
+      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
+      conf = MacArthur.CONFIG;
+      pdf = conf.scenariosPdfs[scale][region] || conf.scenariosPdfs[scale];
+      scenarioDescription = this.getScenarioDescription();
       defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
         filter: this.filter,
         scenarios: scenarios,
-        defaultOption: defaultOption
+        defaultOption: defaultOption,
+        scenarioDescription: scenarioDescription,
+        pdf: pdf
       }));
       theSelect = this.$el.find('.select-box');
       setTimeout((function(_this) {
@@ -1438,6 +1492,16 @@
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
       return this.filter.set('scenario', scenarioName);
+    };
+
+    ScenarioSelectorView.prototype.getScenarioDescription = function() {
+      var scale;
+      scale = this.filter.get('scale').get('code');
+      if (scale === 'broadscale') {
+        return 'These scenarios are based on UNEP GEO4';
+      } else {
+        return 'These scenarios are based on regional scenarios and workshops';
+      }
     };
 
     return ScenarioSelectorView;
@@ -1892,8 +1956,11 @@
     };
 
     FilterView.prototype.render = function() {
-      var subjects;
-      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'subject');
+      var options, subjects;
+      options = {
+        name: 'subject'
+      };
+      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
       this.$el.html(this.template({
         thisView: this,
         subjects: subjects,
