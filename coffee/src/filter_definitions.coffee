@@ -55,58 +55,64 @@ MacArthur.CONFIG =
     regional:
       WAN: [
         {
-          selector: "sl2050"
-          name: "Sleeping Lions"
+          selector: "sc1"
+          name: "Scenario 1"
         }
         {
-          selector: "ll2050"
-          name: "Lone Leopards"
+          selector: "sc2"
+          name: "Scenario 2"
         }
         {
-          selector: "hz2050"
-          name: "Herd of Zebra"
+          selector: "sc3"
+          name: "Scenario 3"
         }
         {
-          selector: "ia2050"
-          name: "Industrious Ants"
+          selector: "sc4"
+          name: "Scenario 4"
         }
       ]
       GLR: [
         {
-          selector: "sl2050"
+          selector: "sc1"
           name: "Sleeping Lions"
         }
         {
-          selector: "ll2050"
+          selector: "sc2"
           name: "Lone Leopards"
         }
         {
-          selector: "hz2050"
+          selector: "sc3"
           name: "Herd of Zebra"
         }
         {
-          selector: "ia2050"
+          selector: "sc4"
           name: "Industrious Ants"
         }
       ]
       MEK: [
         {
-          selector: "sl2050"
-          name: "Sleeping Lions"
+          selector: "sc1"
+          name: "Scenario 1"
         }
         {
-          selector: "ll2050"
-          name: "Lone Leopards"
+          selector: "sc2"
+          name: "Scenario 2"
         }
         {
-          selector: "hz2050"
-          name: "Herd of Zebra"
+          selector: "sc3"
+          name: "Scenario 3"
         }
         {
-          selector: "ia2050"
-          name: "Industrious Ants"
+          selector: "sc4"
+          name: "Scenario 4"
         }
       ]
+  scenariosPdfs:
+    broadscale: "http://www.unep.org/geo/geo4.asp"
+    regional:
+      WAN: "http://cgspace.cgiar.org/handle/10568/34864"
+      GLR: "http://cgspace.cgiar.org/handle/10568/34864"
+      MEK: "http://cgspace.cgiar.org/handle/10568/34864"
   levels: {
     default: [
       { selector: "all", name: "All", default: true }
