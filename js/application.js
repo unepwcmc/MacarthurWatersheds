@@ -109,49 +109,57 @@
       regional: {
         WAN: [
           {
-            selector: "sl2050",
-            name: "Sleeping Lions"
+            selector: "sc1",
+            name: "Scenario 1"
           }, {
-            selector: "ll2050",
-            name: "Lone Leopards"
+            selector: "sc2",
+            name: "Scenario 2"
           }, {
-            selector: "hz2050",
-            name: "Herd of Zebra"
+            selector: "sc3",
+            name: "Scenario 3"
           }, {
-            selector: "ia2050",
-            name: "Industrious Ants"
+            selector: "sc4",
+            name: "Scenario 4"
           }
         ],
         GLR: [
           {
-            selector: "sl2050",
+            selector: "sc1",
             name: "Sleeping Lions"
           }, {
-            selector: "ll2050",
+            selector: "sc2",
             name: "Lone Leopards"
           }, {
-            selector: "hz2050",
+            selector: "sc3",
             name: "Herd of Zebra"
           }, {
-            selector: "ia2050",
+            selector: "sc4",
             name: "Industrious Ants"
           }
         ],
         MEK: [
           {
-            selector: "sl2050",
-            name: "Sleeping Lions"
+            selector: "sc1",
+            name: "Scenario 1"
           }, {
-            selector: "ll2050",
-            name: "Lone Leopards"
+            selector: "sc2",
+            name: "Scenario 2"
           }, {
-            selector: "hz2050",
-            name: "Herd of Zebra"
+            selector: "sc3",
+            name: "Scenario 3"
           }, {
-            selector: "ia2050",
-            name: "Industrious Ants"
+            selector: "sc4",
+            name: "Scenario 4"
           }
         ]
+      }
+    },
+    scenariosPdfs: {
+      broadscale: "http://www.unep.org/geo/geo4.asp",
+      regional: {
+        WAN: "http://cgspace.cgiar.org/handle/10568/34864",
+        GLR: "http://cgspace.cgiar.org/handle/10568/34864",
+        MEK: "http://cgspace.cgiar.org/handle/10568/34864"
       }
     },
     levels: {
@@ -1446,7 +1454,7 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var defaultOption, options, region, scale, scenarios, theSelect;
+      var conf, defaultOption, options, pdf, region, scale, scenarioDescription, scenarios, theSelect;
       scale = this.filter.get('scale').get('code');
       region = this.filter.get('region').get('code');
       options = {
@@ -1455,11 +1463,16 @@
         region: region
       };
       scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
+      conf = MacArthur.CONFIG;
+      pdf = conf.scenariosPdfs[scale][region] || conf.scenariosPdfs[scale];
+      scenarioDescription = this.getScenarioDescription();
       defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
         filter: this.filter,
         scenarios: scenarios,
-        defaultOption: defaultOption
+        defaultOption: defaultOption,
+        scenarioDescription: scenarioDescription,
+        pdf: pdf
       }));
       theSelect = this.$el.find('.select-box');
       setTimeout((function(_this) {
@@ -1479,6 +1492,16 @@
       var scenarioName;
       scenarioName = $(event.target).find(':selected').attr('value');
       return this.filter.set('scenario', scenarioName);
+    };
+
+    ScenarioSelectorView.prototype.getScenarioDescription = function() {
+      var scale;
+      scale = this.filter.get('scale').get('code');
+      if (scale === 'broadscale') {
+        return 'These scenarios are based on UNEP GEO4';
+      } else {
+        return 'These scenarios are based on regional scenarios and workshops';
+      }
     };
 
     return ScenarioSelectorView;

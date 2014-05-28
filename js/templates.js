@@ -509,7 +509,15 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<h1>Scenario of change</h1>\n<p class=\"scenario-help\">These scenarios are based on UNEP GEO4. <a href=\"http://www.unep.org/geo/geo4.asp\" target=\"_blank\">Learn more here <img src=\"../imgs/external-link-grey-light05.png\"></a></p>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" ";
+  buffer += "<h1>Scenario of change</h1>\n<p class=\"scenario-help\">";
+  if (stack1 = helpers.scenarioDescription) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.scenarioDescription); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + ". <a href=\"";
+  if (stack1 = helpers.pdf) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.pdf); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" target=\"_blank\">Learn more here <img src=\"../imgs/external-link-grey-light05.png\"></a></p>\n\n<select id=\"scenario-select\" class='select-box'>\n  <option value=\"\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.defaultOption), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " disabled>Select a scenario</option>\n  ";

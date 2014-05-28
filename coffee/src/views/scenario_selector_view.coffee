@@ -17,14 +17,16 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
     region = @filter.get('region').get('code')
     options = {name: 'scenario', scale: scale, region: region}
     scenarios = MacArthur.getFilterOptionsWithSelectedSet(@filter, options)
-    options.name = 'scenariosPdf'
-    pdf = MacArthur.getFilterOptionsWithSelectedSet(@filter, options)
-    scenarioDescription = getScenarioDescription()
+    conf = MacArthur.CONFIG
+    pdf = conf.scenariosPdfs[scale][region] or conf.scenariosPdfs[scale]
+    scenarioDescription = @getScenarioDescription()
     defaultOption = if @filter.get('scenario')? then no else yes
     @$el.html(@template(
       filter: @filter
       scenarios: scenarios
       defaultOption: defaultOption
+      scenarioDescription: scenarioDescription
+      pdf: pdf
     ))
 
     # SORRY
@@ -43,7 +45,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
     scenarioName = $(event.target).find(':selected').attr('value')
     @filter.set('scenario', scenarioName)
 
-  getScenarioDescription: () ->
+  getScenarioDescription: ->
     scale = @filter.get('scale').get('code')
     if scale == 'broadscale'
       return 'These scenarios are based on UNEP GEO4'

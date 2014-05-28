@@ -5,7 +5,7 @@ require 'open-uri'
 
 
 SUBJECT = ['bd', 'ef']
-TYPE_DATA = ['value', 'rank']
+TYPE_DATA = ['value']
 METRIC = ['imp', 'change']
 BD_LENS = ['allsp', 'crenvu', 'amphibia', 'mammalia', 'aves', 'crenvu']
 EF_LENS = ['totef', 'comprov', 'wildprov', 'regprov']
@@ -85,7 +85,7 @@ end
 
 def datapoint
   broadscale_scenario = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
-  regional_scenario = ['bas', 'sc1', 'sc2', 'sc3', 'sc4']
+  regional_scenario = ['sc1', 'sc2', 'sc3', 'sc4']
   datapoint_query broadscale_scenario, 'true'
   datapoint_query regional_scenario, 'false'
 end
