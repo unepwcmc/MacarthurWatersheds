@@ -16,7 +16,8 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     @render()
     
   render: ->
-    tabs = MacArthur.getFilterOptionsWithSelectedSet(@filter, 'tab')
+    options = {name: 'tab'}
+    tabs = MacArthur.getFilterOptionsWithSelectedSet(@filter, options)
     strapline = _.find(tabs, (t) -> t.active).strapline
     @$el.html(@template(
       thisView: @

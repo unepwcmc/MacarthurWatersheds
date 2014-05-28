@@ -2,12 +2,14 @@ suite 'Tab View'
 
 test('when the `change` tab selector and the `subject` selector have been clicked, 
  the view re-renders and the scenario subview is rendered', ->
+  regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
   resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
    'initialize', -> )
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
     scale: scales.models[0]
+    region: regions.models[0]
   )
   scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView::, 'render')
 
@@ -64,12 +66,14 @@ test('when the `Future Threats` tab selector is clicked,
   and the `subject` is selected and the `scenario` is selected
   and the AgrCommDev level is selected then
   the LensSelectorView is rendered', ->
+  regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
   resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
    'initialize', -> )
   filter = new Backbone.Models.Filter(
     subject: 'biodiversity'
     scale: scales.models[0]
+    region: regions.models[0]
   )
   lensSelectorRenderSpy = sinon.spy(
     Backbone.Views.LensSelectorView::, 'render')

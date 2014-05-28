@@ -106,21 +106,53 @@
           name: "Policy first"
         }
       ],
-      regional: [
-        {
-          selector: "sl2050",
-          name: "Sleeping Lions"
-        }, {
-          selector: "ll2050",
-          name: "Lone Leopards"
-        }, {
-          selector: "hz2050",
-          name: "Herd of Zebra"
-        }, {
-          selector: "ia2050",
-          name: "Industrious Ants"
-        }
-      ]
+      regional: {
+        WAN: [
+          {
+            selector: "sl2050",
+            name: "Sleeping Lions"
+          }, {
+            selector: "ll2050",
+            name: "Lone Leopards"
+          }, {
+            selector: "hz2050",
+            name: "Herd of Zebra"
+          }, {
+            selector: "ia2050",
+            name: "Industrious Ants"
+          }
+        ],
+        GLR: [
+          {
+            selector: "sl2050",
+            name: "Sleeping Lions"
+          }, {
+            selector: "ll2050",
+            name: "Lone Leopards"
+          }, {
+            selector: "hz2050",
+            name: "Herd of Zebra"
+          }, {
+            selector: "ia2050",
+            name: "Industrious Ants"
+          }
+        ],
+        MEK: [
+          {
+            selector: "sl2050",
+            name: "Sleeping Lions"
+          }, {
+            selector: "ll2050",
+            name: "Lone Leopards"
+          }, {
+            selector: "hz2050",
+            name: "Herd of Zebra"
+          }, {
+            selector: "ia2050",
+            name: "Industrious Ants"
+          }
+        ]
+      }
     },
     levels: {
       "default": [
@@ -202,12 +234,12 @@
     ]
   };
 
-  MacArthur.getFilterOptionsWithSelectedSet = function(filter, name, plural, scale) {
-    var collection_name, option;
-    collection_name = plural || ("" + name + "s");
-    option = MacArthur.CONFIG[collection_name][scale] || MacArthur.CONFIG[collection_name];
+  MacArthur.getFilterOptionsWithSelectedSet = function(filter, options) {
+    var collection_name, option, _ref;
+    collection_name = options.plural || ("" + options.name + "s");
+    option = ((_ref = MacArthur.CONFIG[collection_name][options.scale]) != null ? _ref[options.region] : void 0) || MacArthur.CONFIG[collection_name][options.scale] || MacArthur.CONFIG[collection_name];
     return _.map(option, function(element) {
-      if (filter.get(name) === element.selector) {
+      if (filter.get(options.name) === element.selector) {
         element.active = true;
       } else {
         element.active = false;
@@ -531,8 +563,11 @@
     };
 
     TabView.prototype.render = function() {
-      var strapline, tabs;
-      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'tab');
+      var options, strapline, tabs;
+      options = {
+        name: 'tab'
+      };
+      tabs = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
       strapline = _.find(tabs, function(t) {
         return t.active;
       }).strapline;
@@ -1411,9 +1446,15 @@
     };
 
     ScenarioSelectorView.prototype.render = function() {
-      var defaultOption, scale, scenarios, theSelect;
+      var defaultOption, options, region, scale, scenarios, theSelect;
       scale = this.filter.get('scale').get('code');
-      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'scenario', null, scale);
+      region = this.filter.get('region').get('code');
+      options = {
+        name: 'scenario',
+        scale: scale,
+        region: region
+      };
+      scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
       defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
         filter: this.filter,
@@ -1892,8 +1933,11 @@
     };
 
     FilterView.prototype.render = function() {
-      var subjects;
-      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, 'subject');
+      var options, subjects;
+      options = {
+        name: 'subject'
+      };
+      subjects = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
       this.$el.html(this.template({
         thisView: this,
         subjects: subjects,
