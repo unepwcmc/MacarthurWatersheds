@@ -44,33 +44,19 @@ You will need to run:
 ## Importing data
 We have created a script that populates the tables using the original data.
 You should run:
-
-	ruby update_tables.rb [data_to_populate]
-
-data_to_populate is:
-
-	geometry_data(regions and watersheds)
-	lens
-	bd(bd datapoint)
+```sh
+  ruby ./db/update_tables.rb
+```
+This will also regenerate the topojson files, but the node env must be set.
 
 ## Exporting watershed geometries
 These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data), but presently one needs to regenerate them every time the data changes on cartodb:
 
   * export one geojson file per watershed from the [macarthur_watershed table](https://carbon-tool.cartodb.com/tables/macarthur_watershed/table) into [data/json](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data/json) and name them with the corresponding watershed code.
   * if not installed: `npm install -g topojson`
-  * then, from within the `data` directory:
+  * then:
   ```sh
-  topojson -o GLR_broadscale.topo.json -p -q 20000 -- json/GLR_broadscale.geojson
-
-  topojson -o MEK_broadscale.topo.json -p -q 20000 -- json/MEK_broadscale.geojson 
- 
-  topojson -o WAN_broadscale.topo.json -p -q 20000 -- json/WAN_broadscale.geojson 
-  
-  topojson -o GLR_regional.topo.json -p -q 20000 -- json/GLR_regional.geojson
-
-  topojson -o MEK_regional.topo.json -p -q 20000 -- json/MEK_regional.geojson 
-  
-  topojson -o WAN_regional.topo.json -p -q 20000 -- json/WAN_regional.geojson  
+    ruby ./db/update_tables.rb topojson
 
   ```
 
