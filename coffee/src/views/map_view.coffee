@@ -58,7 +58,7 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     #@map.fitBounds regionBounds {animate: false}
-    @map.setView(regionCentre, 4, {animate: false});
+    @map.setView(regionCentre, 4, {animate: false})
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
   getLegendGradientElement: (tab) ->
@@ -317,7 +317,7 @@ class Backbone.Views.MapView extends Backbone.View
   unsetWatershedSelectionCount: ->
     @parsedResults = 0
     @currentSelectionCount = 0
-    @resultsNumber.set 'number', 0
+    @resultsNumber.set 'number', -999
 
   formatToFirst2NonZeroDecimals: (number) ->
     number += ''

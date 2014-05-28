@@ -10,10 +10,13 @@ class Backbone.Views.ResultsNumberView extends Backbone.View
     @render()
 
   render: ->
+    console.log @resultsNumber.get('number')
     @$el.html(@template(
       number: @resultsNumber.get('number')
+      isNumber: @resultsNumber.get('number') != -999
     ))
     return @
 
   onClose: ->
     @remove()
+    @stopListening()

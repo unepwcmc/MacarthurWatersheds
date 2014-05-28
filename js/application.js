@@ -297,7 +297,7 @@
     }
 
     ResultsNumber.prototype.defaults = {
-      number: 0
+      number: -999
     };
 
     return ResultsNumber;
@@ -1188,7 +1188,7 @@
     MapView.prototype.unsetWatershedSelectionCount = function() {
       this.parsedResults = 0;
       this.currentSelectionCount = 0;
-      return this.resultsNumber.set('number', 0);
+      return this.resultsNumber.set('number', -999);
     };
 
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
@@ -1283,14 +1283,17 @@
     };
 
     ResultsNumberView.prototype.render = function() {
+      console.log(this.resultsNumber.get('number'));
       this.$el.html(this.template({
-        number: this.resultsNumber.get('number')
+        number: this.resultsNumber.get('number'),
+        isNumber: this.resultsNumber.get('number') !== -999
       }));
       return this;
     };
 
     ResultsNumberView.prototype.onClose = function() {
-      return this.remove();
+      this.remove();
+      return this.stopListening();
     };
 
     return ResultsNumberView;
