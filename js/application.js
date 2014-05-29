@@ -1267,7 +1267,6 @@
 
 (function() {
   var _base,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1279,7 +1278,6 @@
     __extends(ResultsNumberView, _super);
 
     function ResultsNumberView() {
-      this.spin = __bind(this.spin, this);
       return ResultsNumberView.__super__.constructor.apply(this, arguments);
     }
 
@@ -1289,7 +1287,6 @@
       this.resultsNumber = options.resultsNumber;
       this.listenTo(this.resultsNumber, 'change:number', this.render);
       this.listenTo(this.resultsNumber, 'change:loading', this.render);
-      this.dataLoading = options.dataLoading;
       return this.render();
     };
 
@@ -1300,11 +1297,6 @@
         dataLoading: this.resultsNumber.get('loading')
       }));
       return this;
-    };
-
-    ResultsNumberView.prototype.spin = function(dataLoading) {
-      console.log('spin', dataLoading);
-      return this.dataLoading = dataLoading;
     };
 
     ResultsNumberView.prototype.onClose = function() {

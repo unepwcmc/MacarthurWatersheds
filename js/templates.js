@@ -120,8 +120,7 @@ function program15(depth0,data) {
 
   buffer += "<div class=\"results-number\">\n  ";
   options = {hash:{
-    'resultsNumber': ((depth0 && depth0.resultsNumber)),
-    'dataLoading': ((depth0 && depth0.dataLoading))
+    'resultsNumber': ((depth0 && depth0.resultsNumber))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ResultsNumberView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ResultsNumberView", options)))
     + "\n</div>\n\n<div class=\"subjects\">\n  <h1>What would you like to explore?</h1>\n  <ul>\n    ";
