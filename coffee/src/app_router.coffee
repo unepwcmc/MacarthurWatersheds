@@ -33,6 +33,9 @@ class Backbone.Router.AppRouter extends Backbone.Router
     @modalContainer.showModal(scaleChooserView)
 
   showSidePanel: (regionCode, scaleCode) =>
+    @modalContainer.hideModal()
+    spinView = new Backbone.Views.SpinView()
+    @modalContainer.showModal(spinView)
     init = (geo) =>
       @modalContainer.hideModal()
       region = @regions.find( (region) -> region.get('code') == regionCode )

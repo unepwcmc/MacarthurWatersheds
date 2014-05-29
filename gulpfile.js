@@ -23,6 +23,7 @@ var paths = {
     'coffee/src/views/results_number_view.coffee',
     'coffee/src/views/region_chooser_view.coffee',
     'coffee/src/views/scale_chooser_view.coffee',
+    'coffee/src/views/spin_view.coffee',
     'coffee/src/views/scenario_selector_view.coffee',
     'coffee/src/views/lens_selector_view.coffee',
     'coffee/src/views/level_selector_agr_comm_dev_view.coffee',

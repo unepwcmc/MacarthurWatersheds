@@ -131,13 +131,13 @@ div.subjects {
     text-transform: uppercase;
     font-size: 1em; }
 
-.region-chooser, .scale-chooser {
+.region-chooser, .scale-chooser, .spin {
   width: 570px;
   height: 350px; }
-  .region-chooser header, .scale-chooser header {
+  .region-chooser header, .scale-chooser header, .spin header {
     padding: 10px 0;
     background: #2A2B33; }
-  .region-chooser h1, .scale-chooser h1 {
+  .region-chooser h1, .scale-chooser h1, .spin h1 {
     margin: 0;
     text-align: center;
     color: #fff;
@@ -156,6 +156,14 @@ div.subjects {
   bottom: 0;
   left: 0;
   right: 0; }
+
+.modal.spin {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 270px;
+  font-style: italic;
+  font-size: 32px;
+  color: #888888; }
 
 ul.regions {
   margin: auto;

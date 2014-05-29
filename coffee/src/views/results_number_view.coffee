@@ -7,12 +7,14 @@ class Backbone.Views.ResultsNumberView extends Backbone.View
   initialize: (options) ->
     @resultsNumber = options.resultsNumber
     @listenTo(@resultsNumber, 'change:number', @render)
+    @listenTo(@resultsNumber, 'change:loading', @render)
     @render()
 
   render: ->
     @$el.html(@template(
       number: @resultsNumber.get('number')
       isRelevantNumber: @resultsNumber.get('number') != -999
+      dataLoading: @resultsNumber.get('loading')
     ))
     return @
 

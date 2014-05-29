@@ -911,8 +911,10 @@
       if (q == null) {
         return;
       }
+      this.resultsNumber.set('loading', true);
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q + "&callback=?", (function(_this) {
         return function(data) {
+          _this.resultsNumber.set('loading', false);
           _this.data = _this.sortDataBy(data.rows, 'value');
           _this.dataLenght = _this.data.length;
           if (!(_this.dataLenght > 0)) {
@@ -1265,6 +1267,7 @@
 
 (function() {
   var _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1276,6 +1279,7 @@
     __extends(ResultsNumberView, _super);
 
     function ResultsNumberView() {
+      this.spin = __bind(this.spin, this);
       return ResultsNumberView.__super__.constructor.apply(this, arguments);
     }
 
@@ -1284,15 +1288,23 @@
     ResultsNumberView.prototype.initialize = function(options) {
       this.resultsNumber = options.resultsNumber;
       this.listenTo(this.resultsNumber, 'change:number', this.render);
+      this.listenTo(this.resultsNumber, 'change:loading', this.render);
+      this.dataLoading = options.dataLoading;
       return this.render();
     };
 
     ResultsNumberView.prototype.render = function() {
       this.$el.html(this.template({
         number: this.resultsNumber.get('number'),
-        isRelevantNumber: this.resultsNumber.get('number') !== -999
+        isRelevantNumber: this.resultsNumber.get('number') !== -999,
+        dataLoading: this.resultsNumber.get('loading')
       }));
       return this;
+    };
+
+    ResultsNumberView.prototype.spin = function(dataLoading) {
+      console.log('spin', dataLoading);
+      return this.dataLoading = dataLoading;
     };
 
     ResultsNumberView.prototype.onClose = function() {
@@ -1427,6 +1439,41 @@
     ScaleChooserView.prototype.onClose = function() {};
 
     return ScaleChooserView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.SpinView = (function(_super) {
+    __extends(SpinView, _super);
+
+    function SpinView() {
+      return SpinView.__super__.constructor.apply(this, arguments);
+    }
+
+    SpinView.prototype.template = _.template("<p>Loading...</p>");
+
+    SpinView.prototype.className = 'modal spin';
+
+    SpinView.prototype.initialize = function(options) {
+      return this.render();
+    };
+
+    SpinView.prototype.render = function() {
+      this.$el.html(this.template());
+      return this;
+    };
+
+    return SpinView;
 
   })(Backbone.View);
 
@@ -2184,7 +2231,10 @@
     };
 
     AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {
-      var geom, init;
+      var geom, init, spinView;
+      this.modalContainer.hideModal();
+      spinView = new Backbone.Views.SpinView();
+      this.modalContainer.showModal(spinView);
       init = (function(_this) {
         return function(geo) {
           var region, scale;

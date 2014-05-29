@@ -117,7 +117,9 @@ class Backbone.Views.MapView extends Backbone.View
     @styleValueField = 'rank'  # or value
     q = @filter.get('query')
     unless q? then return
+    @resultsNumber.set 'loading', true
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
+      @resultsNumber.set 'loading', false
       @data = @sortDataBy(data.rows, 'value')
       @dataLenght = @data.length
       unless @dataLenght > 0
