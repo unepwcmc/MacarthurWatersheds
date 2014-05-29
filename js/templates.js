@@ -460,7 +460,7 @@ function program3(depth0,data) {
   }
 
   buffer += "<div class=\"highlight-section match-count\">\n  <p>\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isNumber), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isRelevantNumber), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </p>\n</div>\n";
   return buffer;

@@ -643,7 +643,8 @@
       this.filter.unset('protection');
       this.filter.unset('protectionLevel');
       this.filter.unset('pressure');
-      return this.filter.unset('pressureLevel');
+      this.filter.unset('pressureLevel');
+      return this.resultsNumber.set('number', -999);
     };
 
     return TabView;
@@ -1186,9 +1187,13 @@
     };
 
     MapView.prototype.unsetWatershedSelectionCount = function() {
-      this.parsedResults = 0;
-      this.currentSelectionCount = 0;
-      return this.resultsNumber.set('number', -999);
+      if (this.currentSelectionCount === void 0) {
+        this.parsedResults = 0;
+        this.currentSelectionCount = 0;
+      }
+      if (this.resultsNumber.get('number') !== -999) {
+        return this.resultsNumber.set('number', 0);
+      }
     };
 
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
@@ -1283,10 +1288,9 @@
     };
 
     ResultsNumberView.prototype.render = function() {
-      console.log(this.resultsNumber.get('number'));
       this.$el.html(this.template({
         number: this.resultsNumber.get('number'),
-        isNumber: this.resultsNumber.get('number') !== -999
+        isRelevantNumber: this.resultsNumber.get('number') !== -999
       }));
       return this;
     };

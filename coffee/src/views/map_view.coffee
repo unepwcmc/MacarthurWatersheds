@@ -315,9 +315,11 @@ class Backbone.Views.MapView extends Backbone.View
     @currentSelectionCount = 0
 
   unsetWatershedSelectionCount: ->
-    @parsedResults = 0
-    @currentSelectionCount = 0
-    @resultsNumber.set 'number', -999
+    unless @currentSelectionCount != undefined
+      @parsedResults = 0
+      @currentSelectionCount = 0
+    unless @resultsNumber.get('number') == -999
+      @resultsNumber.set 'number', 0
 
   formatToFirst2NonZeroDecimals: (number) ->
     number += ''

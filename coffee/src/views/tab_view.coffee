@@ -71,3 +71,5 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     @filter.unset('protectionLevel')
     @filter.unset('pressure')
     @filter.unset('pressureLevel')
+    @resultsNumber.set('number', -999)
+

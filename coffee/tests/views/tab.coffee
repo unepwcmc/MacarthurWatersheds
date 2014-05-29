@@ -4,6 +4,7 @@ test('when the `change` tab selector and the `subject` selector have been clicke
  the view re-renders and the scenario subview is rendered', ->
   regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  resultsNumber = new Backbone.Models.ResultsNumber({number: 10})
   resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
    'initialize', -> )
   filter = new Backbone.Models.Filter(
@@ -13,7 +14,7 @@ test('when the `change` tab selector and the `subject` selector have been clicke
   )
   scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView::, 'render')
 
-  tabView = new Backbone.Views.TabView( filter: filter )
+  tabView = new Backbone.Views.TabView( filter: filter, resultsNumber: resultsNumber )
   filterView = new Backbone.Views.FilterView( filter: filter )
 
   tabView.$el.find('li.change-tab').trigger('click')
@@ -33,6 +34,7 @@ test('when the `change` tab selector and the `subject` selector have been clicke
 test('when the `change` tab selector has been clicked an `active` class 
   is set on it and removed from all other siblings', ->
   scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  resultsNumber = new Backbone.Models.ResultsNumber({number: 10})
   resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
    'initialize', -> )
   filter = new Backbone.Models.Filter(
@@ -40,7 +42,7 @@ test('when the `change` tab selector has been clicked an `active` class
     scale: scales.models[0]
   )
 
-  tabView = new Backbone.Views.TabView( filter: filter )
+  tabView = new Backbone.Views.TabView( filter: filter, resultsNumber: resultsNumber )
 
   activeTab = tabView.$el.find('ul.tabs li.active')
   assert.strictEqual(
@@ -68,6 +70,7 @@ test('when the `Future Threats` tab selector is clicked,
   the LensSelectorView is rendered', ->
   regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
+  resultsNumber = new Backbone.Models.ResultsNumber({number: 10})
   resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView::,
    'initialize', -> )
   filter = new Backbone.Models.Filter(
@@ -80,7 +83,7 @@ test('when the `Future Threats` tab selector is clicked,
   levelSelectorAgrCommDevRenderSpy = sinon.spy(
     Backbone.Views.LevelSelectorAgrCommDevView::, 'render')
 
-  tabView = new Backbone.Views.TabView( filter: filter )
+  tabView = new Backbone.Views.TabView( filter: filter, resultsNumber: resultsNumber )
 
   lensSelectorRenderCalles = lensSelectorRenderSpy.callCount
   levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount
