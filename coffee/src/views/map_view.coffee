@@ -58,7 +58,7 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     #@map.fitBounds regionBounds {animate: false}
-    @map.setView(regionCentre, 4, {animate: false});
+    @map.setView(regionCentre, 4, {animate: false})
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
   getLegendGradientElement: (tab) ->
@@ -117,7 +117,9 @@ class Backbone.Views.MapView extends Backbone.View
     @styleValueField = 'rank'  # or value
     q = @filter.get('query')
     unless q? then return
+    @resultsNumber.set 'loading', true
     $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=#{q}&callback=?", (data) =>
+      @resultsNumber.set 'loading', false
       @data = @sortDataBy(data.rows, 'value')
       @dataLenght = @data.length
       unless @dataLenght > 0
@@ -315,9 +317,11 @@ class Backbone.Views.MapView extends Backbone.View
     @currentSelectionCount = 0
 
   unsetWatershedSelectionCount: ->
-    @parsedResults = 0
-    @currentSelectionCount = 0
-    @resultsNumber.set 'number', 0
+    unless @currentSelectionCount != undefined
+      @parsedResults = 0
+      @currentSelectionCount = 0
+    unless @resultsNumber.get('number') == -999
+      @resultsNumber.set 'number', 0
 
   formatToFirst2NonZeroDecimals: (number) ->
     number += ''

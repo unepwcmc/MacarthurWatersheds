@@ -655,9 +655,12 @@
   suite('Tab View');
 
   test('when the `change` tab selector and the `subject` selector have been clicked, the view re-renders and the scenario subview is rendered', function() {
-    var filter, filterView, regions, resultsNumberRenderStub, scales, scenarioRenderSpy, tabView;
+    var filter, filterView, regions, resultsNumber, resultsNumberRenderStub, scales, scenarioRenderSpy, tabView;
     regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
     scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    resultsNumber = new Backbone.Models.ResultsNumber({
+      number: 10
+    });
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity',
@@ -666,7 +669,8 @@
     });
     scenarioRenderSpy = sinon.spy(Backbone.Views.ScenarioSelectorView.prototype, 'render');
     tabView = new Backbone.Views.TabView({
-      filter: filter
+      filter: filter,
+      resultsNumber: resultsNumber
     });
     filterView = new Backbone.Views.FilterView({
       filter: filter
@@ -682,15 +686,19 @@
   });
 
   test('when the `change` tab selector has been clicked an `active` class is set on it and removed from all other siblings', function() {
-    var activeTab, filter, resultsNumberRenderStub, scales, tabView;
+    var activeTab, filter, resultsNumber, resultsNumberRenderStub, scales, tabView;
     scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    resultsNumber = new Backbone.Models.ResultsNumber({
+      number: 10
+    });
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity',
       scale: scales.models[0]
     });
     tabView = new Backbone.Views.TabView({
-      filter: filter
+      filter: filter,
+      resultsNumber: resultsNumber
     });
     activeTab = tabView.$el.find('ul.tabs li.active');
     assert.strictEqual(activeTab.attr('data-subject'), 'now', "Expected the `now` tab to be active");
@@ -702,9 +710,12 @@
   });
 
   test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected and the AgrCommDev level is selected then the LensSelectorView is rendered', function() {
-    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, regions, resultsNumberRenderStub, scales, tabView;
+    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, regions, resultsNumber, resultsNumberRenderStub, scales, tabView;
     regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
     scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
+    resultsNumber = new Backbone.Models.ResultsNumber({
+      number: 10
+    });
     resultsNumberRenderStub = sinon.stub(Backbone.Views.ResultsNumberView.prototype, 'initialize', function() {});
     filter = new Backbone.Models.Filter({
       subject: 'biodiversity',
@@ -714,7 +725,8 @@
     lensSelectorRenderSpy = sinon.spy(Backbone.Views.LensSelectorView.prototype, 'render');
     levelSelectorAgrCommDevRenderSpy = sinon.spy(Backbone.Views.LevelSelectorAgrCommDevView.prototype, 'render');
     tabView = new Backbone.Views.TabView({
-      filter: filter
+      filter: filter,
+      resultsNumber: resultsNumber
     });
     lensSelectorRenderCalles = lensSelectorRenderSpy.callCount;
     levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount;

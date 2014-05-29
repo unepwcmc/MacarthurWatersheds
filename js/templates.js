@@ -440,14 +440,44 @@ function program1(depth0,data) {
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["results_number"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
+function program1(depth0,data) {
+  
+  
+  return "\n    loading...\n  ";
+  }
 
-  buffer += "<div class=\"highlight-section match-count\"><p><span class=\"watershed-number\">";
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isRelevantNumber), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ";
+  return buffer;
+  }
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <span class=\"watershed-number\">";
   if (stack1 = helpers.number) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.number); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</span> watersheds match your selection</p></div>\n";
+    + "</span> watersheds match your selection\n    ";
+  return buffer;
+  }
+
+function program6(depth0,data) {
+  
+  
+  return "\n      Please make a selection\n    ";
+  }
+
+  buffer += "<div class=\"highlight-section match-count\">\n  <p>\n  ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dataLoading), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  <span class=\"spin\"></span>\n  </p>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scale_chooser"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

@@ -297,7 +297,7 @@
     }
 
     ResultsNumber.prototype.defaults = {
-      number: 0
+      number: -999
     };
 
     return ResultsNumber;
@@ -643,7 +643,8 @@
       this.filter.unset('protection');
       this.filter.unset('protectionLevel');
       this.filter.unset('pressure');
-      return this.filter.unset('pressureLevel');
+      this.filter.unset('pressureLevel');
+      return this.resultsNumber.set('number', -999);
     };
 
     return TabView;
@@ -910,8 +911,10 @@
       if (q == null) {
         return;
       }
+      this.resultsNumber.set('loading', true);
       return $.getJSON("https://carbon-tool.cartodb.com/api/v2/sql?q=" + q + "&callback=?", (function(_this) {
         return function(data) {
+          _this.resultsNumber.set('loading', false);
           _this.data = _this.sortDataBy(data.rows, 'value');
           _this.dataLenght = _this.data.length;
           if (!(_this.dataLenght > 0)) {
@@ -1186,9 +1189,13 @@
     };
 
     MapView.prototype.unsetWatershedSelectionCount = function() {
-      this.parsedResults = 0;
-      this.currentSelectionCount = 0;
-      return this.resultsNumber.set('number', 0);
+      if (this.currentSelectionCount === void 0) {
+        this.parsedResults = 0;
+        this.currentSelectionCount = 0;
+      }
+      if (this.resultsNumber.get('number') !== -999) {
+        return this.resultsNumber.set('number', 0);
+      }
     };
 
     MapView.prototype.formatToFirst2NonZeroDecimals = function(number) {
@@ -1279,18 +1286,22 @@
     ResultsNumberView.prototype.initialize = function(options) {
       this.resultsNumber = options.resultsNumber;
       this.listenTo(this.resultsNumber, 'change:number', this.render);
+      this.listenTo(this.resultsNumber, 'change:loading', this.render);
       return this.render();
     };
 
     ResultsNumberView.prototype.render = function() {
       this.$el.html(this.template({
-        number: this.resultsNumber.get('number')
+        number: this.resultsNumber.get('number'),
+        isRelevantNumber: this.resultsNumber.get('number') !== -999,
+        dataLoading: this.resultsNumber.get('loading')
       }));
       return this;
     };
 
     ResultsNumberView.prototype.onClose = function() {
-      return this.remove();
+      this.remove();
+      return this.stopListening();
     };
 
     return ResultsNumberView;
@@ -1420,6 +1431,41 @@
     ScaleChooserView.prototype.onClose = function() {};
 
     return ScaleChooserView;
+
+  })(Backbone.View);
+
+}).call(this);
+
+(function() {
+  var _base,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Backbone || (window.Backbone = {});
+
+  (_base = window.Backbone).Views || (_base.Views = {});
+
+  Backbone.Views.SpinView = (function(_super) {
+    __extends(SpinView, _super);
+
+    function SpinView() {
+      return SpinView.__super__.constructor.apply(this, arguments);
+    }
+
+    SpinView.prototype.template = _.template("<p>Loading...</p>");
+
+    SpinView.prototype.className = 'modal spin';
+
+    SpinView.prototype.initialize = function(options) {
+      return this.render();
+    };
+
+    SpinView.prototype.render = function() {
+      this.$el.html(this.template());
+      return this;
+    };
+
+    return SpinView;
 
   })(Backbone.View);
 
@@ -2177,7 +2223,10 @@
     };
 
     AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {
-      var geom, init;
+      var geom, init, spinView;
+      this.modalContainer.hideModal();
+      spinView = new Backbone.Views.SpinView();
+      this.modalContainer.showModal(spinView);
       init = (function(_this) {
         return function(geo) {
           var region, scale;
