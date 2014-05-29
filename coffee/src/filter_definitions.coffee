@@ -18,9 +18,9 @@ MacArthur.CONFIG =
   ],
   regions: [
     # latLngBounds(southWest, northEast)
-    { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ], centre: [-4, -55] }
-    { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ], centre: [-3, 46] }
-    { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [19, 118] }
+    { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ], centre: [-4, -61] }
+    { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ], centre: [-3, 43] }
+    { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [21, 110] }
   ]
   scales: [
     { code: "broadscale", name: "Global"}

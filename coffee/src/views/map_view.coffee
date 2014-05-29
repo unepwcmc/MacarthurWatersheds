@@ -58,7 +58,7 @@ class Backbone.Views.MapView extends Backbone.View
     @queryLayer = L.geoJson(@collection, {style: @basePolyStyle}).addTo(@map)
     @queryLayerInteriors = L.geoJson(@interiors, {style: @baseLineStyle}).addTo(@map)
     #@map.fitBounds regionBounds {animate: false}
-    @map.setView(regionCentre, 4, {animate: false})
+    @map.setView(regionCentre, 5, {animate: false})
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
   getLegendGradientElement: (tab) ->
