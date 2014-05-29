@@ -1,4 +1,6 @@
-<h2><input type="checkbox" name="pressure" {{#if pressure}}checked{{/if}}>Pressure</h2>
+<h2><input type="checkbox" name="pressure" {{#if pressure}}checked{{/if}}>
+  <label class="for-checkbox">Pressure</label>
+</h2>
 
 {{#if pressure}}
   {{addSubViewTo thisView 'PressureSelectorView' filter=filter}}

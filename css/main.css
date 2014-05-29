@@ -575,3 +575,6 @@ div.step-count {
       background: #ddd; }
     div.step-count div.circle.inactive {
       border: 1px solid #ddd; }
+
+.for-checkbox {
+  cursor: pointer; }

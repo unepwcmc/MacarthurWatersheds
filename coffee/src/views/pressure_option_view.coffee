@@ -6,6 +6,7 @@ class Backbone.Views.PressureOptionView extends Backbone.Diorama.NestingView
 
   events:
     'change [type="checkbox"]': "setPressure"
+    'click .for-checkbox': "toggleCheckbox"
 
   initialize: (options) ->
     @filter = options.filter
@@ -28,6 +29,13 @@ class Backbone.Views.PressureOptionView extends Backbone.Diorama.NestingView
   unsetPressureLevel: ->
     if @filter.get('pressure') == no
       @filter.unset('pressureLevel')
+
+  toggleCheckbox: (event) ->
+    checkBox = $(event.target).parent().find('input')
+    isChecked = checkBox.prop("checked")
+    checkBox.prop("checked", !isChecked)
+    @filter.set('pressure', !isChecked)
+    @unsetPressureLevel()
 
   onClose: ->
     @closeSubViews()
