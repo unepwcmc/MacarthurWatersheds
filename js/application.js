@@ -1789,7 +1789,8 @@
     PressureOptionView.prototype.template = Handlebars.templates['pressure_option'];
 
     PressureOptionView.prototype.events = {
-      'change [type="checkbox"]': "setPressure"
+      'change [type="checkbox"]': "setPressure",
+      'click .for-checkbox': "toggleCheckbox"
     };
 
     PressureOptionView.prototype.initialize = function(options) {
@@ -1817,6 +1818,15 @@
       if (this.filter.get('pressure') === false) {
         return this.filter.unset('pressureLevel');
       }
+    };
+
+    PressureOptionView.prototype.toggleCheckbox = function(event) {
+      var checkBox, isChecked;
+      checkBox = $(event.target).parent().find('input');
+      isChecked = checkBox.prop("checked");
+      checkBox.prop("checked", !isChecked);
+      this.filter.set('pressure', !isChecked);
+      return this.unsetPressureLevel();
     };
 
     PressureOptionView.prototype.onClose = function() {
@@ -1887,7 +1897,8 @@
     ProtectionOptionView.prototype.template = Handlebars.templates['protection_option'];
 
     ProtectionOptionView.prototype.events = {
-      'change [type="checkbox"]': "setProtection"
+      'change [type="checkbox"]': "setProtection",
+      'click .for-checkbox': "toggleCheckbox"
     };
 
     ProtectionOptionView.prototype.initialize = function(options) {
@@ -1915,6 +1926,15 @@
       if (this.filter.get('protection') === false) {
         return this.filter.unset('protectionLevel');
       }
+    };
+
+    ProtectionOptionView.prototype.toggleCheckbox = function(event) {
+      var checkBox, isChecked;
+      checkBox = $(event.target).parent().find('input');
+      isChecked = checkBox.prop("checked");
+      checkBox.prop("checked", !isChecked);
+      this.filter.set('protection', !isChecked);
+      return this.unsetProtectionLevel();
     };
 
     ProtectionOptionView.prototype.onClose = function() {

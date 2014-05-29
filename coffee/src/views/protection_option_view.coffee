@@ -6,6 +6,7 @@ class Backbone.Views.ProtectionOptionView extends Backbone.Diorama.NestingView
 
   events:
     'change [type="checkbox"]': "setProtection"
+    'click .for-checkbox': "toggleCheckbox"
 
   initialize: (options) ->
     @filter = options.filter
@@ -28,6 +29,13 @@ class Backbone.Views.ProtectionOptionView extends Backbone.Diorama.NestingView
   unsetProtectionLevel: ->
     if @filter.get('protection') == no
       @filter.unset('protectionLevel')
+
+  toggleCheckbox: (event) ->
+    checkBox = $(event.target).parent().find('input')
+    isChecked = checkBox.prop("checked")
+    checkBox.prop("checked", !isChecked)
+    @filter.set('protection', !isChecked)
+    @unsetProtectionLevel()
 
   onClose: ->
     @closeSubViews()
