@@ -6,7 +6,7 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
   className: 'modal scale-chooser'
 
   events:
-    "click .scales .scale-area": "triggerChooseScale"
+    "click .scales li": "triggerChooseScale"
     "click .back a": "goBack"
 
   initialize: (options) ->
@@ -26,7 +26,8 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
     _.find(regionOptions, (o) -> o.code == regionCode).name
 
   triggerChooseScale: (event) =>
-    scaleCode = $(event.target).attr('data-scale-code')
+    scaleCode = $(event.target).attr('data-scale-code') or 
+      $(event.target).find('.scale-link').attr('data-scale-code')
     Backbone.appRouter.navigate(
       "#{Backbone.history.fragment}/scale:#{scaleCode}", {trigger: true}
     )

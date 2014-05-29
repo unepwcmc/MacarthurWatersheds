@@ -22,17 +22,17 @@
         code: "WAN",
         name: "Andes",
         bounds: [[-22, -57], [14, -83]],
-        centre: [-4, -55]
+        centre: [-4, -61]
       }, {
         code: "GLR",
         name: "African Great Lakes",
         bounds: [[-18, 30], [10, 40]],
-        centre: [-3, 46]
+        centre: [-3, 43]
       }, {
         code: "MEK",
         name: "Mekong",
         bounds: [[6, 110], [35, 90]],
-        centre: [19, 118]
+        centre: [21, 110]
       }
     ],
     scales: [
@@ -834,7 +834,7 @@
       this.queryLayerInteriors = L.geoJson(this.interiors, {
         style: this.baseLineStyle
       }).addTo(this.map);
-      this.map.setView(regionCentre, 4, {
+      this.map.setView(regionCentre, 5, {
         animate: false
       });
       return this.map.on('zoomend', (function(_this) {
@@ -1387,7 +1387,7 @@
     ScaleChooserView.prototype.className = 'modal scale-chooser';
 
     ScaleChooserView.prototype.events = {
-      "click .scales .scale-area": "triggerChooseScale",
+      "click .scales li": "triggerChooseScale",
       "click .back a": "goBack"
     };
 
@@ -1415,7 +1415,7 @@
 
     ScaleChooserView.prototype.triggerChooseScale = function(event) {
       var scaleCode;
-      scaleCode = $(event.target).attr('data-scale-code');
+      scaleCode = $(event.target).attr('data-scale-code') || $(event.target).find('.scale-link').attr('data-scale-code');
       return Backbone.appRouter.navigate("" + Backbone.history.fragment + "/scale:" + scaleCode, {
         trigger: true
       });
