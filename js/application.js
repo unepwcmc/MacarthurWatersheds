@@ -10,7 +10,7 @@
       }, {
         selector: "change",
         name: "Change",
-        strapline: "Change up to 2050"
+        strapline: "Change between now and 2050"
       }, {
         selector: "future_threats",
         name: "Future Threats",
