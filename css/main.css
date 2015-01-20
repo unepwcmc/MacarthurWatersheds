@@ -461,7 +461,8 @@ div.legend div.map-legend-gradient {
     div.legend div.map-legend-gradient span:last-child {
       float: right; }
 
-header a.about {
+header a.nav-right {
+  margin-left: 20px;
   float: right;
   font-family: 'Open Sans', sans-serif;
   font-weight: 600;
