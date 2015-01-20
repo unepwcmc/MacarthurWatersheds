@@ -1800,13 +1800,13 @@
     };
 
     PressureOptionView.prototype.render = function() {
-      this.$el.html(this.template({
-        thisView: this,
-        filter: this.filter,
-        pressure: !!this.pressure
-      }));
-      this.attachSubViews();
-      return this;
+      // this.$el.html(this.template({
+      //   thisView: this,
+      //   filter: this.filter,
+      //   pressure: !!this.pressure
+      // }));
+      // this.attachSubViews();
+      // return this;
     };
 
     PressureOptionView.prototype.setPressure = function(event) {
