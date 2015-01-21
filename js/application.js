@@ -1800,6 +1800,9 @@
     };
 
     PressureOptionView.prototype.render = function() {
+      // REMOVED AT REQUEST OF SCIENCE TEAM.
+      // UNCOMMENT THIS TO RE-ENABLE PRESSURE CHECKBOX
+      
       // this.$el.html(this.template({
       //   thisView: this,
       //   filter: this.filter,
