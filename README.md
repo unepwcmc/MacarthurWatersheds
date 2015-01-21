@@ -79,7 +79,7 @@ are written in Handlebars.
 We're using gulp for compiling coffeescript and handlebars. To run this task,
 do:
   
-  gulp
+    gulp
 
 
 ### Tests

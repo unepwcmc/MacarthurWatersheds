@@ -1799,18 +1799,7 @@
       return this.render();
     };
 
-    PressureOptionView.prototype.render = function() {
-      // REMOVED AT REQUEST OF SCIENCE TEAM.
-      // UNCOMMENT THIS TO RE-ENABLE PRESSURE CHECKBOX
-      
-      // this.$el.html(this.template({
-      //   thisView: this,
-      //   filter: this.filter,
-      //   pressure: !!this.pressure
-      // }));
-      // this.attachSubViews();
-      // return this;
-    };
+    PressureOptionView.prototype.render = function() {};
 
     PressureOptionView.prototype.setPressure = function(event) {
       this.filter.set('pressure', $(event.target).is(':checked'));
@@ -1858,8 +1847,6 @@
     function PressureSelectorView() {
       return PressureSelectorView.__super__.constructor.apply(this, arguments);
     }
-
-    PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
 
     PressureSelectorView.prototype.events = {
       'change #pressure-select': "setLevel"
