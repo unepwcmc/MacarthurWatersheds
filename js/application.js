@@ -751,6 +751,7 @@
       this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
       this.setProtectionFill = __bind(this.setProtectionFill, this);
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
+      this.getFutureThreatsColours = __bind(this.getFutureThreatsColours, this);
       this.getColor = __bind(this.getColor, this);
       this.resetQueryLayerStyle = __bind(this.resetQueryLayerStyle, this);
       this.updateQueryLayerStyle = __bind(this.updateQueryLayerStyle, this);
@@ -767,8 +768,12 @@
 
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
-      'now': ["#FFDC73", "#FF5C26"],
-      'future_threats': ["#FFDC73", "#FF5C26"]
+      'now': ["#fff5eb", "#7f2704"],
+      'high_agricultural': ["#deebf7", "#9ecae1", "#3182bd"],
+      'medium_agricultural': ["#efedf5", "#bcbddc", "#756bb1"],
+      'low_agricultural': ["#fee0d2", "#fc9272", "#de2d26"],
+      'negative_agricultural': ["#fee0d2", "#fc9272", "#de2d26"],
+      'categories': 3
     };
 
     MapView.prototype.legendText = {
@@ -868,6 +873,7 @@
           var div, tab, title;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
+          console.log();
           title = tab === 'change' ? 'change' : 'importance';
           div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>          \n</div>";
           return div;
@@ -997,12 +1003,77 @@
         if (isZero != null) {
           return '#eee';
         } else if (rank > this.firstPositiveIndex) {
-          return this.colorPositive(rank);
+          this.colorPositive(rank);
         } else {
-          return this.colorNegative(rank);
+          this.colorNegative(rank);
         }
+      }
+      if (tab = 'future_threats') {
+        return this.getFutureThreatsColours(feature);
       } else {
         return this.color(rank);
+      }
+    };
+
+    MapView.prototype.getFutureThreatsColours = function(feature) {
+      var agrCommDevValue, categories, high_agricultural, level, low_agricultural, max_agr, max_rank, medium_agricultural, min_agr, min_rank, negative_agricultural, range_agr, range_rank, rank;
+      level = this.filter.get('agrCommDevLevel');
+      agrCommDevValue = this.querydata[feature].agrCommDevValue;
+      rank = this.querydata[feature].rank;
+      categories = colorRange['categories'];
+      min_rank = this.min.rank;
+      max_rank = this.max.rank;
+      min_agr = this.min.agrCommDevValue;
+      max_agr = this.max.agrCommDevValue;
+      high_agricultural = colorRange['high_agricultural'];
+      medium_agricultural = colorRange['medium_agricultural'];
+      low_agricultural = colorRange['low_agricultural'];
+      negative_agricultural = colorRange['negative_agricultural'];
+      range_agr = (max_agr - min_agr) / categories;
+      range_rank = (max_rank - min_rank) / 3;
+      if (agrCommDevValue >= min_agr + range_agr * 2) {
+        if (rank >= min_rank + range_rank * 2) {
+          this.color = high_agricultural[2];
+        }
+        if (rank >= min_rank + range_rank && rank < min_rank + range_rank * 2) {
+          this.color = high_agricultural[1];
+        }
+        if (rank >= min_rank && rank < min_rank + range_rank) {
+          this.color = high_agricultural[0];
+        }
+      }
+      if (agrCommDevValue >= min_agr + range_agr && agrCommDevValue < min_agr + range_agr * 2) {
+        if (rank >= min_rank + range_rank * 2) {
+          this.color = medium_agricultural[2];
+        }
+        if (rank >= min_rank + range_rank && rank < min_rank + range_rank * 2) {
+          this.color = medium_agricultural[1];
+        }
+        if (rank >= min_rank && rank < min_rank + range_rank) {
+          this.color = medium_agricultural[0];
+        }
+      }
+      if (agrCommDevValue >= 0 && agrCommDevValue < min_agr + range_agr) {
+        if (rank >= min_rank + range_rank * 2) {
+          this.color = low_agricultural[2];
+        }
+        if (rank >= min_rank + range_rank && rank < min_rank + range_rank * 2) {
+          this.color = low_agricultural[1];
+        }
+        if (rank >= min_rank && rank < min_rank + range_rank) {
+          this.color = low_agricultural[0];
+        }
+      }
+      if (agrCommDevValue < 0) {
+        if (rank >= min_rank + range_rank * 2) {
+          this.color = negative_agricultural[2];
+        }
+        if (rank >= min_rank + range_rank && rank < min_rank + range_rank * 2) {
+          this.color = negative_agricultural[1];
+        }
+        if (rank >= min_rank && rank < min_rank + range_rank) {
+          return this.color = negative_agricultural[0];
+        }
       }
     };
 
@@ -1235,6 +1306,30 @@
         domain = [min, this.max[this.styleValueField]];
         range = this.colorRange[tab].slice(-2);
         return this.colorPositive = d3.scale.linear().domain(domain).range(range);
+      }
+    };
+
+    MapView.prototype.setFutureThreatsLinearScaleColour = function() {
+      var colorRange, d, domain, min, range;
+      min = this.min.agrCommDev;
+      d = d.agrCommDevValue;
+      range = (this.max.agrCommDev - min) / this.categories;
+      domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
+      if (d >= min + range * 2) {
+        colorRange = this.colorRange['high_agricultural'];
+        this.color = d3.scale.linear().domain(domain).range(colorRange);
+      }
+      if (d >= min + range && d < min + range * 2) {
+        colorRange = this.colorRange['medium_agricultural'];
+        this.color = d3.scale.linear().domain(domain).range(colorRange);
+      }
+      if (d >= min && d < min + range) {
+        colorRange = this.colorRange['low_agricultural'];
+        this.color = d3.scale.linear().domain(domain).range(colorRange);
+      }
+      if (d < 0) {
+        colorRange = this.colorRange['negative_agricultural'];
+        return this.color = d3.scale.linear().domain(domain).range(colorRange);
       }
     };
 

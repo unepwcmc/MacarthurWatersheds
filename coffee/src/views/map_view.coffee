@@ -6,8 +6,13 @@ class Backbone.Views.MapView extends Backbone.View
 
   colorRange:
     'change': ["#FF5C26", "#fff", "#A3D900"]
-    'now': ["#FFDC73", "#FF5C26"]
-    'future_threats': ["#FFDC73", "#FF5C26"]
+    'now': ["#fff5eb", "#7f2704"]
+    'high_agricultural': ["#deebf7", "#9ecae1", "#3182bd"]
+    'medium_agricultural': ["#efedf5", "#bcbddc", "#756bb1"]
+    'low_agricultural': ["#fee0d2", "#fc9272", "#de2d26"]
+    'negative_agricultural': ["#fee0d2", "#fc9272", "#de2d26"]
+    'categories': 3
+
 
   legendText:
     'change': ['Decrease', 'Increase']
@@ -76,6 +81,7 @@ class Backbone.Views.MapView extends Backbone.View
     @legend.onAdd = (map) =>
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
+      console.log()
       title = if tab == 'change' then 'change' else 'importance'
       div.innerHTML = """
         <div class='map-legend-text'>
@@ -187,8 +193,59 @@ class Backbone.Views.MapView extends Backbone.View
         @colorPositive(rank)
       else
         @colorNegative(rank)
+    if tab = 'future_threats'
+      @getFutureThreatsColours feature
     else
       @color(rank)
+
+  getFutureThreatsColours: (feature) =>
+    level = @filter.get('agrCommDevLevel')
+    agrCommDevValue = @querydata[feature].agrCommDevValue
+    rank = @querydata[feature].rank
+    categories = colorRange['categories']
+    min_rank = @min.rank
+    max_rank = @max.rank
+    min_agr = @min.agrCommDevValue
+    max_agr = @max.agrCommDevValue
+    high_agricultural = colorRange['high_agricultural']
+    medium_agricultural = colorRange['medium_agricultural']
+    low_agricultural = colorRange['low_agricultural']
+    negative_agricultural = colorRange['negative_agricultural']
+    range_agr = (max_agr - min_agr) / categories
+    range_rank = (max_rank - min_rank) / 3
+    if agrCommDevValue >= min_agr + range_agr * 2
+    #high
+      if rank >= min_rank + range_rank * 2
+        @color = high_agricultural[2]
+      if rank >= min_rank + range_rank and rank < min_rank + range_rank * 2
+        @color = high_agricultural[1]
+      if rank >= min_rank and rank < min_rank + range_rank
+        @color = high_agricultural[0]
+    if agrCommDevValue >= min_agr + range_agr and agrCommDevValue < min_agr + range_agr * 2
+      #medium
+      if rank >= min_rank + range_rank * 2
+        @color = medium_agricultural[2]
+      if rank >= min_rank + range_rank and rank < min_rank + range_rank * 2
+        @color = medium_agricultural[1]
+      if rank >= min_rank and rank < min_rank + range_rank
+        @color = medium_agricultural[0]
+    if agrCommDevValue >= 0 and agrCommDevValue < min_agr + range_agr
+      #low
+      if rank >= min_rank + range_rank * 2
+        @color = low_agricultural[2]
+      if rank >= min_rank + range_rank and rank < min_rank + range_rank * 2
+        @color = low_agricultural[1]
+      if rank >= min_rank and rank < min_rank + range_rank
+        @color = low_agricultural[0]
+    if agrCommDevValue < 0
+      #negative
+      if rank >= min_rank + range_rank * 2
+        @color = negative_agricultural[2]
+      if rank >= min_rank + range_rank and rank < min_rank + range_rank * 2
+        @color = negative_agricultural[1]
+      if rank >= min_rank and rank < min_rank + range_rank
+        @color = negative_agricultural[0]
+
 
   filterFeatureLevel: (id) =>
     level = @filter.get('level')
@@ -350,11 +407,32 @@ class Backbone.Views.MapView extends Backbone.View
       range = @colorRange[tab][-2..]
       @colorPositive = d3.scale.linear().domain(domain).range(range)
 
+  setFutureThreatsLinearScaleColour: ->
+    min = @min.agrCommDev
+    d = d.agrCommDevValue
+    range = (@max.agrCommDev - min) / @categories
+    domain = [@min[@styleValueField], @max[@styleValueField]]
+    if d >= min + range * 2
+      colorRange = @colorRange['high_agricultural']
+      @color = d3.scale.linear().domain(domain).range(colorRange)
+    if d >= min + range and d < min + range * 2
+      colorRange = @colorRange['medium_agricultural']
+      @color = d3.scale.linear().domain(domain).range(colorRange)
+    if d >= min and d < min + range
+      colorRange = @colorRange['low_agricultural']
+      @color = d3.scale.linear().domain(domain).range(colorRange)
+    if d < 0
+      colorRange = @colorRange['negative_agricultural']
+      @color = d3.scale.linear().domain(domain).range(colorRange)
+
   setLinearScaleColour: ->
     tab = @filter.get('tab')
     if tab == 'change'
       @setNegativeLinearScaleColour tab
       @setPositiveLinearScaleColour tab
+    # Use if wanted gradient for future threats
+    #if tab == 'future_threats'
+      #@setFutureThreatsLinearScaleColour
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]
       range = @colorRange[tab]
