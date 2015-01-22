@@ -10,7 +10,7 @@
       }, {
         selector: "change",
         name: "Change",
-        strapline: "Change up to 2050"
+        strapline: "Change between now and 2050"
       }, {
         selector: "future_threats",
         name: "Future Threats",
@@ -589,6 +589,10 @@
         unSelectedScaleName: this.getUnSelectedScaleName()
       }));
       this.attachSubViews();
+      $("[data-toggle=\"popover\"]").popover({
+        trigger: "hover"
+      });
+      console.log('tab_view.coffee, LOAD AFTER HERE');
       return this;
     };
 
@@ -1799,15 +1803,7 @@
       return this.render();
     };
 
-    PressureOptionView.prototype.render = function() {
-      this.$el.html(this.template({
-        thisView: this,
-        filter: this.filter,
-        pressure: !!this.pressure
-      }));
-      this.attachSubViews();
-      return this;
-    };
+    PressureOptionView.prototype.render = function() {};
 
     PressureOptionView.prototype.setPressure = function(event) {
       this.filter.set('pressure', $(event.target).is(':checked'));
@@ -1855,8 +1851,6 @@
     function PressureSelectorView() {
       return PressureSelectorView.__super__.constructor.apply(this, arguments);
     }
-
-    PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
 
     PressureSelectorView.prototype.events = {
       'change #pressure-select': "setLevel"

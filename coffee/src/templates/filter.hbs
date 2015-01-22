@@ -3,7 +3,10 @@
 </div>
 
 <div class="subjects">
-  <h1>What would you like to explore?</h1>
+  <h1>Which results would you like to explore? <!--i class="fa fa-info-circle" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."></i--></h1>
+  
+  <script type="text/javascript">console.log("Loaded filters!");</script>
+
   <ul>
     {{# each subjects}}
     <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{name}}</li>

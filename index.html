@@ -6,8 +6,10 @@
     <link href='http://fonts.googleapis.com/css?family=Dosis:500,600,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/application.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+
 
     <link rel="stylesheet" type="text/css" href="lib/leaflet/leaflet.css">
 
@@ -20,7 +22,7 @@
     <script src="lib/backbone/backbone.js"></script>
     <script src="lib/handlebars/handlebars.min.js"></script>
     <script src="lib/leaflet/leaflet-src.js"></script>
-
+    <script src="lib/bootstrap/bootstrap.js"></script>
     <script src="lib/diorama.js"></script>
 
     <script src="js/templates.js"></script>
@@ -30,14 +32,17 @@
       $(document).ready(function(){
         var myController = new Backbone.Controllers.MainController();
       });
+
+      console.log('here?');
     </script>
   </head>
   <body>
     <header>
       <a href="" alt="Watershed Explorer home">Watershed Explorer</a>
-      <a href="about.html" class="about">About</a>
-    <p>Investigate the importance of biodiversity and ecosystem functions within watersheds</p>
-  </header>
+      <a href="about.html" target="_blank" class="nav-right">About</a>
+      <a href="" class="nav-right">Start Again</a>
+      <p>Expore biodiversity and ecosystem function provision in watersheds</p>
+    </header>
     <div class="map-container">
       <div id='map'>Map</div>
     </div>

@@ -14,13 +14,16 @@ class Backbone.Views.PressureOptionView extends Backbone.Diorama.NestingView
     @render()
 
   render: ->
-    @$el.html(@template(
-      thisView: @
-      filter: @filter
-      pressure: !!@pressure
-    ))
-    @attachSubViews()
-    return @
+    # Removed the pressure checkbox at the request of the science team.
+    # To reinstantiate, just uncomment the code below
+    
+    # @$el.html(@template(
+    #   thisView: @
+    #   filter: @filter
+    #   pressure: !!@pressure
+    # ))
+    # @attachSubViews()
+    # return @
 
   setPressure: (event) ->
     @filter.set('pressure', $(event.target).is(':checked'))
