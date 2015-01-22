@@ -18,7 +18,7 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
       levels: levels
       isChangeTab: @isChangeTab
     ))
-    
+
     # SORRY
     theSelect = @$el.find('.select-box')
     setTimeout(=>

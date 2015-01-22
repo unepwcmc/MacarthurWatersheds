@@ -123,7 +123,7 @@ function program15(depth0,data) {
     'resultsNumber': ((depth0 && depth0.resultsNumber))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ResultsNumberView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ResultsNumberView", options)))
-    + "\n</div>\n\n<div class=\"subjects\">\n  <h1>Which results would you like to explore?</h1>\n  <ul>\n    ";
+    + "\n</div>\n\n<div class=\"subjects\">\n  <h1>Which results would you like to explore? <i class=\"fa fa-info-circle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-content=\"Vivamus sagittis lacus vel augue laoreet rutrum faucibus.\"></i></h1>\n  \n  <script type=\"text/javascript\">console.log(\"Loaded filters!\");</script>\n\n  <ul>\n    ";
   stack2 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </ul>\n</div>\n\n";
@@ -189,8 +189,13 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  
-  return "Importance";
+  var buffer = "", stack1;
+  buffer += " ";
+  if (stack1 = helpers.level) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.level); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "F Importance";
+  return buffer;
   }
 
 function program5(depth0,data) {
