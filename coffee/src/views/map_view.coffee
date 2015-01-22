@@ -68,10 +68,10 @@ class Backbone.Views.MapView extends Backbone.View
 
   getLegendGradientElement: (tab) ->
     if Modernizr.cssgradients
-      colorRange = _.cloneDeep(@colorRange[tab])
-      colours = colorRange.join(', ')
-      style = "linear-gradient(to right, #{colours});"
-      return "<div class='map-legend-gradient' style='background: #{style}'>" 
+     colorRange = _.cloneDeep(@colorRange[tab])
+     colours = colorRange.join(', ')
+     style = "linear-gradient(to right, #{colours});"
+     return "<div class='map-legend-gradient' style='background: #{style}'>" 
     else
       return "<div class='map-legend-gradient nogradient #{tab}'>"
 
@@ -142,7 +142,7 @@ class Backbone.Views.MapView extends Backbone.View
         @mapHasData = yes
         @queryLayerInteriors.setStyle @baseLineStyle
       @queryLayerInteriors.bringToFront()
-      @setLegend()
+      #@setLegend()
     )
 
   setMinMax: (type) =>
@@ -202,15 +202,15 @@ class Backbone.Views.MapView extends Backbone.View
     level = @filter.get('agrCommDevLevel')
     agrCommDevValue = @querydata[feature].agrCommDevValue
     rank = @querydata[feature].rank
-    categories = colorRange['categories']
+    categories = this.colorRange['categories']
     min_rank = @min.rank
     max_rank = @max.rank
     min_agr = @min.agrCommDevValue
     max_agr = @max.agrCommDevValue
-    high_agricultural = colorRange['high_agricultural']
-    medium_agricultural = colorRange['medium_agricultural']
-    low_agricultural = colorRange['low_agricultural']
-    negative_agricultural = colorRange['negative_agricultural']
+    high_agricultural = @colorRange['high_agricultural']
+    medium_agricultural = @colorRange['medium_agricultural']
+    low_agricultural = @colorRange['low_agricultural']
+    negative_agricultural = @colorRange['negative_agricultural']
     range_agr = (max_agr - min_agr) / categories
     range_rank = (max_rank - min_rank) / 3
     if agrCommDevValue >= min_agr + range_agr * 2
@@ -355,8 +355,8 @@ class Backbone.Views.MapView extends Backbone.View
       fillOpacity = 0
       fillColor = 0
     @parsedResults += 1
-    if @parsedResults == @dataLenght
-      @setWatershedSelectionCount()
+    #if @parsedResults == @dataLenght
+      #@setWatershedSelectionCount()
     {
       weight: 0
       opacity: 0
@@ -431,7 +431,7 @@ class Backbone.Views.MapView extends Backbone.View
       @setNegativeLinearScaleColour tab
       @setPositiveLinearScaleColour tab
     # Use if wanted gradient for future threats
-    #if tab == 'future_threats'
+    if tab == 'future_threats'
       #@setFutureThreatsLinearScaleColour
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]

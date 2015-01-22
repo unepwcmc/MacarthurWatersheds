@@ -940,8 +940,7 @@
             _this.mapHasData = true;
             _this.queryLayerInteriors.setStyle(_this.baseLineStyle);
           }
-          _this.queryLayerInteriors.bringToFront();
-          return _this.setLegend();
+          return _this.queryLayerInteriors.bringToFront();
         };
       })(this));
     };
@@ -1020,15 +1019,15 @@
       level = this.filter.get('agrCommDevLevel');
       agrCommDevValue = this.querydata[feature].agrCommDevValue;
       rank = this.querydata[feature].rank;
-      categories = colorRange['categories'];
+      categories = this.colorRange['categories'];
       min_rank = this.min.rank;
       max_rank = this.max.rank;
       min_agr = this.min.agrCommDevValue;
       max_agr = this.max.agrCommDevValue;
-      high_agricultural = colorRange['high_agricultural'];
-      medium_agricultural = colorRange['medium_agricultural'];
-      low_agricultural = colorRange['low_agricultural'];
-      negative_agricultural = colorRange['negative_agricultural'];
+      high_agricultural = this.colorRange['high_agricultural'];
+      medium_agricultural = this.colorRange['medium_agricultural'];
+      low_agricultural = this.colorRange['low_agricultural'];
+      negative_agricultural = this.colorRange['negative_agricultural'];
       range_agr = (max_agr - min_agr) / categories;
       range_rank = (max_rank - min_rank) / 3;
       if (agrCommDevValue >= min_agr + range_agr * 2) {
@@ -1235,9 +1234,6 @@
         fillColor = 0;
       }
       this.parsedResults += 1;
-      if (this.parsedResults === this.dataLenght) {
-        this.setWatershedSelectionCount();
-      }
       return {
         weight: 0,
         opacity: 0,
@@ -1338,7 +1334,10 @@
       tab = this.filter.get('tab');
       if (tab === 'change') {
         this.setNegativeLinearScaleColour(tab);
-        return this.setPositiveLinearScaleColour(tab);
+        this.setPositiveLinearScaleColour(tab);
+      }
+      if (tab === 'future_threats') {
+
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
         range = this.colorRange[tab];
