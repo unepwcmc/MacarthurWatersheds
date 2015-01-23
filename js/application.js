@@ -767,8 +767,8 @@
 
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
-      'now': ["#ffffff", "#67000d"],
-      'future_threats': ["#ffffff", "#67000d"]
+      'now': ["#fcbba1", "#67000d"],
+      'future_threats': ["#fcbba1", "#67000d"]
     };
 
     MapView.prototype.legendText = {
