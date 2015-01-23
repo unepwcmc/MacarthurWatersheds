@@ -184,9 +184,15 @@ class Backbone.Views.MapView extends Backbone.View
     rank = @querydata[feature][@styleValueField]
     isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
     if tab == 'change'
-      if isZero?
-        return '#eee'
-      else if rank > @firstPositiveIndex
+      if @styleValueField == 'value'
+        middle_gradient = 0
+        if rank == 0
+          return '#eee'
+      else
+        middle_gradient = @firstPositiveIndex
+        if isZero?
+          return '#eee'
+      if rank > middle_gradient
         @colorPositive(rank)
       else
         @colorNegative(rank)
@@ -339,17 +345,26 @@ class Backbone.Views.MapView extends Backbone.View
         d.index = i
       d.value == 0
     ), (d) -> d.index)
-    @firstPositiveIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
+    if @styleValueField == 'value'
+      @firstPositiveIndex = 0
+    else
+      @firstPositiveIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
 
   setNegativeLinearScaleColour: (tab) ->
-    domain = [@min[@styleValueField], @firstPositiveIndex-1]
-    range = @colorRange[tab][0..2]
+    if @styleValueField == 'value'
+      domain = [@min[@styleValueField], @firstPositiveIndex]
+    else
+      domain = [@min[@styleValueField], @firstPositiveIndex-1]
+    range = @colorRange[tab][0..1]
     @colorNegative = d3.scale.linear().domain(domain).range(range)
 
   setPositiveLinearScaleColour: (tab) ->
     if @zeroValueIndexes?.length > 0
-      min = @zeroValueIndexes[0]
-      domain = [min, @max[@filterValueField]]
+      if @styleValueField == 'value'
+        min = 0
+      else
+        min = @zeroValueIndexes[0]
+      domain = [min, @max[@styleValueField]]
       range = @colorRange[tab][-2..]
       @colorPositive = d3.scale.linear().domain(domain).range(range)
 

@@ -992,16 +992,25 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var isZero, rank, tab;
+      var isZero, middle_gradient, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
       isZero = _.find(this.zeroValueIndexes, function(i) {
         return rank === i;
       });
       if (tab === 'change') {
-        if (isZero != null) {
-          return '#eee';
-        } else if (rank > this.firstPositiveIndex) {
+        if (this.styleValueField === 'value') {
+          middle_gradient = 0;
+          if (rank === 0) {
+            return '#eee';
+          }
+        } else {
+          middle_gradient = this.firstPositiveIndex;
+          if (isZero != null) {
+            return '#eee';
+          }
+        }
+        if (rank > middle_gradient) {
           return this.colorPositive(rank);
         } else {
           return this.colorNegative(rank);
@@ -1223,21 +1232,33 @@
       }), function(d) {
         return d.index;
       });
-      return this.firstPositiveIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
+      if (this.styleValueField === 'value') {
+        return this.firstPositiveIndex = 0;
+      } else {
+        return this.firstPositiveIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
+      }
     };
 
     MapView.prototype.setNegativeLinearScaleColour = function(tab) {
       var domain, range;
-      domain = [this.min[this.styleValueField], this.firstPositiveIndex - 1];
-      range = this.colorRange[tab].slice(0, 3);
+      if (this.styleValueField === 'value') {
+        domain = [this.min[this.styleValueField], this.firstPositiveIndex];
+      } else {
+        domain = [this.min[this.styleValueField], this.firstPositiveIndex - 1];
+      }
+      range = this.colorRange[tab].slice(0, 2);
       return this.colorNegative = d3.scale.linear().domain(domain).range(range);
     };
 
     MapView.prototype.setPositiveLinearScaleColour = function(tab) {
       var domain, min, range, _ref;
       if (((_ref = this.zeroValueIndexes) != null ? _ref.length : void 0) > 0) {
-        min = this.zeroValueIndexes[0];
-        domain = [min, this.max[this.filterValueField]];
+        if (this.styleValueField === 'value') {
+          min = 0;
+        } else {
+          min = this.zeroValueIndexes[0];
+        }
+        domain = [min, this.max[this.styleValueField]];
         range = this.colorRange[tab].slice(-2);
         return this.colorPositive = d3.scale.linear().domain(domain).range(range);
       }
