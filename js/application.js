@@ -906,7 +906,8 @@
     MapView.prototype.updateQueryLayer = function() {
       var q;
       this.map.removeLayer(this.queryLayer);
-      this.styleValueField = 'rank';
+      this.styleValueField = 'value';
+      this.filterValueField = 'rank';
       q = this.filter.get('query');
       if (q == null) {
         return;
@@ -1014,31 +1015,31 @@
       if (tab === 'change') {
         range = this.firstPositiveIndex / this.categories;
       } else {
-        range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
+        range = (this.max[this.filterValueField] - this.min[this.filterValueField]) / this.categories;
       }
       if (level === 'all') {
         return true;
       }
       if (level === 'increase') {
-        return d[this.styleValueField] >= this.firstPositiveIndex;
+        return d[this.filterValueField] >= this.firstPositiveIndex;
       }
       if (level === 'high' && tab !== 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'low' && tab === 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2 && d[this.styleValueField] < this.firstPositiveIndex) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2 && d[this.filterValueField] < this.firstPositiveIndex) {
           return true;
         }
       }
       if (level === 'medium') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range && d[this.styleValueField] < this.min[this.styleValueField] + range * 2) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range && d[this.filterValueField] < this.min[this.filterValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'low' && tab !== 'change' || level === 'high' && tab === 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] && d[this.styleValueField] < this.min[this.styleValueField] + range) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] && d[this.filterValueField] < this.min[this.filterValueField] + range) {
           return true;
         }
       }
@@ -1232,7 +1233,7 @@
       var domain, min, range, _ref;
       if (((_ref = this.zeroValueIndexes) != null ? _ref.length : void 0) > 0) {
         min = this.zeroValueIndexes[0];
-        domain = [min, this.max[this.styleValueField]];
+        domain = [min, this.max[this.filterValueField]];
         range = this.colorRange[tab].slice(-2);
         return this.colorPositive = d3.scale.linear().domain(domain).range(range);
       }

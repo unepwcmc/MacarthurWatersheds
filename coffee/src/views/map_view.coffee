@@ -114,7 +114,8 @@ class Backbone.Views.MapView extends Backbone.View
   # This re-styles the map with new data
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
-    @styleValueField = 'rank'  # or value
+    @styleValueField = 'value'  # or value
+    @filterValueField = 'rank'
     q = @filter.get('query')
     unless q? then return
     @resultsNumber.set 'loading', true
@@ -197,22 +198,22 @@ class Backbone.Views.MapView extends Backbone.View
     if tab == 'change'
       range = @firstPositiveIndex / @categories
     else
-      range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
+      range = (@max[@filterValueField] - @min[@filterValueField]) / @categories
     if level == 'all'
       return yes
     if level == 'increase'
-      return d[@styleValueField] >= @firstPositiveIndex
+      return d[@filterValueField] >= @firstPositiveIndex
     if level == 'high' && tab != 'change'
-      if d[@styleValueField] >= @min[@styleValueField] + range * 2
+      if d[@filterValueField] >= @min[@filterValueField] + range * 2
         return yes
     if level == 'low' && tab == 'change'
-      if d[@styleValueField] >= @min[@styleValueField] + range * 2 and d[@styleValueField] < @firstPositiveIndex
+      if d[@filterValueField] >= @min[@filterValueField] + range * 2 and d[@filterValueField] < @firstPositiveIndex
         return yes      
     if level == 'medium'
-      if d[@styleValueField] >= @min[@styleValueField] + range and d[@styleValueField] < @min[@styleValueField] + range * 2
+      if d[@filterValueField] >= @min[@filterValueField] + range and d[@filterValueField] < @min[@filterValueField] + range * 2
         return yes
     if level == 'low' && tab != 'change' or level == 'high' && tab == 'change'
-      if d[@styleValueField] >= @min[@styleValueField] and d[@styleValueField] < @min[@styleValueField] + range
+      if d[@filterValueField] >= @min[@filterValueField] and d[@filterValueField] < @min[@filterValueField] + range
         return yes
     no
 
@@ -346,7 +347,7 @@ class Backbone.Views.MapView extends Backbone.View
   setPositiveLinearScaleColour: (tab) ->
     if @zeroValueIndexes?.length > 0
       min = @zeroValueIndexes[0]
-      domain = [min, @max[@styleValueField]]
+      domain = [min, @max[@filterValueField]]
       range = @colorRange[tab][-2..]
       @colorPositive = d3.scale.linear().domain(domain).range(range)
 
