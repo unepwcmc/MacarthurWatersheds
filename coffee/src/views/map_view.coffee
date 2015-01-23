@@ -141,13 +141,15 @@ class Backbone.Views.MapView extends Backbone.View
     )
 
   setMinMax: (type) =>
+
+    data_without_lakes = $.grep @data, (e) -> e.lake isnt true
     @max = {
-      'value': @data[@data.length - 1].value
-      'rank': @data.length
-      'agrCommDev': _.max(@data, (o) -> o.comprov_value).comprov_value
+      'value': data_without_lakes[data_without_lakes.length - 1].value
+      'rank': data_without_lakes.length
+      'agrCommDev': _.max(data_without_lakes, (o) -> o.comprov_value).comprov_value
     }
     @min = {
-      'value': @data[0].value
+      'value': data_without_lakes[0].value
       'rank': 0
       'agrCommDev': 0
     }

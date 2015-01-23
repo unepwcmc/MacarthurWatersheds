@@ -942,15 +942,19 @@
     };
 
     MapView.prototype.setMinMax = function(type) {
+      var data_without_lakes;
+      data_without_lakes = $.grep(this.data, function(e) {
+        return e.lake !== true;
+      });
       this.max = {
-        'value': this.data[this.data.length - 1].value,
-        'rank': this.data.length,
-        'agrCommDev': _.max(this.data, function(o) {
+        'value': data_without_lakes[data_without_lakes.length - 1].value,
+        'rank': data_without_lakes.length,
+        'agrCommDev': _.max(data_without_lakes, function(o) {
           return o.comprov_value;
         }).comprov_value
       };
       this.min = {
-        'value': this.data[0].value,
+        'value': data_without_lakes[0].value,
         'rank': 0,
         'agrCommDev': 0
       };
