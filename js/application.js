@@ -2031,12 +2031,15 @@
         filter: this.filter,
         resultsNumber: this.resultsNumber
       }));
-      $("[data-toggle=\"popover\"]").popover({
+      this.attachSubViews();
+      this.initialiseTooltips();
+      return this;
+    };
+
+    FilterView.prototype.initialiseTooltips = function() {
+      return this.$el.find("[data-toggle=\"popover\"]").popover({
         trigger: "hover"
       });
-      debugger;
-      this.attachSubViews();
-      return this;
     };
 
     FilterView.prototype.setSubject = function(event) {

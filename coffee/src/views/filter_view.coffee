@@ -8,7 +8,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     "click .subjects li": "setSubject"
 
   attributes:
-    class: "filters" 
+    class: "filters"
 
   initialize: (options) ->
     @filter = options.filter
@@ -30,10 +30,14 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       filter: @filter
       resultsNumber: @resultsNumber
     ))
-    $("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
-    debugger
     @attachSubViews()
+
+    @initialiseTooltips()
+
     return @
+
+  initialiseTooltips: ->
+    @$el.find("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
 
   setSubject: (event) =>
     subjectName = $(event.target).attr('data-subject')
@@ -76,4 +80,3 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       return @filter.get('subject')? and @filter.get('scenario')? and
       @filter.get('agrCommDevLevel')?
     no
-    
