@@ -33,6 +33,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     @attachSubViews()
 
     @initialiseTooltips()
+    console.log(subjects)
 
     return @
 

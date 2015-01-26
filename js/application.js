@@ -39,11 +39,11 @@
       {
         code: "broadscale",
         name: "Global",
-        tooltip: "Global tooltip"
+        tooltip: "Global Geo4 scenarios were used to analyse full MacArthur regions"
       }, {
         code: "regional",
         name: "Regional",
-        tooltip: "Regional tooltip"
+        tooltip: "Regionally developed scenarios were used to analyse a subset of three countries in each region"
       }
     ],
     subjects: [
@@ -52,7 +52,7 @@
         name: "Biodiversity importance"
       }, {
         selector: "ecosystem",
-        name: "Ecosystem function importance"
+        name: "Ecosystem function provision"
       }
     ],
     lenses: {
@@ -1612,6 +1612,7 @@
       })(this));
       this.$el.html(this.template({
         lenses: lenses,
+        heading: this.getLensTitle(),
         title: this.getLensTitle(),
         subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
@@ -1651,9 +1652,15 @@
 
     LensSelectorView.prototype.getLensTitle = function() {
       if (this.filter.get('subject') === 'biodiversity') {
-        return "For species";
+        return {
+          title: "For Species",
+          tooltip: "View results for total or a subset of species"
+        };
       } else if (this.filter.get('subject') === 'ecosystem') {
-        return "By provision";
+        return {
+          title: "By provision",
+          tooltip: "View results for total or a subset of ecosystem functions"
+        };
       }
     };
 
@@ -2037,6 +2044,7 @@
       }));
       this.attachSubViews();
       this.initialiseTooltips();
+      console.log(subjects);
       return this;
     };
 
