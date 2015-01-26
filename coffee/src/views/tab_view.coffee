@@ -30,7 +30,6 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
     ))
     @attachSubViews()
     $("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
-    console.log('tab_view.coffee, LOAD AFTER HERE')
     return @
 
   onClose: ->

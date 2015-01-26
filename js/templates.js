@@ -6,12 +6,27 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1;
+  buffer += "\n    ";
+  if (stack1 = helpers.selector) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.selector); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + " - ";
+  if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\n  ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
   buffer += "\n    <li data-subject=\"";
   if (stack1 = helpers.selector) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.selector); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
     + "\" class=\"";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.active), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.active), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\">";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
@@ -20,34 +35,34 @@ function program1(depth0,data) {
     + "</li>\n    ";
   return buffer;
   }
-function program2(depth0,data) {
+function program4(depth0,data) {
   
   
   return "active";
   }
 
-function program4(depth0,data) {
+function program6(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n  <div class=\"";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\">\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </div>\n";
   return buffer;
   }
-function program5(depth0,data) {
+function program7(depth0,data) {
   
   
   return "scenario-container highlight-section";
   }
 
-function program7(depth0,data) {
+function program9(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n    ";
@@ -59,7 +74,7 @@ function program7(depth0,data) {
   return buffer;
   }
 
-function program9(depth0,data) {
+function program11(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n    ";
@@ -71,20 +86,20 @@ function program9(depth0,data) {
   return buffer;
   }
 
-function program11(depth0,data) {
+function program13(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showAgrCommDevSelector), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n";
   return buffer;
   }
 
-function program13(depth0,data) {
+function program15(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n  ";
@@ -96,7 +111,7 @@ function program13(depth0,data) {
   return buffer;
   }
 
-function program15(depth0,data) {
+function program17(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n  ";
@@ -123,17 +138,20 @@ function program15(depth0,data) {
     'resultsNumber': ((depth0 && depth0.resultsNumber))
   },data:data};
   buffer += escapeExpression(((stack1 = helpers.addSubViewTo || (depth0 && depth0.addSubViewTo)),stack1 ? stack1.call(depth0, (depth0 && depth0.thisView), "ResultsNumberView", options) : helperMissing.call(depth0, "addSubViewTo", (depth0 && depth0.thisView), "ResultsNumberView", options)))
-    + "\n</div>\n\n<div class=\"subjects\">\n  <h1>Which results would you like to explore? <!--i class=\"fa fa-info-circle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-content=\"Vivamus sagittis lacus vel augue laoreet rutrum faucibus.\"></i--></h1>\n  \n  <script type=\"text/javascript\">console.log(\"Loaded filters!\");</script>\n\n  <ul>\n    ";
+    + "\n</div>\n\n<div class=\"subjects\">\n  <h1>Which results would you like to explore? <i class=\"fa fa-info-circle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"bottom\" data-content=\"Vivamus sagittis lacus vel augue laoreet rutrum faucibus.\"></i></h1>\n\n  ";
   stack2 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n  <ul>\n    ";
+  stack2 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </ul>\n</div>\n\n";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioGroup), {hash:{},inverse:self.program(11, program11, data),fn:self.program(4, program4, data),data:data});
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioGroup), {hash:{},inverse:self.program(13, program13, data),fn:self.program(6, program6, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showOtherSelectors), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showOtherSelectors), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n";
   return buffer;
@@ -431,7 +449,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<header><h1>Welcome to the Watershed exploration tool</h1></header>\n<div class=\"region-copy\"><p>Select a region to start exploring</p></div>\n<ul class=\"regions\">\n  ";
+  buffer += "<header><h1>Welcome to the Watershed exploration tool</h1></header>\n<div class=\"region-copy\"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in three regions.<p><p><strong>Select a region to start exploring</strong></p></div>\n<ul class=\"regions\">\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.regions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</ul>\n";
@@ -489,7 +507,7 @@ function program1(depth0,data) {
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</div>\n	    </li>\n	  ";
+    + " </div>\n	    </li>\n	  ";
   return buffer;
   }
 
@@ -500,7 +518,7 @@ function program1(depth0,data) {
     + "</strong> region.</p>\n		<p>Which level of data would you like to see?</p>\n	</div>\n	<div class=\"back\"><a href=\"\"><i class=\"fa fa-angle-left\"></i></a></div>\n	<ul class=\"scales\">\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scales), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n</div>\n";
+  buffer += "\n	</ul>\n	<p><strong>Hover over the buttons to find out more about each dataset <i class=\"fa fa-info-circle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"bottom\" data-content=\"Vivamus sagittis lacus vel augue laoreet rutrum faucibus.\"></i></strong></p>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scenario_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

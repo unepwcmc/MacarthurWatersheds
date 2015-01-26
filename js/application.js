@@ -592,7 +592,6 @@
       $("[data-toggle=\"popover\"]").popover({
         trigger: "hover"
       });
-      console.log('tab_view.coffee, LOAD AFTER HERE');
       return this;
     };
 
@@ -1405,6 +1404,9 @@
         scales: this.scales.toJSON(),
         regionName: this.getRegionName()
       }));
+      $("[data-toggle=\"popover\"]").popover({
+        trigger: "hover"
+      });
       return this;
     };
 
@@ -2032,6 +2034,9 @@
         filter: this.filter,
         resultsNumber: this.resultsNumber
       }));
+      $("[data-toggle=\"popover\"]").popover({
+        trigger: "hover"
+      });
       this.attachSubViews();
       return this;
     };

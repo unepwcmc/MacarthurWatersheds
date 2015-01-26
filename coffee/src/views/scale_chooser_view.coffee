@@ -18,6 +18,7 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
       scales: @scales.toJSON()
       regionName: @getRegionName()
     ))
+    $("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
     return @
 
   getRegionName: ->

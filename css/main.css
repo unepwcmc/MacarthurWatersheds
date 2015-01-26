@@ -133,7 +133,7 @@ div.subjects {
 
 .region-chooser, .scale-chooser, .spin {
   width: 570px;
-  height: 350px; }
+  height: 400px; }
   .region-chooser header, .scale-chooser header, .spin header {
     padding: 10px 0;
     background: #2A2B33; }
@@ -519,7 +519,8 @@ div.scale-copy, div.region-copy {
   text-align: center; }
   div.scale-copy p, div.region-copy p {
     font-size: 1em;
-    margin: 0 0 5px 0;
+    margin: 0 0 10px 0;
+    padding: 0 10px;
     color: #929292; }
     div.scale-copy p strong, div.region-copy p strong {
       color: #4dc0dd; }
