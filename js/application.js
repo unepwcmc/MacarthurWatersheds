@@ -589,9 +589,6 @@
         unSelectedScaleName: this.getUnSelectedScaleName()
       }));
       this.attachSubViews();
-      $("[data-toggle=\"popover\"]").popover({
-        trigger: "hover"
-      });
       return this;
     };
 
@@ -2037,6 +2034,7 @@
       $("[data-toggle=\"popover\"]").popover({
         trigger: "hover"
       });
+      debugger;
       this.attachSubViews();
       return this;
     };

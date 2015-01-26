@@ -29,7 +29,6 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
       unSelectedScaleName: @getUnSelectedScaleName()
     ))
     @attachSubViews()
-    $("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
     return @
 
   onClose: ->

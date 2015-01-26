@@ -31,6 +31,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       resultsNumber: @resultsNumber
     ))
     $("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
+    debugger
     @attachSubViews()
     return @
 
