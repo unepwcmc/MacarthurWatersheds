@@ -23,9 +23,9 @@ MacArthur.CONFIG =
     { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [21, 110] }
   ]
   scales: [
-    { code: "broadscale", name: "Global"}
-    { code: "regional", name: "Regional"}
-  ]
+    { code: "broadscale", name: "Global", tooltip: "Global tooltip"}
+    { code: "regional", name: "Regional", tooltip: "Regional tooltip"}
+  ,]
   subjects: [
     { selector: "biodiversity", name: "Biodiversity importance"}
     { selector: "ecosystem", name: "Ecosystem function importance"}

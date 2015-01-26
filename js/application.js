@@ -38,10 +38,12 @@
     scales: [
       {
         code: "broadscale",
-        name: "Global"
+        name: "Global",
+        tooltip: "Global tooltip"
       }, {
         code: "regional",
-        name: "Regional"
+        name: "Regional",
+        tooltip: "Regional tooltip"
       }
     ],
     subjects: [
@@ -1401,7 +1403,7 @@
         scales: this.scales.toJSON(),
         regionName: this.getRegionName()
       }));
-      $("[data-toggle=\"popover\"]").popover({
+      this.$el.find("[data-toggle=\"popover\"]").popover({
         trigger: "hover"
       });
       return this;
@@ -1431,7 +1433,9 @@
       });
     };
 
-    ScaleChooserView.prototype.onClose = function() {};
+    ScaleChooserView.prototype.onClose = function() {
+      return $('.popover[role="tooltip"]').remove();
+    };
 
     return ScaleChooserView;
 
