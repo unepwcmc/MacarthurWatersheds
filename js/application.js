@@ -1026,7 +1026,7 @@
       tab = this.filter.get('tab');
       d = this.querydata[id];
       if (tab === 'change') {
-        range = this.firstPositiveIndex / this.categories;
+        range = this.firstPositiveFilterIndex / this.categories;
       } else {
         range = (this.max[this.filterValueField] - this.min[this.filterValueField]) / this.categories;
       }
@@ -1034,7 +1034,7 @@
         return true;
       }
       if (level === 'increase') {
-        return d[this.filterValueField] >= this.firstPositiveIndex;
+        return d[this.filterValueField] >= this.firstPositiveFilterIndex;
       }
       if (level === 'high' && tab !== 'change') {
         if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2) {
@@ -1042,7 +1042,7 @@
         }
       }
       if (level === 'low' && tab === 'change') {
-        if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2 && d[this.filterValueField] < this.firstPositiveIndex) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2 && d[this.filterValueField] < this.firstPositiveFilterIndex) {
           return true;
         }
       }
@@ -1233,7 +1233,8 @@
         return d.index;
       });
       if (this.styleValueField === 'value') {
-        return this.firstPositiveIndex = 0;
+        this.firstPositiveIndex = 0;
+        return this.firstPositiveFilterIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
       } else {
         return this.firstPositiveIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
       }
@@ -1251,17 +1252,15 @@
     };
 
     MapView.prototype.setPositiveLinearScaleColour = function(tab) {
-      var domain, min, range, _ref;
-      if (((_ref = this.zeroValueIndexes) != null ? _ref.length : void 0) > 0) {
-        if (this.styleValueField === 'value') {
-          min = 0;
-        } else {
-          min = this.zeroValueIndexes[0];
-        }
-        domain = [min, this.max[this.styleValueField]];
-        range = this.colorRange[tab].slice(-2);
-        return this.colorPositive = d3.scale.linear().domain(domain).range(range);
+      var domain, min, range;
+      if (this.styleValueField === 'value') {
+        min = 0;
+      } else {
+        min = this.zeroValueIndexes[0];
       }
+      domain = [min, this.max[this.styleValueField]];
+      range = this.colorRange[tab].slice(-2);
+      return this.colorPositive = d3.scale.linear().domain(domain).range(range);
     };
 
     MapView.prototype.setLinearScaleColour = function() {

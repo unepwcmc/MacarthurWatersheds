@@ -204,18 +204,18 @@ class Backbone.Views.MapView extends Backbone.View
     tab = @filter.get('tab')
     d = @querydata[id]
     if tab == 'change'
-      range = @firstPositiveIndex / @categories
+      range = @firstPositiveFilterIndex / @categories
     else
       range = (@max[@filterValueField] - @min[@filterValueField]) / @categories
     if level == 'all'
       return yes
     if level == 'increase'
-      return d[@filterValueField] >= @firstPositiveIndex
+      return d[@filterValueField] >= @firstPositiveFilterIndex
     if level == 'high' && tab != 'change'
       if d[@filterValueField] >= @min[@filterValueField] + range * 2
         return yes
     if level == 'low' && tab == 'change'
-      if d[@filterValueField] >= @min[@filterValueField] + range * 2 and d[@filterValueField] < @firstPositiveIndex
+      if d[@filterValueField] >= @min[@filterValueField] + range * 2 and d[@filterValueField] < @firstPositiveFilterIndex
         return yes      
     if level == 'medium'
       if d[@filterValueField] >= @min[@filterValueField] + range and d[@filterValueField] < @min[@filterValueField] + range * 2
@@ -347,6 +347,7 @@ class Backbone.Views.MapView extends Backbone.View
     ), (d) -> d.index)
     if @styleValueField == 'value'
       @firstPositiveIndex = 0
+      @firstPositiveFilterIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
     else
       @firstPositiveIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
 
@@ -359,7 +360,7 @@ class Backbone.Views.MapView extends Backbone.View
     @colorNegative = d3.scale.linear().domain(domain).range(range)
 
   setPositiveLinearScaleColour: (tab) ->
-    if @zeroValueIndexes?.length > 0
+    #if @zeroValueIndexes?.length > 0
       if @styleValueField == 'value'
         min = 0
       else
