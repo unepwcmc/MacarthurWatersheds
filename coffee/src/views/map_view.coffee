@@ -102,7 +102,7 @@ class Backbone.Views.MapView extends Backbone.View
       Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
       Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
-      <a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>
+      <a href='data/data_sheets/#{w.name}.pdf' target="_blank">Watershed data sheet</a>
       """
 
   bindPopup: (feature, layer) =>

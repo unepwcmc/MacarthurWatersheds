@@ -223,17 +223,34 @@ function program6(depth0,data) {
 
 function program8(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "View results for all watersheds on a subset based on change in the level of ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isBiodiversity), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer;
+  }
+function program9(depth0,data) {
   
-  return "View results for all watersheds on a subset based on change in the level of biodiversity importance";
+  
+  return "biodiversity importance";
   }
 
-function program10(depth0,data) {
+function program11(depth0,data) {
   
   
-  return "View results for all watersheds or a subset based on level of biodiversity importance";
+  return "ecosystem function provision";
   }
 
-function program12(depth0,data) {
+function program13(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "View results for all watersheds or a subset based on level of ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isBiodiversity), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer;
+  }
+
+function program15(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n  <option value=\"";
@@ -241,7 +258,7 @@ function program12(depth0,data) {
   else { stack1 = (depth0 && depth0.selector); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
@@ -250,7 +267,7 @@ function program12(depth0,data) {
     + "</option>\n  ";
   return buffer;
   }
-function program13(depth0,data) {
+function program16(depth0,data) {
   
   
   return "selected";
@@ -260,10 +277,10 @@ function program13(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.isChangeTab), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " <i class=\"fa fa-info-circle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"bottom\" data-content=\"";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isChangeTab), {hash:{},inverse:self.program(10, program10, data),fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isChangeTab), {hash:{},inverse:self.program(13, program13, data),fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\"></i></h1>\n\n<select id=\"levels-select\" class='select-box'>\n  ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.levels), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</select>\n  ";
   return buffer;
