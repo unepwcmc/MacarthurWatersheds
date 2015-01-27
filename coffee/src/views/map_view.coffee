@@ -29,7 +29,6 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
-    @listenTo(@filter, 'change:agrCommDevLevel', @updateQueryLayerStyle)
 
   sortDataBy: (data, field) ->
     _.map(_.sortBy(data, field), (row, i) -> 
@@ -257,25 +256,6 @@ class Backbone.Views.MapView extends Backbone.View
         op = 0
     op
 
-  setAgrCommDevFill: (op, d) =>
-    agrCommDevLevel = @filter.get('agrCommDevLevel')
-    min = @min.agrCommDev
-    d = d.agrCommDevValue
-    range = (@max.agrCommDev - min) / @categories
-    if agrCommDevLevel == 'high'
-      unless d >= min + range * 2
-        op = 0 
-    if agrCommDevLevel == 'medium'
-      unless d >= min + range and d < min + range * 2
-        op = 0  
-    if agrCommDevLevel == 'low'
-      unless d >= min and d < min + range
-        op = 0  
-    if agrCommDevLevel == 'negative'
-      unless d < 0
-        op = 0
-    op
-
   setPressureFill: (op, d) =>
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
@@ -296,8 +276,6 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setProtectionFill op, d
     if @filter.get('pressure') == yes
       op = @setPressureFill op, d
-    if @filter.get('agrCommDevLevel')?
-      op = @setAgrCommDevFill op, d 
     if op == .9 then @currentSelectionCount += 1
     return op
 

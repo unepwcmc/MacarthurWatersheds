@@ -12,20 +12,13 @@
 </div>
 
 {{#if showScenarioGroup}}
-  <div class="{{#if showAgrCommDevSelector}}scenario-container highlight-section{{/if}}">
   {{#if showScenarioSelector}}
     {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
-  {{/if}}
-  {{#if showAgrCommDevSelector}}
-    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
   {{/if}}
   </div>
 {{else}}
   {{#if showScenarioSelector}}
     {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
-  {{/if}}
-  {{#if showAgrCommDevSelector}}
-    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
   {{/if}}
 {{/if}}
 

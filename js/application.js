@@ -224,21 +224,6 @@
         selector: "low",
         name: "Low"
       }
-    ],
-    agrCommDevLevels: [
-      {
-        selector: "high",
-        name: "High"
-      }, {
-        selector: "medium",
-        name: "Medium"
-      }, {
-        selector: "low",
-        name: "Low"
-      }, {
-        selector: "negative",
-        name: "Decrease"
-      }
     ]
   };
 
@@ -639,7 +624,6 @@
       this.filter.unset('lens');
       this.filter.unset('scenario');
       this.filter.unset('level');
-      this.filter.unset('agrCommDevLevel');
       this.filter.unset('protection');
       this.filter.unset('protectionLevel');
       this.filter.unset('pressure');
@@ -748,7 +732,6 @@
       this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.setPressureFill = __bind(this.setPressureFill, this);
-      this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
       this.setProtectionFill = __bind(this.setProtectionFill, this);
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
@@ -792,8 +775,7 @@
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
-      this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
-      return this.listenTo(this.filter, 'change:agrCommDevLevel', this.updateQueryLayerStyle);
+      return this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
     };
 
     MapView.prototype.sortDataBy = function(data, field) {
@@ -1113,35 +1095,6 @@
       return op;
     };
 
-    MapView.prototype.setAgrCommDevFill = function(op, d) {
-      var agrCommDevLevel, min, range;
-      agrCommDevLevel = this.filter.get('agrCommDevLevel');
-      min = this.min.agrCommDev;
-      d = d.agrCommDevValue;
-      range = (this.max.agrCommDev - min) / this.categories;
-      if (agrCommDevLevel === 'high') {
-        if (!(d >= min + range * 2)) {
-          op = 0;
-        }
-      }
-      if (agrCommDevLevel === 'medium') {
-        if (!(d >= min + range && d < min + range * 2)) {
-          op = 0;
-        }
-      }
-      if (agrCommDevLevel === 'low') {
-        if (!(d >= min && d < min + range)) {
-          op = 0;
-        }
-      }
-      if (agrCommDevLevel === 'negative') {
-        if (!(d < 0)) {
-          op = 0;
-        }
-      }
-      return op;
-    };
-
     MapView.prototype.setPressureFill = function(op, d) {
       var pressureLevel;
       pressureLevel = this.filter.get('pressureLevel');
@@ -1172,9 +1125,6 @@
       }
       if (this.filter.get('pressure') === true) {
         op = this.setPressureFill(op, d);
-      }
-      if (this.filter.get('agrCommDevLevel') != null) {
-        op = this.setAgrCommDevFill(op, d);
       }
       if (op === .9) {
         this.currentSelectionCount += 1;
@@ -1732,73 +1682,6 @@
 
 (function() {
   var _base,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  window.Backbone || (window.Backbone = {});
-
-  (_base = window.Backbone).Views || (_base.Views = {});
-
-  Backbone.Views.LevelSelectorAgrCommDevView = (function(_super) {
-    __extends(LevelSelectorAgrCommDevView, _super);
-
-    function LevelSelectorAgrCommDevView() {
-      return LevelSelectorAgrCommDevView.__super__.constructor.apply(this, arguments);
-    }
-
-    LevelSelectorAgrCommDevView.prototype.template = Handlebars.templates['level_selector_agr_comm_dev'];
-
-    LevelSelectorAgrCommDevView.prototype.events = {
-      'change #agr-comm-select': "setLevel"
-    };
-
-    LevelSelectorAgrCommDevView.prototype.initialize = function(options) {
-      LevelSelectorAgrCommDevView.__super__.initialize.apply(this, arguments);
-      this.config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels);
-      this.levelType = 'agrCommDevLevel';
-      if (this.filter.get(this.levelType) == null) {
-        this["default"] = true;
-      }
-      return this.render();
-    };
-
-    LevelSelectorAgrCommDevView.prototype.render = function() {
-      var levels, theSelect;
-      levels = _.map(this.config, (function(_this) {
-        return function(level) {
-          if (_this.filter.get(_this.levelType) === level.selector) {
-            level.selected = true;
-            _this["default"] = false;
-          } else {
-            level.selected = false;
-          }
-          return level;
-        };
-      })(this));
-      this.$el.html(this.template({
-        levels: levels,
-        "default": this["default"],
-        isChangeTab: this.isChangeTab
-      }));
-      theSelect = this.$el.find('.select-box');
-      return setTimeout((function(_this) {
-        return function() {
-          theSelect.customSelect();
-          return _this.$el.find('.customSelectInner').css({
-            'width': '100%'
-          });
-        };
-      })(this), 20);
-    };
-
-    return LevelSelectorAgrCommDevView;
-
-  })(Backbone.Views.BaseSelectorView);
-
-}).call(this);
-
-(function() {
-  var _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2108,7 +1991,6 @@
         showScenarioGroup: this.showScenarioGroup(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
-        showAgrCommDevSelector: this.showAgrCommDevSelector(),
         filter: this.filter,
         resultsNumber: this.resultsNumber
       }));
@@ -2161,10 +2043,6 @@
       return false;
     };
 
-    FilterView.prototype.showAgrCommDevSelector = function() {
-      return this.filter.get('tab') === 'future_threats' && (this.filter.get('scenario') != null);
-    };
-
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
@@ -2175,7 +2053,7 @@
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       if (tab === 'future_threats') {
-        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null) && (this.filter.get('agrCommDevLevel') != null);
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
     };

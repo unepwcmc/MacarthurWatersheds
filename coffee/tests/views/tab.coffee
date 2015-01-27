@@ -66,8 +66,7 @@ test('when the `change` tab selector has been clicked an `active` class
 
 test('when the `Future Threats` tab selector is clicked,
   and the `subject` is selected and the `scenario` is selected
-  and the AgrCommDev level is selected then
-  the LensSelectorView is rendered', ->
+  then the LensSelectorView is rendered', ->
   regions = new Backbone.Collections.RegionCollection MacArthur.CONFIG.regions
   scales = new Backbone.Collections.ScaleCollection MacArthur.CONFIG.scales
   resultsNumber = new Backbone.Models.ResultsNumber({number: 10})
@@ -80,32 +79,23 @@ test('when the `Future Threats` tab selector is clicked,
   )
   lensSelectorRenderSpy = sinon.spy(
     Backbone.Views.LensSelectorView::, 'render')
-  levelSelectorAgrCommDevRenderSpy = sinon.spy(
-    Backbone.Views.LevelSelectorAgrCommDevView::, 'render')
 
   tabView = new Backbone.Views.TabView( filter: filter, resultsNumber: resultsNumber )
 
   lensSelectorRenderCalles = lensSelectorRenderSpy.callCount
-  levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount
 
   tabView.$el.find('li.future_threats-tab').trigger('click')
 
   filter.set('subject', 'biodiversity')
   filter.set('scenario', 'mf2050')
-  filter.set('agrCommDevLevel', 'medium')
 
   try
     assert.isTrue(
       lensSelectorRenderSpy.callCount > lensSelectorRenderCalles,
       "Expected the lensSelectorView to be called"
     )
-    assert.isTrue(
-      levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles,
-      "Expected the levelSelectorAgrCommDevView to be called"
-    )
 
   finally
     lensSelectorRenderSpy.restore()
-    levelSelectorAgrCommDevRenderSpy.restore()
   resultsNumberRenderStub.restore()
 )
