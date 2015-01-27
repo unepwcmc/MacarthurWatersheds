@@ -30,10 +30,9 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       filter: @filter
       resultsNumber: @resultsNumber
     ))
+    console.log(@isThreatsTab)
     @attachSubViews()
-
     @initialiseTooltips()
-    console.log(subjects)
 
     return @
 

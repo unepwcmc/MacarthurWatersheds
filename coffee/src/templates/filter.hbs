@@ -7,10 +7,11 @@
 
   <ul>
     {{# each subjects}}
-    <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{name}}</li>
+      <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{#if ../showScenarioGroup}}{{threatsName}}{{else}}{{name}}{{/if}}</li>
     {{/each}}
   </ul>
 </div>
+
 
 {{#if showScenarioGroup}}
   <div class="{{#if showAgrCommDevSelector}}scenario-container highlight-section{{/if}}">

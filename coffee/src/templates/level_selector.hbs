@@ -1,7 +1,8 @@
-<h1>Level of {{#if isChangeTab}}Change{{else}} Importance{{/if}} <i class="fa fa-info-circle" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{#if isChangeTab}}View results for all watersheds on a subset based on change in the level of biodiversity importance{{else}}View results for all watersheds or a subset based on level of biodiversity importance{{/if}}"></i></h1>
+<h1>Level of {{#if isChangeTab}}Change{{else}}{{#if isBiodiversity}}Biodiversity Importance{{else}}Ecosystem Function Prov.{{/if}}{{/if}} <i class="fa fa-info-circle" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{#if isChangeTab}}View results for all watersheds on a subset based on change in the level of biodiversity importance{{else}}View results for all watersheds or a subset based on level of biodiversity importance{{/if}}"></i></h1>
 
 <select id="levels-select" class='select-box'>
   {{# each levels}}
   <option value="{{selector}}" {{#if selected}}selected{{/if}}>{{name}}</option>
   {{/each}}
 </select>
+  

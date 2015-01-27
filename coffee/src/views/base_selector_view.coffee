@@ -17,6 +17,7 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
     @$el.html(@template(
       levels: levels
       isChangeTab: @isChangeTab
+      isBiodiversity: @isBiodiversity
     ))
 
     # SORRY
@@ -41,3 +42,7 @@ class Backbone.Views.BaseSelectorView extends Backbone.View
 
   isChangeTab: =>
     @filter.get('tab') == 'change'
+
+  isBiodiversity: =>
+    if @filter.attributes.subject == 'biodiversity'
+      return true

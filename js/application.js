@@ -49,10 +49,12 @@
     subjects: [
       {
         selector: "biodiversity",
-        name: "Biodiversity importance"
+        name: "Biodiversity importance",
+        threatsName: "Threats to current Biodiversity"
       }, {
         selector: "ecosystem",
-        name: "Ecosystem function provision"
+        name: "Ecosystem function provision",
+        threatsName: "Threats to current ecosystem function"
       }
     ],
     lenses: {
@@ -669,6 +671,7 @@
     __extends(BaseSelectorView, _super);
 
     function BaseSelectorView() {
+      this.isBiodiversity = __bind(this.isBiodiversity, this);
       this.isChangeTab = __bind(this.isChangeTab, this);
       this.setDefaultLevel = __bind(this.setDefaultLevel, this);
       return BaseSelectorView.__super__.constructor.apply(this, arguments);
@@ -692,7 +695,8 @@
       })(this));
       this.$el.html(this.template({
         levels: levels,
-        isChangeTab: this.isChangeTab
+        isChangeTab: this.isChangeTab,
+        isBiodiversity: this.isBiodiversity
       }));
       theSelect = this.$el.find('.select-box');
       return setTimeout((function(_this) {
@@ -723,6 +727,12 @@
 
     BaseSelectorView.prototype.isChangeTab = function() {
       return this.filter.get('tab') === 'change';
+    };
+
+    BaseSelectorView.prototype.isBiodiversity = function() {
+      if (this.filter.attributes.subject === 'biodiversity') {
+        return true;
+      }
     };
 
     return BaseSelectorView;
@@ -2042,9 +2052,9 @@
         filter: this.filter,
         resultsNumber: this.resultsNumber
       }));
+      console.log(this.isThreatsTab);
       this.attachSubViews();
       this.initialiseTooltips();
-      console.log(subjects);
       return this;
     };
 

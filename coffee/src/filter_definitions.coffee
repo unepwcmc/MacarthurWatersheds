@@ -27,8 +27,8 @@ MacArthur.CONFIG =
     { code: "regional", name: "Regional", tooltip: "Regionally developed scenarios were used to analyse a subset of three countries in each region"}
   ,]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity importance"}
-    { selector: "ecosystem", name: "Ecosystem function provision"}
+    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity"}
+    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function"}
   ],
   lenses: {
     biodiversity: [
