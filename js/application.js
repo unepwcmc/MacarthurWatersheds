@@ -767,8 +767,14 @@
 
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
-      'now': ["#fcbba1", "#67000d"],
-      'future_threats': ["#fcbba1", "#67000d"]
+      'now': ["#fcbba1", "#67000d"]
+    };
+
+    MapView.prototype.futureThreatsColorRange = {
+      'high_agricultural_colour': ["#deebf7", "#3182bd"],
+      'medium_agricultural_colour': ["#efedf5", "#756bb1"],
+      'low_agricultural_colour': ["#fee0d2", "#de2d26"],
+      'negative_agricultural_colour': ["#fee0d2", "#de2d26"]
     };
 
     MapView.prototype.legendText = {
@@ -851,29 +857,34 @@
         colours = colorRange.join(', ');
         style = "linear-gradient(to right, " + colours + ");";
         return "<div class='map-legend-gradient' style='background: " + style + "'>";
+      }
+      if (tab = 'future_threats') {
+
       } else {
         return "<div class='map-legend-gradient nogradient " + tab + "'>";
       }
     };
 
     MapView.prototype.setLegend = function() {
-      if (this.legend) {
-        this.unsetLegend();
+      if (this.filter.get('tab') !== 'future_threats') {
+        if (this.legend) {
+          this.unsetLegend();
+        }
+        this.legend = L.control({
+          position: "bottomleft"
+        });
+        this.legend.onAdd = (function(_this) {
+          return function(map) {
+            var div, tab, title;
+            div = L.DomUtil.create("div", "info legend");
+            tab = _this.filter.get('tab');
+            title = tab === 'change' ? 'change' : 'importance';
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
+            return div;
+          };
+        })(this);
+        return this.legend.addTo(this.map);
       }
-      this.legend = L.control({
-        position: "bottomleft"
-      });
-      this.legend.onAdd = (function(_this) {
-        return function(map) {
-          var div, tab, title;
-          div = L.DomUtil.create("div", "info legend");
-          tab = _this.filter.get('tab');
-          title = tab === 'change' ? 'change' : 'importance';
-          div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>          \n</div>";
-          return div;
-        };
-      })(this);
-      return this.legend.addTo(this.map);
     };
 
     MapView.prototype.unsetLegend = function() {
@@ -992,7 +1003,7 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var isZero, middle_gradient, rank, tab;
+      var d, isZero, max, middle_gradient, min, range, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
       isZero = _.find(this.zeroValueIndexes, function(i) {
@@ -1011,9 +1022,31 @@
           }
         }
         if (rank > middle_gradient) {
-          return this.colorPositive(rank);
+          this.colorPositive(rank);
         } else {
-          return this.colorNegative(rank);
+          this.colorNegative(rank);
+        }
+      }
+      if (tab === 'future_threats') {
+        d = this.querydata[feature].agrCommDevValue;
+        max = this.max.agrCommDev;
+        if (this.min.agrCommDev > 0) {
+          min = this.min.agrCommDev;
+        } else {
+          min = 0;
+        }
+        range = (max - min) / this.categories;
+        if (d > min + range * 2) {
+          return this.high_agricultural_colour(rank);
+        }
+        if (d >= min + range && d < min + range * 2) {
+          return this.medium_agricultural_colour(rank);
+        }
+        if (d >= min && d < min + range) {
+          return this.low_agricultural_colour(rank);
+        }
+        if (d < 0) {
+          return this.negative_agricultural_colour(rank);
         }
       } else {
         return this.color(rank);
@@ -1263,12 +1296,28 @@
       return this.colorPositive = d3.scale.linear().domain(domain).range(range);
     };
 
+    MapView.prototype.setFutureThreatsLinearScaleColour = function() {
+      var domain, range_high, range_low, range_medium, range_negative;
+      domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
+      range_high = this.futureThreatsColorRange['high_agricultural_colour'];
+      range_medium = this.futureThreatsColorRange['medium_agricultural_colour'];
+      range_low = this.futureThreatsColorRange['low_agricultural_colour'];
+      range_negative = this.futureThreatsColorRange['negative_agricultural_colour'];
+      this.high_agricultural_colour = d3.scale.linear().domain(domain).range(range_high);
+      this.medium_agricultural_colour = d3.scale.linear().domain(domain).range(range_medium);
+      this.low_agricultural_colour = d3.scale.linear().domain(domain).range(range_low);
+      return this.negative_agricultural_colour = d3.scale.linear().domain(domain).range(range_negative);
+    };
+
     MapView.prototype.setLinearScaleColour = function() {
       var domain, range, tab;
       tab = this.filter.get('tab');
       if (tab === 'change') {
         this.setNegativeLinearScaleColour(tab);
-        return this.setPositiveLinearScaleColour(tab);
+        this.setPositiveLinearScaleColour(tab);
+      }
+      if (tab === 'future_threats') {
+        return this.setFutureThreatsLinearScaleColour();
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
         range = this.colorRange[tab];

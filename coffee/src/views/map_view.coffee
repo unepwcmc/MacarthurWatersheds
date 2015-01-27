@@ -7,7 +7,12 @@ class Backbone.Views.MapView extends Backbone.View
   colorRange:
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
-    'future_threats': ["#fcbba1", "#67000d"]
+
+  futureThreatsColorRange:
+    'high_agricultural_colour': ["#deebf7", "#3182bd"]
+    'medium_agricultural_colour': ["#efedf5", "#756bb1"]
+    'low_agricultural_colour': ["#fee0d2", "#de2d26"]
+    'negative_agricultural_colour': ["#fee0d2", "#de2d26"]
 
   legendText:
     'change': ['Decrease', 'Increase']
@@ -66,28 +71,30 @@ class Backbone.Views.MapView extends Backbone.View
       colorRange = _.cloneDeep(@colorRange[tab])
       colours = colorRange.join(', ')
       style = "linear-gradient(to right, #{colours});"
-      return "<div class='map-legend-gradient' style='background: #{style}'>" 
+      return "<div class='map-legend-gradient' style='background: #{style}'>"
+    if tab = 'future_threats'
     else
       return "<div class='map-legend-gradient nogradient #{tab}'>"
 
   setLegend: () =>
-    if @legend then @unsetLegend()
-    @legend = L.control(position: "bottomleft")
-    @legend.onAdd = (map) =>
-      div = L.DomUtil.create("div", "info legend")
-      tab = @filter.get('tab')
-      title = if tab == 'change' then 'change' else 'importance'
-      div.innerHTML = """
-        <div class='map-legend-text'>
-          <h3 class='legend-title'>Level of #{title}</h3>
-        </div>
-          #{@getLegendGradientElement(tab)}
-          <span>#{@legendText[tab][0]}</span>
-          <span>#{@legendText[tab][1]}</span>          
-        </div>
-      """
-      div
-    @legend.addTo @map
+    if @filter.get('tab') != 'future_threats'
+      if @legend then @unsetLegend()
+      @legend = L.control(position: "bottomleft")
+      @legend.onAdd = (map) =>
+        div = L.DomUtil.create("div", "info legend")
+        tab = @filter.get('tab')
+        title = if tab == 'change' then 'change' else 'importance'
+        div.innerHTML = """
+          <div class='map-legend-text'>
+            <h3 class='legend-title'>Level of #{title}</h3>
+          </div>
+            #{@getLegendGradientElement(tab)}
+            <span>#{@legendText[tab][0]}</span>
+            <span>#{@legendText[tab][1]}</span>
+          </div>
+        """
+        div
+      @legend.addTo @map
 
   unsetLegend: =>
     if @legend then @legend.removeFrom @map
@@ -196,6 +203,18 @@ class Backbone.Views.MapView extends Backbone.View
         @colorPositive(rank)
       else
         @colorNegative(rank)
+    if tab == 'future_threats'
+      d = @querydata[feature].agrCommDevValue
+      max = @max.agrCommDev
+      if @min.agrCommDev > 0
+        min = @min.agrCommDev
+      else
+        min = 0
+      range = (max - min) / @categories
+      return @high_agricultural_colour(rank)  if d > min + range * 2
+      return @medium_agricultural_colour(rank)  if d >= min + range and d < min + range * 2
+      return @low_agricultural_colour(rank)  if d >= min and d < min + range
+      @negative_agricultural_colour rank  if d < 0
     else
       @color(rank)
 
@@ -369,11 +388,24 @@ class Backbone.Views.MapView extends Backbone.View
       range = @colorRange[tab][-2..]
       @colorPositive = d3.scale.linear().domain(domain).range(range)
 
+  setFutureThreatsLinearScaleColour: ->
+    domain = [@min[@styleValueField], @max[@styleValueField]]
+    range_high = @futureThreatsColorRange['high_agricultural_colour']
+    range_medium = @futureThreatsColorRange['medium_agricultural_colour']
+    range_low = @futureThreatsColorRange['low_agricultural_colour']
+    range_negative = @futureThreatsColorRange['negative_agricultural_colour']
+    @high_agricultural_colour = d3.scale.linear().domain(domain).range(range_high)
+    @medium_agricultural_colour = d3.scale.linear().domain(domain).range(range_medium)
+    @low_agricultural_colour = d3.scale.linear().domain(domain).range(range_low)
+    @negative_agricultural_colour = d3.scale.linear().domain(domain).range(range_negative)
+
   setLinearScaleColour: ->
     tab = @filter.get('tab')
     if tab == 'change'
       @setNegativeLinearScaleColour tab
       @setPositiveLinearScaleColour tab
+    if tab == 'future_threats'
+      @setFutureThreatsLinearScaleColour()
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]
       range = @colorRange[tab]
