@@ -1026,11 +1026,11 @@
       }
       if (tab === 'future_threats') {
         d = this.querydata[feature].agrCommDevValue;
-        futureThreatsColorpleth = this.colorRange[futureThreatsColorpleth];
+        futureThreatsColorpleth = this.colorRange.futureThreatsColorpleth;
         min_agr = this.min.agrCommDev;
         max_agr = this.max.agrCommDev;
-        max_val = this.max.styleValueField;
-        min_val = this.min.styleValueField;
+        max_val = this.max[this.styleValueField];
+        min_val = this.min[this.styleValueField];
         range_agr = (max_agr - min_agr) / 3;
         range_val = (max_val - min_val) / 3;
         if (rank < min_val + range_val) {

@@ -224,11 +224,11 @@ class Backbone.Views.MapView extends Backbone.View
         @colorNegative(rank)
     if tab == 'future_threats'
       d = @querydata[feature].agrCommDevValue
-      futureThreatsColorpleth = @colorRange[futureThreatsColorpleth]
+      futureThreatsColorpleth = @colorRange.futureThreatsColorpleth
       min_agr = @min.agrCommDev
       max_agr = @max.agrCommDev
-      max_val = @max.styleValueField
-      min_val = @min.styleValueField
+      max_val = @max[@styleValueField]
+      min_val = @min[@styleValueField]
       range_agr = (( max_agr - min_agr ) /3)
       range_val = (( max_val - min_val ) /3)
       if rank < min_val + range_val
