@@ -30,9 +30,9 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       filter: @filter
       resultsNumber: @resultsNumber
     ))
-    console.log(@isThreatsTab)
     @attachSubViews()
     @initialiseTooltips()
+    $('.popover[role="tooltip"]').remove() 
 
     return @
 
@@ -46,6 +46,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
   onClose: ->
     @closeSubViews()
     @stopListening()
+     
 
   showLensSelector: ->
     tab = @filter.get('tab')

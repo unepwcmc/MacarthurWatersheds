@@ -50,11 +50,13 @@
       {
         selector: "biodiversity",
         name: "Biodiversity importance",
-        threatsName: "Threats to current Biodiversity"
+        threatsName: "Threats to current Biodiversity",
+        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover change between 2005 and 2050."
       }, {
         selector: "ecosystem",
         name: "Ecosystem function provision",
-        threatsName: "Threats to current ecosystem function"
+        threatsName: "Threats to current ecosystem function",
+        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover change between 2005 and 2050."
       }
     ],
     lenses: {
@@ -80,7 +82,7 @@
       ecosystem: [
         {
           selector: "totef",
-          name: "Total EF provision",
+          name: "Total Ecosystem Function Provision",
           "default": true
         }, {
           selector: "comprov",
@@ -193,13 +195,13 @@
           name: "Increase"
         }, {
           selector: "low",
-          name: "Low"
+          name: "Low Decrease"
         }, {
           selector: "medium",
-          name: "Medium"
+          name: "Medium Decrease"
         }, {
           selector: "high",
-          name: "High"
+          name: "High Decrease"
         }
       ]
     },
@@ -232,13 +234,13 @@
     agrCommDevLevels: [
       {
         selector: "high",
-        name: "High"
+        name: "High Increase"
       }, {
         selector: "medium",
-        name: "Medium"
+        name: "Medium Increase"
       }, {
         selector: "low",
-        name: "Low"
+        name: "Low Increase"
       }, {
         selector: "negative",
         name: "Decrease"
@@ -1535,6 +1537,7 @@
         scenarios: scenarios,
         defaultOption: defaultOption,
         scenarioDescription: scenarioDescription,
+        isFutureTab: this.isFutureTab(),
         pdf: pdf
       }));
       theSelect = this.$el.find('.select-box');
@@ -1564,6 +1567,16 @@
         return 'These scenarios are based on UNEP GEO4';
       } else {
         return 'These scenarios are based on regional scenarios and workshops';
+      }
+    };
+
+    ScenarioSelectorView.prototype.isFutureTab = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        return true;
+      } else {
+        return false;
       }
     };
 
@@ -2052,9 +2065,9 @@
         filter: this.filter,
         resultsNumber: this.resultsNumber
       }));
-      console.log(this.isThreatsTab);
       this.attachSubViews();
       this.initialiseTooltips();
+      $('.popover[role="tooltip"]').remove();
       return this;
     };
 

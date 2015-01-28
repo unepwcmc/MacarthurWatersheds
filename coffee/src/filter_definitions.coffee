@@ -27,8 +27,8 @@ MacArthur.CONFIG =
     { code: "regional", name: "Regional", tooltip: "Regionally developed scenarios were used to analyse a subset of three countries in each region"}
   ,]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity"}
-    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function"}
+    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity", tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover change between 2005 and 2050."}
+    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function", tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover change between 2005 and 2050."}
   ],
   lenses: {
     biodiversity: [
@@ -39,7 +39,7 @@ MacArthur.CONFIG =
       { selector: "aves", name: "Birds" }
     ]
     ecosystem: [
-      { selector: "totef", name: "Total EF provision", default: true }
+      { selector: "totef", name: "Total Ecosystem Function Provision", default: true }
       { selector: "comprov", name: "Commodity provision (cultivated products)" }
       { selector: "wildprov", name: "Wild provision" }
       { selector: "regprov", name: "Regulating functions provision" }
@@ -123,9 +123,9 @@ MacArthur.CONFIG =
     change: [
       { selector: "all", name: "All", default: true }
       { selector: "increase", name: "Increase" }
-      { selector: "low", name: "Low" }
-      { selector: "medium", name: "Medium" }
-      { selector: "high", name: "High" }
+      { selector: "low", name: "Low Decrease" }
+      { selector: "medium", name: "Medium Decrease" }
+      { selector: "high", name: "High Decrease" }
     ]
   },
   protectionLevels: [
@@ -139,9 +139,9 @@ MacArthur.CONFIG =
     { selector: "low", name: "Low" }
   ],
   agrCommDevLevels: [
-    { selector: "high", name: "High" }
-    { selector: "medium", name: "Medium" }
-    { selector: "low", name: "Low" }
+    { selector: "high", name: "High Increase" }
+    { selector: "medium", name: "Medium Increase" }
+    { selector: "low", name: "Low Increase" }
     { selector: "negative", name: "Decrease" }
   ]
 
