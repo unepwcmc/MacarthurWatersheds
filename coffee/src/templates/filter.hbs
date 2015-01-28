@@ -7,7 +7,7 @@
 
   <ul>
     {{# each subjects}}
-      <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}" data-container="body" data-toggle="popover" data-placement="left" data-content="{{tooltip}}">{{#if ../showScenarioGroup}}{{threatsName}}{{else}}{{name}}{{/if}}</li>
+      <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}" data-container="body" data-toggle="popover" data-placement="left" data-content="{{tooltip}} <a href='www.google.com'>Google</a>">{{#if ../showScenarioGroup}}{{threatsName}}{{else}}{{name}}{{/if}}</li>
     {{/each}}
   </ul>
 </div>

@@ -2073,7 +2073,11 @@
 
     FilterView.prototype.initialiseTooltips = function() {
       return this.$el.find("[data-toggle=\"popover\"]").popover({
-        trigger: "hover"
+        trigger: "hover",
+        html: true,
+        delay: {
+          hide: 500
+        }
       });
     };
 

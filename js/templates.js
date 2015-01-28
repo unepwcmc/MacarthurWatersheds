@@ -17,7 +17,7 @@ function program1(depth0,data,depth1) {
   if (stack1 = helpers.tooltip) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.tooltip); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\">";
+    + " <a href='www.google.com'>Google</a>\">";
   stack1 = helpers['if'].call(depth0, (depth1 && depth1.showScenarioGroup), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "</li>\n    ";
