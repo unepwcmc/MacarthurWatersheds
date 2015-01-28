@@ -750,14 +750,15 @@
 
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
-      'now': ["#fcbba1", "#67000d"]
+      'now': ["#fcbba1", "#67000d"],
+      'futureThreatsColorpleth': [['#deebf7', '#9ecae1', '#3182bd'], ['#e5f5e0', '#a1d99b', '#31a354'], ['#fee6ce', '#fdae6b', '#e6550d']]
     };
 
     MapView.prototype.futureThreatsColorRange = {
       'high_agricultural_colour': ["#deebf7", "#3182bd"],
       'medium_agricultural_colour': ["#efedf5", "#756bb1"],
       'low_agricultural_colour': ["#fee0d2", "#de2d26"],
-      'negative_agricultural_colour': ["#fee0d2", "#de2d26"]
+      'negative_agricultural_colour': ["#ffffff", "#000000"]
     };
 
     MapView.prototype.legendText = {
@@ -832,41 +833,55 @@
       })(this));
     };
 
-    MapView.prototype.getLegendGradientElement = function(tab) {
-      var colorRange, colours, style;
-      if (Modernizr.cssgradients) {
-        colorRange = _.cloneDeep(this.colorRange[tab]);
-        colours = colorRange.join(', ');
-        style = "linear-gradient(to right, " + colours + ");";
-        return "<div class='map-legend-gradient' style='background: " + style + "'>";
-      }
-      if (tab = 'future_threats') {
+    MapView.prototype.htmlGradientElement = function(colorRange) {
+      var colours, style;
+      colorRange = _.cloneDeep(colorRange);
+      colours = colorRange.join(', ');
+      style = "linear-gradient(to right, " + colours + ");";
+      return "<div class='map-legend-gradient' style='background: " + style + "'>";
+    };
 
+    MapView.prototype.getLegendGradientElement = function(tab) {
+      var html_element, k, v, _ref;
+      if (Modernizr.cssgradients) {
+        if (tab === 'future_threats') {
+          html_element = '';
+          _ref = this.futureThreatsColorRange;
+          for (k in _ref) {
+            v = _ref[k];
+            html_element = html_element.concat("" + (this.htmlGradientElement(v)) + "</div>");
+          }
+          return html_element;
+        } else {
+          return this.htmlGradientElement(this.colorRange[tab]);
+        }
       } else {
         return "<div class='map-legend-gradient nogradient " + tab + "'>";
       }
     };
 
     MapView.prototype.setLegend = function() {
-      if (this.filter.get('tab') !== 'future_threats') {
-        if (this.legend) {
-          this.unsetLegend();
-        }
-        this.legend = L.control({
-          position: "bottomleft"
-        });
-        this.legend.onAdd = (function(_this) {
-          return function(map) {
-            var div, tab, title;
-            div = L.DomUtil.create("div", "info legend");
-            tab = _this.filter.get('tab');
-            title = tab === 'change' ? 'change' : 'importance';
-            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
-            return div;
-          };
-        })(this);
-        return this.legend.addTo(this.map);
+      if (this.legend) {
+        this.unsetLegend();
       }
+      this.legend = L.control({
+        position: "bottomleft"
+      });
+      this.legend.onAdd = (function(_this) {
+        return function(map) {
+          var div, tab, title;
+          div = L.DomUtil.create("div", "info legend");
+          tab = _this.filter.get('tab');
+          title = tab === 'change' ? 'change' : 'importance';
+          if (tab === 'future_threats') {
+            div.innerHTML = "  <div class='map-legend-y-axis-label'>\n    <h3>Agr. Dev. Level</h3>\n  </div>\n" + (_this.getLegendGradientElement(tab));
+          } else {
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
+          }
+          return div;
+        };
+      })(this);
+      return this.legend.addTo(this.map);
     };
 
     MapView.prototype.unsetLegend = function() {
@@ -985,7 +1000,7 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, isZero, max, middle_gradient, min, range, rank, tab;
+      var d, futureThreatsColorpleth, isZero, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
       isZero = _.find(this.zeroValueIndexes, function(i) {
@@ -1011,24 +1026,45 @@
       }
       if (tab === 'future_threats') {
         d = this.querydata[feature].agrCommDevValue;
-        max = this.max.agrCommDev;
-        if (this.min.agrCommDev > 0) {
-          min = this.min.agrCommDev;
-        } else {
-          min = 0;
+        futureThreatsColorpleth = this.colorRange[futureThreatsColorpleth];
+        min_agr = this.min.agrCommDev;
+        max_agr = this.max.agrCommDev;
+        max_val = this.max.styleValueField;
+        min_val = this.min.styleValueField;
+        range_agr = (max_agr - min_agr) / 3;
+        range_val = (max_val - min_val) / 3;
+        if (rank < min_val + range_val) {
+          if (d < min_agr + range_agr) {
+            return futureThreatsColorpleth[0][0];
+          }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return futureThreatsColorpleth[0][1];
+          }
+          if (d > min_agr + range_agr) {
+            return futureThreatsColorpleth[0][2];
+          }
         }
-        range = (max - min) / this.categories;
-        if (d > min + range * 2) {
-          return this.high_agricultural_colour(rank);
+        if (rank < min_val + 2 * range_val && rank > min_val + range_val) {
+          if (d < min_agr + range_agr) {
+            return futureThreatsColorpleth[1][0];
+          }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return futureThreatsColorpleth[1][1];
+          }
+          if (d > min_agr + range_agr) {
+            return futureThreatsColorpleth[1][2];
+          }
         }
-        if (d >= min + range && d < min + range * 2) {
-          return this.medium_agricultural_colour(rank);
-        }
-        if (d >= min && d < min + range) {
-          return this.low_agricultural_colour(rank);
-        }
-        if (d < 0) {
-          return this.negative_agricultural_colour(rank);
+        if (rank > min_val + 2 * range_val) {
+          if (d < min_agr + range_agr) {
+            return futureThreatsColorpleth[2][0];
+          }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return futureThreatsColorpleth[2][1];
+          }
+          if (d > min_agr + range_agr) {
+            return futureThreatsColorpleth[2][2];
+          }
         }
       } else {
         return this.color(rank);

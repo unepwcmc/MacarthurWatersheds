@@ -7,12 +7,17 @@ class Backbone.Views.MapView extends Backbone.View
   colorRange:
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
+    'futureThreatsColorpleth': [
+                                ['#deebf7', '#9ecae1', '#3182bd'],
+                                ['#e5f5e0', '#a1d99b', '#31a354'],
+                                ['#fee6ce', '#fdae6b', '#e6550d']
+                               ]
 
   futureThreatsColorRange:
     'high_agricultural_colour': ["#deebf7", "#3182bd"]
     'medium_agricultural_colour': ["#efedf5", "#756bb1"]
     'low_agricultural_colour': ["#fee0d2", "#de2d26"]
-    'negative_agricultural_colour': ["#fee0d2", "#de2d26"]
+    'negative_agricultural_colour': ["#ffffff", "#000000"]
 
   legendText:
     'change': ['Decrease', 'Increase']
@@ -65,24 +70,39 @@ class Backbone.Views.MapView extends Backbone.View
     @map.setView(regionCentre, 5, {animate: false})
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
+  htmlGradientElement: (colorRange) ->
+    colorRange = _.cloneDeep(colorRange)
+    colours = colorRange.join(', ')
+    style = "linear-gradient(to right, #{colours});"
+    return "<div class='map-legend-gradient' style='background: #{style}'>"
+
   getLegendGradientElement: (tab) ->
     if Modernizr.cssgradients
-      colorRange = _.cloneDeep(@colorRange[tab])
-      colours = colorRange.join(', ')
-      style = "linear-gradient(to right, #{colours});"
-      return "<div class='map-legend-gradient' style='background: #{style}'>"
-    if tab = 'future_threats'
+      if tab == 'future_threats'
+        html_element = ''
+        for k,v of @futureThreatsColorRange
+          html_element = html_element.concat("#{@htmlGradientElement(v)}</div>")
+        return html_element
+      else
+        @htmlGradientElement(@colorRange[tab])
     else
       return "<div class='map-legend-gradient nogradient #{tab}'>"
 
   setLegend: () =>
-    if @filter.get('tab') != 'future_threats'
-      if @legend then @unsetLegend()
-      @legend = L.control(position: "bottomleft")
-      @legend.onAdd = (map) =>
-        div = L.DomUtil.create("div", "info legend")
-        tab = @filter.get('tab')
-        title = if tab == 'change' then 'change' else 'importance'
+    if @legend then @unsetLegend()
+    @legend = L.control(position: "bottomleft")
+    @legend.onAdd = (map) =>
+      div = L.DomUtil.create("div", "info legend")
+      tab = @filter.get('tab')
+      title = if tab == 'change' then 'change' else 'importance'
+      if tab == 'future_threats'
+        div.innerHTML = """
+            <div class='map-legend-y-axis-label'>
+              <h3>Agr. Dev. Level</h3>
+            </div>
+          #{@getLegendGradientElement(tab)}
+        """
+      else
         div.innerHTML = """
           <div class='map-legend-text'>
             <h3 class='legend-title'>Level of #{title}</h3>
@@ -92,8 +112,8 @@ class Backbone.Views.MapView extends Backbone.View
             <span>#{@legendText[tab][1]}</span>
           </div>
         """
-        div
-      @legend.addTo @map
+      div
+    @legend.addTo @map
 
   unsetLegend: =>
     if @legend then @legend.removeFrom @map
@@ -204,16 +224,47 @@ class Backbone.Views.MapView extends Backbone.View
         @colorNegative(rank)
     if tab == 'future_threats'
       d = @querydata[feature].agrCommDevValue
-      max = @max.agrCommDev
-      if @min.agrCommDev > 0
-        min = @min.agrCommDev
-      else
-        min = 0
-      range = (max - min) / @categories
-      return @high_agricultural_colour(rank)  if d > min + range * 2
-      return @medium_agricultural_colour(rank)  if d >= min + range and d < min + range * 2
-      return @low_agricultural_colour(rank)  if d >= min and d < min + range
-      @negative_agricultural_colour rank  if d < 0
+      futureThreatsColorpleth = @colorRange[futureThreatsColorpleth]
+      min_agr = @min.agrCommDev
+      max_agr = @max.agrCommDev
+      max_val = @max.styleValueField
+      min_val = @min.styleValueField
+      range_agr = (( max_agr - min_agr ) /3)
+      range_val = (( max_val - min_val ) /3)
+      if rank < min_val + range_val
+        if d < min_agr + range_agr
+          return futureThreatsColorpleth[0][0]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return futureThreatsColorpleth[0][1]
+        if d > min_agr + range_agr
+          return futureThreatsColorpleth[0][2]
+      if rank < min_val + 2 * range_val and rank > min_val + range_val
+        if d < min_agr + range_agr
+          return futureThreatsColorpleth[1][0]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return futureThreatsColorpleth[1][1]
+        if d > min_agr + range_agr
+          return futureThreatsColorpleth[1][2]
+      if rank > min_val + 2 * range_val
+        if d < min_agr + range_agr
+          return futureThreatsColorpleth[2][0]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return futureThreatsColorpleth[2][1]
+        if d > min_agr + range_agr
+          return futureThreatsColorpleth[2][2]
+  # In case of multiple gradients:
+
+  #    d = @querydata[feature].agrCommDevValue
+  #    max = @max.agrCommDev
+  #    if @min.agrCommDev > 0
+  #      min = @min.agrCommDev
+  #    else
+  #      min = 0
+  #    range = (max - min) / @categories
+  #    return @high_agricultural_colour(rank)  if d > min + range * 2
+  #    return @medium_agricultural_colour(rank)  if d >= min + range and d < min + range * 2
+  #    return @low_agricultural_colour(rank)  if d >= min and d < min + range
+  #    @negative_agricultural_colour rank  if d < 0
     else
       @color(rank)
 
