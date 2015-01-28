@@ -860,6 +860,20 @@
       }
     };
 
+    MapView.prototype.legendGrid = function() {
+      var colour, html_element, value, _i, _j, _len, _len1, _ref;
+      html_element = '';
+      _ref = this.futureThreatsColorpleth;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        value = _ref[_i];
+        for (_j = 0, _len1 = value.length; _j < _len1; _j++) {
+          colour = value[_j];
+          html_element = html_element.concat("<div class='map-legend-grid-square' \nstyle=background-color:" + colour + ";></div>");
+        }
+      }
+      return html_element;
+    };
+
     MapView.prototype.setLegend = function() {
       if (this.legend) {
         this.unsetLegend();
@@ -874,7 +888,7 @@
           tab = _this.filter.get('tab');
           title = tab === 'change' ? 'change' : 'importance';
           if (tab === 'future_threats') {
-            div.innerHTML = "  <div class='map-legend-y-axis-label'>\n    <h3>Agr. Dev. Level</h3>\n  </div>\n" + (_this.getLegendGradientElement(tab));
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n<div class='map-legend-grid'>\n  " + (_this.legendGrid()) + "\n</div>";
           } else {
             div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
           }
@@ -1000,7 +1014,7 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, futureThreatsColorpleth, isZero, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
+      var d, isZero, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
       isZero = _.find(this.zeroValueIndexes, function(i) {
@@ -1026,7 +1040,7 @@
       }
       if (tab === 'future_threats') {
         d = this.querydata[feature].agrCommDevValue;
-        futureThreatsColorpleth = this.colorRange.futureThreatsColorpleth;
+        this.futureThreatsColorpleth = this.colorRange.futureThreatsColorpleth;
         min_agr = this.min.agrCommDev;
         max_agr = this.max.agrCommDev;
         max_val = this.max[this.styleValueField];
@@ -1035,35 +1049,35 @@
         range_val = (max_val - min_val) / 3;
         if (rank < min_val + range_val) {
           if (d < min_agr + range_agr) {
-            return futureThreatsColorpleth[0][0];
+            return this.futureThreatsColorpleth[0][0];
           }
           if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
-            return futureThreatsColorpleth[0][1];
+            return this.futureThreatsColorpleth[0][1];
           }
           if (d > min_agr + range_agr) {
-            return futureThreatsColorpleth[0][2];
+            return this.futureThreatsColorpleth[0][2];
           }
         }
         if (rank < min_val + 2 * range_val && rank > min_val + range_val) {
           if (d < min_agr + range_agr) {
-            return futureThreatsColorpleth[1][0];
+            return this.futureThreatsColorpleth[1][0];
           }
           if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
-            return futureThreatsColorpleth[1][1];
+            return this.futureThreatsColorpleth[1][1];
           }
           if (d > min_agr + range_agr) {
-            return futureThreatsColorpleth[1][2];
+            return this.futureThreatsColorpleth[1][2];
           }
         }
         if (rank > min_val + 2 * range_val) {
           if (d < min_agr + range_agr) {
-            return futureThreatsColorpleth[2][0];
+            return this.futureThreatsColorpleth[2][0];
           }
           if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
-            return futureThreatsColorpleth[2][1];
+            return this.futureThreatsColorpleth[2][1];
           }
           if (d > min_agr + range_agr) {
-            return futureThreatsColorpleth[2][2];
+            return this.futureThreatsColorpleth[2][2];
           }
         }
       } else {

@@ -88,6 +88,14 @@ class Backbone.Views.MapView extends Backbone.View
     else
       return "<div class='map-legend-gradient nogradient #{tab}'>"
 
+  legendGrid: () ->
+    html_element = ''
+    for value in @futureThreatsColorpleth
+      for colour in value
+        html_element = html_element.concat("""<div class='map-legend-grid-square' 
+                                              style=background-color:#{colour};></div>""")
+    return html_element
+
   setLegend: () =>
     if @legend then @unsetLegend()
     @legend = L.control(position: "bottomleft")
@@ -96,12 +104,23 @@ class Backbone.Views.MapView extends Backbone.View
       tab = @filter.get('tab')
       title = if tab == 'change' then 'change' else 'importance'
       if tab == 'future_threats'
+        #categories option
         div.innerHTML = """
-            <div class='map-legend-y-axis-label'>
-              <h3>Agr. Dev. Level</h3>
-            </div>
-          #{@getLegendGradientElement(tab)}
+          <div class='map-legend-text'>
+            <h3 class='legend-title'>Level of #{title}</h3>
+          </div>
+          <div class='map-legend-grid'>
+            #{@legendGrid()}
+          </div>
         """
+
+        # gradient option
+        # div.innerHTML = """
+        #     <div class='map-legend-y-axis-label'>
+        #       <h3>Agr. Dev. Level</h3>
+        #     </div>
+        #   #{@getLegendGradientElement(tab)}
+        # """
       else
         div.innerHTML = """
           <div class='map-legend-text'>
@@ -224,7 +243,7 @@ class Backbone.Views.MapView extends Backbone.View
         @colorNegative(rank)
     if tab == 'future_threats'
       d = @querydata[feature].agrCommDevValue
-      futureThreatsColorpleth = @colorRange.futureThreatsColorpleth
+      @futureThreatsColorpleth = @colorRange.futureThreatsColorpleth
       min_agr = @min.agrCommDev
       max_agr = @max.agrCommDev
       max_val = @max[@styleValueField]
@@ -233,25 +252,25 @@ class Backbone.Views.MapView extends Backbone.View
       range_val = (( max_val - min_val ) /3)
       if rank < min_val + range_val
         if d < min_agr + range_agr
-          return futureThreatsColorpleth[0][0]
+          return @futureThreatsColorpleth[0][0]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return futureThreatsColorpleth[0][1]
+          return @futureThreatsColorpleth[0][1]
         if d > min_agr + range_agr
-          return futureThreatsColorpleth[0][2]
+          return @futureThreatsColorpleth[0][2]
       if rank < min_val + 2 * range_val and rank > min_val + range_val
         if d < min_agr + range_agr
-          return futureThreatsColorpleth[1][0]
+          return @futureThreatsColorpleth[1][0]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return futureThreatsColorpleth[1][1]
+          return @futureThreatsColorpleth[1][1]
         if d > min_agr + range_agr
-          return futureThreatsColorpleth[1][2]
+          return @futureThreatsColorpleth[1][2]
       if rank > min_val + 2 * range_val
         if d < min_agr + range_agr
-          return futureThreatsColorpleth[2][0]
+          return @futureThreatsColorpleth[2][0]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return futureThreatsColorpleth[2][1]
+          return @futureThreatsColorpleth[2][1]
         if d > min_agr + range_agr
-          return futureThreatsColorpleth[2][2]
+          return @futureThreatsColorpleth[2][2]
   # In case of multiple gradients:
 
   #    d = @querydata[feature].agrCommDevValue
