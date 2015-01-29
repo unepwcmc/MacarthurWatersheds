@@ -39,11 +39,11 @@
       {
         code: "broadscale",
         name: "Global",
-        tooltip: "Global Geo4 scenarios were used to analyse full MacArthur regions"
+        tooltip: "Global <a href='/about.html#global-definition' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"
       }, {
         code: "regional",
         name: "Regional",
-        tooltip: "Regionally developed scenarios were used to analyse a subset of three countries in each region"
+        tooltip: "<a href='/about.html#regional-definition' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"
       }
     ],
     subjects: [
@@ -51,12 +51,12 @@
         selector: "biodiversity",
         name: "Biodiversity importance",
         threatsName: "Threats to current Biodiversity",
-        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover change between 2005 and 2050."
+        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. For more information <a href='/about.html'>see here</a>."
       }, {
         selector: "ecosystem",
         name: "Ecosystem function provision",
         threatsName: "Threats to current ecosystem function",
-        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover change between 2005 and 2050."
+        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. For more information <a href='/about.html'>see here</a>."
       }
     ],
     lenses: {
@@ -1416,7 +1416,24 @@
         regionName: this.getRegionName()
       }));
       this.$el.find("[data-toggle=\"popover\"]").popover({
-        trigger: "hover"
+        trigger: "manual",
+        animation: false,
+        html: true
+      }).on("mouseenter", function() {
+        var _this;
+        _this = this;
+        $(this).popover("show");
+        $('.popover').on("mouseleave", function() {
+          $(_this).popover("hide");
+        });
+      }).on("mouseleave", function() {
+        var _this;
+        _this = this;
+        setTimeout((function() {
+          if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+          }
+        }), 100);
       });
       return this;
     };

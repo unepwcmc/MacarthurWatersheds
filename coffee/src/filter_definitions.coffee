@@ -23,12 +23,12 @@ MacArthur.CONFIG =
     { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [21, 110] }
   ]
   scales: [
-    { code: "broadscale", name: "Global", tooltip: "Global Geo4 scenarios were used to analyse full MacArthur regions"}
-    { code: "regional", name: "Regional", tooltip: "Regionally developed scenarios were used to analyse a subset of three countries in each region"}
+    { code: "broadscale", name: "Global", tooltip: "Global <a href='/about.html#global-definition' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"}
+    { code: "regional", name: "Regional", tooltip: "<a href='/about.html#regional-definition' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"}
   ,]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity", tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover change between 2005 and 2050."}
-    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function", tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover change between 2005 and 2050."}
+    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity", tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. For more information <a href='/about.html'>see here</a>."}
+    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function", tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. For more information <a href='/about.html'>see here</a>."}
   ],
   lenses: {
     biodiversity: [
