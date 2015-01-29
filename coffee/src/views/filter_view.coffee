@@ -44,16 +44,14 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     ).on("mouseenter", ->
       _this = this
       $(this).popover "show"
-      $(this).siblings('.popover[role="tooltip"]').on "mouseleave", ->
-        alert("left")
+      $('.popover').on("mouseleave", ->
         $(_this).popover "hide"
         return
-
+      )
       return
     ).on "mouseleave", ->
       _this = this
       setTimeout (->
-
         $(_this).popover "hide"  unless $(".popover:hover").length
         return
       ), 100
@@ -66,7 +64,6 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
   onClose: ->
     @closeSubViews()
     @stopListening()
-     
 
   showLensSelector: ->
     tab = @filter.get('tab')

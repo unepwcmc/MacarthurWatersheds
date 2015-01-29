@@ -2080,8 +2080,7 @@
         var _this;
         _this = this;
         $(this).popover("show");
-        $(this).siblings('.popover[role="tooltip"]').on("mouseleave", function() {
-          alert("left");
+        $('.popover').on("mouseleave", function() {
           $(_this).popover("hide");
         });
       }).on("mouseleave", function() {
