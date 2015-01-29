@@ -8,8 +8,11 @@
 	<ul class="scales">
 	  {{#each scales}}
 	    <li>
-	      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}">{{name}}</div>
+	      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{tooltip}}">{{name}}</div>
 	    </li>
 	  {{/each}}
 	</ul>
+	<div class="scale-copy">
+		<p><strong>Hover over the buttons to find out more about each dataset</strong></p>
+	</div>
 </div>

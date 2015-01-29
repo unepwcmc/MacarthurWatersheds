@@ -9,7 +9,7 @@ MacArthur.CONFIG =
     },{
       selector: "change"
       name: "Change"
-      strapline: "Change up to 2050"
+      strapline: "Change between now and 2050"
     },{ 
       selector: "future_threats"
       name: "Future Threats"
@@ -23,12 +23,12 @@ MacArthur.CONFIG =
     { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [21, 110] }
   ]
   scales: [
-    { code: "broadscale", name: "Global"}
-    { code: "regional", name: "Regional"}
-  ]
+    { code: "broadscale", name: "Global", tooltip: "Global Geo4 scenarios were used to analyse full MacArthur regions"}
+    { code: "regional", name: "Regional", tooltip: "Regionally developed scenarios were used to analyse a subset of three countries in each region"}
+  ,]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity importance"}
-    { selector: "ecosystem", name: "Ecosystem function importance"}
+    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity"}
+    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function"}
   ],
   lenses: {
     biodiversity: [

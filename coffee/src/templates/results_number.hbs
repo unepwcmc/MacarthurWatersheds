@@ -1,14 +1,11 @@
-<div class="highlight-section match-count">
-  <p>
-  {{#if dataLoading}}
-    loading...
-  {{else}}
-    {{#if isRelevantNumber}}
+{{#if dataLoading}}
+  <div class="highlight-section match-count">
+    <p>loading... <span class="spin"></span></p>
+  </div>
+{{else}}
+  {{#if isRelevantNumber}}
+    <div class="highlight-section match-count">
       <span class="watershed-number">{{number}}</span> watersheds match your selection
-    {{else}}
-      Please make a selection
-    {{/if}}
+    </div>
   {{/if}}
-  <span class="spin"></span>
-  </p>
-</div>
+{{/if}}

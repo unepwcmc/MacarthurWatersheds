@@ -18,6 +18,7 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
       scales: @scales.toJSON()
       regionName: @getRegionName()
     ))
+    @$el.find("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
     return @
 
   getRegionName: ->
@@ -37,4 +38,4 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
     Backbone.appRouter.navigate('/', {trigger: true})
 
   onClose: ->
-    
+    $('.popover[role="tooltip"]').remove()     
