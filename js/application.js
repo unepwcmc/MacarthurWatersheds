@@ -779,8 +779,8 @@
 
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
-      'now': ["#FFDC73", "#FF5C26"],
-      'future_threats': ["#FFDC73", "#FF5C26"]
+      'now': ["#fcbba1", "#67000d"],
+      'future_threats': ["#fcbba1", "#67000d"]
     };
 
     MapView.prototype.legendText = {
@@ -918,7 +918,8 @@
     MapView.prototype.updateQueryLayer = function() {
       var q;
       this.map.removeLayer(this.queryLayer);
-      this.styleValueField = 'rank';
+      this.styleValueField = 'value';
+      this.filterValueField = 'rank';
       q = this.filter.get('query');
       if (q == null) {
         return;
@@ -953,15 +954,19 @@
     };
 
     MapView.prototype.setMinMax = function(type) {
+      var data_without_lakes;
+      data_without_lakes = $.grep(this.data, function(e) {
+        return e.lake !== true;
+      });
       this.max = {
-        'value': this.data[this.data.length - 1].value,
-        'rank': this.data.length,
-        'agrCommDev': _.max(this.data, function(o) {
+        'value': data_without_lakes[data_without_lakes.length - 1].value,
+        'rank': data_without_lakes.length,
+        'agrCommDev': _.max(data_without_lakes, function(o) {
           return o.comprov_value;
         }).comprov_value
       };
       this.min = {
-        'value': this.data[0].value,
+        'value': data_without_lakes[0].value,
         'rank': 0,
         'agrCommDev': 0
       };
@@ -999,16 +1004,25 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var isZero, rank, tab;
+      var isZero, middle_gradient, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
       isZero = _.find(this.zeroValueIndexes, function(i) {
         return rank === i;
       });
       if (tab === 'change') {
-        if (isZero != null) {
-          return '#eee';
-        } else if (rank > this.firstPositiveIndex) {
+        if (this.styleValueField === 'value') {
+          middle_gradient = 0;
+          if (rank === 0) {
+            return '#eee';
+          }
+        } else {
+          middle_gradient = this.firstPositiveIndex;
+          if (isZero != null) {
+            return '#eee';
+          }
+        }
+        if (rank > middle_gradient) {
           return this.colorPositive(rank);
         } else {
           return this.colorNegative(rank);
@@ -1024,33 +1038,33 @@
       tab = this.filter.get('tab');
       d = this.querydata[id];
       if (tab === 'change') {
-        range = this.firstPositiveIndex / this.categories;
+        range = this.firstPositiveFilterIndex / this.categories;
       } else {
-        range = (this.max[this.styleValueField] - this.min[this.styleValueField]) / this.categories;
+        range = (this.max[this.filterValueField] - this.min[this.filterValueField]) / this.categories;
       }
       if (level === 'all') {
         return true;
       }
       if (level === 'increase') {
-        return d[this.styleValueField] >= this.firstPositiveIndex;
+        return d[this.filterValueField] >= this.firstPositiveFilterIndex;
       }
       if (level === 'high' && tab !== 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'low' && tab === 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range * 2 && d[this.styleValueField] < this.firstPositiveIndex) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range * 2 && d[this.filterValueField] < this.firstPositiveFilterIndex) {
           return true;
         }
       }
       if (level === 'medium') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] + range && d[this.styleValueField] < this.min[this.styleValueField] + range * 2) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] + range && d[this.filterValueField] < this.min[this.filterValueField] + range * 2) {
           return true;
         }
       }
       if (level === 'low' && tab !== 'change' || level === 'high' && tab === 'change') {
-        if (d[this.styleValueField] >= this.min[this.styleValueField] && d[this.styleValueField] < this.min[this.styleValueField] + range) {
+        if (d[this.filterValueField] >= this.min[this.filterValueField] && d[this.filterValueField] < this.min[this.filterValueField] + range) {
           return true;
         }
       }
@@ -1230,24 +1244,35 @@
       }), function(d) {
         return d.index;
       });
-      return this.firstPositiveIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
+      if (this.styleValueField === 'value') {
+        this.firstPositiveIndex = 0;
+        return this.firstPositiveFilterIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
+      } else {
+        return this.firstPositiveIndex = this.zeroValueIndexes[0] || firstPositiveNonZeroIndex;
+      }
     };
 
     MapView.prototype.setNegativeLinearScaleColour = function(tab) {
       var domain, range;
-      domain = [this.min[this.styleValueField], this.firstPositiveIndex - 1];
-      range = this.colorRange[tab].slice(0, 3);
+      if (this.styleValueField === 'value') {
+        domain = [this.min[this.styleValueField], this.firstPositiveIndex];
+      } else {
+        domain = [this.min[this.styleValueField], this.firstPositiveIndex - 1];
+      }
+      range = this.colorRange[tab].slice(0, 2);
       return this.colorNegative = d3.scale.linear().domain(domain).range(range);
     };
 
     MapView.prototype.setPositiveLinearScaleColour = function(tab) {
-      var domain, min, range, _ref;
-      if (((_ref = this.zeroValueIndexes) != null ? _ref.length : void 0) > 0) {
+      var domain, min, range;
+      if (this.styleValueField === 'value') {
+        min = 0;
+      } else {
         min = this.zeroValueIndexes[0];
-        domain = [min, this.max[this.styleValueField]];
-        range = this.colorRange[tab].slice(-2);
-        return this.colorPositive = d3.scale.linear().domain(domain).range(range);
       }
+      domain = [min, this.max[this.styleValueField]];
+      range = this.colorRange[tab].slice(-2);
+      return this.colorPositive = d3.scale.linear().domain(domain).range(range);
     };
 
     MapView.prototype.setLinearScaleColour = function() {
