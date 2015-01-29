@@ -37,7 +37,27 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     return @
 
   initialiseTooltips: ->
-    @$el.find("[data-toggle=\"popover\"]").popover({ trigger: "hover", html: true, delay: { hide: 500 } })
+    @$el.find("[data-toggle=\"popover\"]").popover(
+      trigger: "manual"
+      animation: false
+      html: true
+    ).on("mouseenter", ->
+      _this = this
+      $(this).popover "show"
+      $(this).siblings('.popover[role="tooltip"]').on "mouseleave", ->
+        alert("left")
+        $(_this).popover "hide"
+        return
+
+      return
+    ).on "mouseleave", ->
+      _this = this
+      setTimeout (->
+
+        $(_this).popover "hide"  unless $(".popover:hover").length
+        return
+      ), 100
+      return
 
   setSubject: (event) =>
     subjectName = $(event.target).attr('data-subject')

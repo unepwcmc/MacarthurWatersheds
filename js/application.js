@@ -2073,11 +2073,25 @@
 
     FilterView.prototype.initialiseTooltips = function() {
       return this.$el.find("[data-toggle=\"popover\"]").popover({
-        trigger: "hover",
-        html: true,
-        delay: {
-          hide: 500
-        }
+        trigger: "manual",
+        animation: false,
+        html: true
+      }).on("mouseenter", function() {
+        var _this;
+        _this = this;
+        $(this).popover("show");
+        $(this).siblings('.popover[role="tooltip"]').on("mouseleave", function() {
+          alert("left");
+          $(_this).popover("hide");
+        });
+      }).on("mouseleave", function() {
+        var _this;
+        _this = this;
+        setTimeout((function() {
+          if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+          }
+        }), 100);
       });
     };
 
