@@ -15,6 +15,29 @@
 }).call(this);
 
 (function() {
+  suite("Query Builder integration");
+
+  test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
+    var changeQuerySpy, filter, newQuery, oldQuery, queryBuilder, updatedQuery;
+    filter = new Backbone.Models.Filter();
+    queryBuilder = new MacArthur.QueryBuilder(filter);
+    oldQuery = filter.get('query');
+    changeQuerySpy = sinon.spy();
+    filter.on('change:query', changeQuerySpy);
+    newQuery = "SELECT BLAH BLAH BVLAH";
+    sinon.stub(queryBuilder, 'buildQuery', function() {
+      return newQuery;
+    });
+    filter.set('subject', MacArthur.CONFIG.subjects[0].selector);
+    updatedQuery = filter.get('query');
+    assert.notEqual(updatedQuery, oldQuery, "Expected filter.query to be modified");
+    assert.strictEqual(updatedQuery, newQuery, "Expected filter.query set to the result of QueryBuilder.buildQuery");
+    return assert.isTrue(changeQuerySpy.calledOnce, "Expected filter to fire a change:query event once, but fired " + changeQuerySpy.callCount + " times");
+  });
+
+}).call(this);
+
+(function() {
   suite("QueryBuilder");
 
   test("When initialized it takes a Filter instance and stores it as an attribute", function() {
@@ -172,29 +195,6 @@
       buildQuerySpy.restore();
     }
     return resultsNumberRenderStub.restore();
-  });
-
-}).call(this);
-
-(function() {
-  suite("Query Builder integration");
-
-  test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
-    var changeQuerySpy, filter, newQuery, oldQuery, queryBuilder, updatedQuery;
-    filter = new Backbone.Models.Filter();
-    queryBuilder = new MacArthur.QueryBuilder(filter);
-    oldQuery = filter.get('query');
-    changeQuerySpy = sinon.spy();
-    filter.on('change:query', changeQuerySpy);
-    newQuery = "SELECT BLAH BLAH BVLAH";
-    sinon.stub(queryBuilder, 'buildQuery', function() {
-      return newQuery;
-    });
-    filter.set('subject', MacArthur.CONFIG.subjects[0].selector);
-    updatedQuery = filter.get('query');
-    assert.notEqual(updatedQuery, oldQuery, "Expected filter.query to be modified");
-    assert.strictEqual(updatedQuery, newQuery, "Expected filter.query set to the result of QueryBuilder.buildQuery");
-    return assert.isTrue(changeQuerySpy.calledOnce, "Expected filter to fire a change:query event once, but fired " + changeQuerySpy.callCount + " times");
   });
 
 }).call(this);
@@ -709,8 +709,8 @@
     return resultsNumberRenderStub.restore();
   });
 
-  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected and the AgrCommDev level is selected then the LensSelectorView is rendered', function() {
-    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, levelSelectorAgrCommDevRenderCalles, levelSelectorAgrCommDevRenderSpy, regions, resultsNumber, resultsNumberRenderStub, scales, tabView;
+  test('when the `Future Threats` tab selector is clicked, and the `subject` is selected and the `scenario` is selected then the LensSelectorView is rendered', function() {
+    var filter, lensSelectorRenderCalles, lensSelectorRenderSpy, regions, resultsNumber, resultsNumberRenderStub, scales, tabView;
     regions = new Backbone.Collections.RegionCollection(MacArthur.CONFIG.regions);
     scales = new Backbone.Collections.ScaleCollection(MacArthur.CONFIG.scales);
     resultsNumber = new Backbone.Models.ResultsNumber({
@@ -723,23 +723,18 @@
       region: regions.models[0]
     });
     lensSelectorRenderSpy = sinon.spy(Backbone.Views.LensSelectorView.prototype, 'render');
-    levelSelectorAgrCommDevRenderSpy = sinon.spy(Backbone.Views.LevelSelectorAgrCommDevView.prototype, 'render');
     tabView = new Backbone.Views.TabView({
       filter: filter,
       resultsNumber: resultsNumber
     });
     lensSelectorRenderCalles = lensSelectorRenderSpy.callCount;
-    levelSelectorAgrCommDevRenderCalles = levelSelectorAgrCommDevRenderSpy.callCount;
     tabView.$el.find('li.future_threats-tab').trigger('click');
     filter.set('subject', 'biodiversity');
     filter.set('scenario', 'mf2050');
-    filter.set('agrCommDevLevel', 'medium');
     try {
       assert.isTrue(lensSelectorRenderSpy.callCount > lensSelectorRenderCalles, "Expected the lensSelectorView to be called");
-      assert.isTrue(levelSelectorAgrCommDevRenderSpy.callCount > levelSelectorAgrCommDevRenderCalles, "Expected the levelSelectorAgrCommDevView to be called");
     } finally {
       lensSelectorRenderSpy.restore();
-      levelSelectorAgrCommDevRenderSpy.restore();
     }
     return resultsNumberRenderStub.restore();
   });

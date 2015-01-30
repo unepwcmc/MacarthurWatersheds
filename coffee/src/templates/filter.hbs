@@ -3,29 +3,23 @@
 </div>
 
 <div class="subjects">
-  <h1>What would you like to explore?</h1>
+  <h1>Which results would you like to explore?</h1>
+
   <ul>
     {{# each subjects}}
-    <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{name}}</li>
+      <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}" data-container="body" data-toggle="popover" data-placement="left" data-content="{{tooltip}}">{{#if ../showScenarioGroup}}{{threatsName}}{{else}}{{name}}{{/if}}</li>
     {{/each}}
   </ul>
 </div>
 
+
 {{#if showScenarioGroup}}
-  <div class="{{#if showAgrCommDevSelector}}scenario-container highlight-section{{/if}}">
   {{#if showScenarioSelector}}
     {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
   {{/if}}
-  {{#if showAgrCommDevSelector}}
-    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
-  {{/if}}
-  </div>
 {{else}}
   {{#if showScenarioSelector}}
     {{addSubViewTo thisView 'ScenarioSelectorView' filter=filter}}
-  {{/if}}
-  {{#if showAgrCommDevSelector}}
-    {{addSubViewTo thisView 'LevelSelectorAgrCommDevView' filter=filter}}
   {{/if}}
 {{/if}}
 

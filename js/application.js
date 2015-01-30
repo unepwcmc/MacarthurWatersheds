@@ -10,7 +10,7 @@
       }, {
         selector: "change",
         name: "Change",
-        strapline: "Change up to 2050"
+        strapline: "Change between now and 2050"
       }, {
         selector: "future_threats",
         name: "Future Threats",
@@ -38,19 +38,25 @@
     scales: [
       {
         code: "broadscale",
-        name: "Global"
+        name: "Global",
+        tooltip: "Global <a href='/about.html#global-definition' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"
       }, {
         code: "regional",
-        name: "Regional"
+        name: "Regional",
+        tooltip: "<a href='/about.html#regional-definition' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"
       }
     ],
     subjects: [
       {
         selector: "biodiversity",
-        name: "Biodiversity importance"
+        name: "Biodiversity importance",
+        threatsName: "Threats to current Biodiversity",
+        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. For more information <a href='/about.html'>see here</a>."
       }, {
         selector: "ecosystem",
-        name: "Ecosystem function importance"
+        name: "Ecosystem function provision",
+        threatsName: "Threats to current ecosystem function",
+        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. For more information <a href='/about.html'>see here</a>."
       }
     ],
     lenses: {
@@ -76,7 +82,7 @@
       ecosystem: [
         {
           selector: "totef",
-          name: "Total EF provision",
+          name: "Total Ecosystem Function Provision",
           "default": true
         }, {
           selector: "comprov",
@@ -189,13 +195,13 @@
           name: "Increase"
         }, {
           selector: "low",
-          name: "Low"
+          name: "Low Decrease"
         }, {
           selector: "medium",
-          name: "Medium"
+          name: "Medium Decrease"
         }, {
           selector: "high",
-          name: "High"
+          name: "High Decrease"
         }
       ]
     },
@@ -223,21 +229,6 @@
       }, {
         selector: "low",
         name: "Low"
-      }
-    ],
-    agrCommDevLevels: [
-      {
-        selector: "high",
-        name: "High"
-      }, {
-        selector: "medium",
-        name: "Medium"
-      }, {
-        selector: "low",
-        name: "Low"
-      }, {
-        selector: "negative",
-        name: "Decrease"
       }
     ]
   };
@@ -639,7 +630,6 @@
       this.filter.unset('lens');
       this.filter.unset('scenario');
       this.filter.unset('level');
-      this.filter.unset('agrCommDevLevel');
       this.filter.unset('protection');
       this.filter.unset('protectionLevel');
       this.filter.unset('pressure');
@@ -667,6 +657,7 @@
     __extends(BaseSelectorView, _super);
 
     function BaseSelectorView() {
+      this.isBiodiversity = __bind(this.isBiodiversity, this);
       this.isChangeTab = __bind(this.isChangeTab, this);
       this.setDefaultLevel = __bind(this.setDefaultLevel, this);
       return BaseSelectorView.__super__.constructor.apply(this, arguments);
@@ -690,7 +681,8 @@
       })(this));
       this.$el.html(this.template({
         levels: levels,
-        isChangeTab: this.isChangeTab
+        isChangeTab: this.isChangeTab,
+        isBiodiversity: this.isBiodiversity
       }));
       theSelect = this.$el.find('.select-box');
       return setTimeout((function(_this) {
@@ -723,6 +715,12 @@
       return this.filter.get('tab') === 'change';
     };
 
+    BaseSelectorView.prototype.isBiodiversity = function() {
+      if (this.filter.attributes.subject === 'biodiversity') {
+        return true;
+      }
+    };
+
     return BaseSelectorView;
 
   })(Backbone.View);
@@ -748,7 +746,6 @@
       this.baseLineStyle = __bind(this.baseLineStyle, this);
       this.getFillOpacity = __bind(this.getFillOpacity, this);
       this.setPressureFill = __bind(this.setPressureFill, this);
-      this.setAgrCommDevFill = __bind(this.setAgrCommDevFill, this);
       this.setProtectionFill = __bind(this.setProtectionFill, this);
       this.filterFeatureLevel = __bind(this.filterFeatureLevel, this);
       this.getColor = __bind(this.getColor, this);
@@ -768,7 +765,14 @@
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
       'now': ["#fcbba1", "#67000d"],
-      'future_threats': ["#fcbba1", "#67000d"]
+      'futureThreatsColorpleth': [['#deebf7', '#9ecae1', '#3182bd'], ['#e5f5e0', '#a1d99b', '#31a354'], ['#fee6ce', '#fdae6b', '#e6550d']]
+    };
+
+    MapView.prototype.futureThreatsColorRange = {
+      'high_agricultural_colour': ["#deebf7", "#3182bd"],
+      'medium_agricultural_colour': ["#efedf5", "#756bb1"],
+      'low_agricultural_colour': ["#fee0d2", "#de2d26"],
+      'negative_agricultural_colour': ["#ffffff", "#000000"]
     };
 
     MapView.prototype.legendText = {
@@ -786,8 +790,7 @@
       this.listenTo(this.filter, 'change:query', this.updateQueryLayer);
       this.listenTo(this.filter, 'change:level', this.updateQueryLayerStyle);
       this.listenTo(this.filter, 'change:protectionLevel', this.updateQueryLayerStyle);
-      this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
-      return this.listenTo(this.filter, 'change:agrCommDevLevel', this.updateQueryLayerStyle);
+      return this.listenTo(this.filter, 'change:pressureLevel', this.updateQueryLayerStyle);
     };
 
     MapView.prototype.sortDataBy = function(data, field) {
@@ -844,16 +847,45 @@
       })(this));
     };
 
+    MapView.prototype.htmlGradientElement = function(colorRange) {
+      var colours, style;
+      colorRange = _.cloneDeep(colorRange);
+      colours = colorRange.join(', ');
+      style = "linear-gradient(to right, " + colours + ");";
+      return "<div class='map-legend-gradient' style='background: " + style + "'>";
+    };
+
     MapView.prototype.getLegendGradientElement = function(tab) {
-      var colorRange, colours, style;
+      var html_element, k, v, _ref;
       if (Modernizr.cssgradients) {
-        colorRange = _.cloneDeep(this.colorRange[tab]);
-        colours = colorRange.join(', ');
-        style = "linear-gradient(to right, " + colours + ");";
-        return "<div class='map-legend-gradient' style='background: " + style + "'>";
+        if (tab === 'future_threats') {
+          html_element = '';
+          _ref = this.futureThreatsColorRange;
+          for (k in _ref) {
+            v = _ref[k];
+            html_element = html_element.concat("" + (this.htmlGradientElement(v)) + "</div>");
+          }
+          return html_element;
+        } else {
+          return this.htmlGradientElement(this.colorRange[tab]);
+        }
       } else {
         return "<div class='map-legend-gradient nogradient " + tab + "'>";
       }
+    };
+
+    MapView.prototype.legendGrid = function() {
+      var colour, html_element, value, _i, _j, _len, _len1, _ref;
+      html_element = '';
+      _ref = this.futureThreatsColorpleth;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        value = _ref[_i];
+        for (_j = 0, _len1 = value.length; _j < _len1; _j++) {
+          colour = value[_j];
+          html_element = html_element.concat("<div class='map-legend-grid-square' \nstyle=background-color:" + colour + ";></div>");
+        }
+      }
+      return html_element;
     };
 
     MapView.prototype.setLegend = function() {
@@ -869,7 +901,11 @@
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
           title = tab === 'change' ? 'change' : 'importance';
-          div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>          \n</div>";
+          if (tab === 'future_threats') {
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>Level</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
+          } else {
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
+          }
           return div;
         };
       })(this);
@@ -887,7 +923,7 @@
       if (isLake) {
         return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
       } else {
-        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
+        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
@@ -992,7 +1028,7 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var isZero, middle_gradient, rank, tab;
+      var d, isZero, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
       isZero = _.find(this.zeroValueIndexes, function(i) {
@@ -1011,9 +1047,52 @@
           }
         }
         if (rank > middle_gradient) {
-          return this.colorPositive(rank);
+          this.colorPositive(rank);
         } else {
-          return this.colorNegative(rank);
+          this.colorNegative(rank);
+        }
+      }
+      if (tab === 'future_threats') {
+        d = this.querydata[feature].agrCommDevValue;
+        this.futureThreatsColorpleth = this.colorRange.futureThreatsColorpleth;
+        min_agr = this.min.agrCommDev;
+        max_agr = this.max.agrCommDev;
+        max_val = this.max[this.styleValueField];
+        min_val = this.min[this.styleValueField];
+        range_agr = (max_agr - min_agr) / 3;
+        range_val = (max_val - min_val) / 3;
+        if (rank < min_val + range_val) {
+          if (d < min_agr + range_agr) {
+            return this.futureThreatsColorpleth[0][0];
+          }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[0][1];
+          }
+          if (d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[0][2];
+          }
+        }
+        if (rank < min_val + 2 * range_val && rank > min_val + range_val) {
+          if (d < min_agr + range_agr) {
+            return this.futureThreatsColorpleth[1][0];
+          }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[1][1];
+          }
+          if (d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[1][2];
+          }
+        }
+        if (rank > min_val + 2 * range_val) {
+          if (d < min_agr + range_agr) {
+            return this.futureThreatsColorpleth[2][0];
+          }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[2][1];
+          }
+          if (d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[2][2];
+          }
         }
       } else {
         return this.color(rank);
@@ -1080,35 +1159,6 @@
       return op;
     };
 
-    MapView.prototype.setAgrCommDevFill = function(op, d) {
-      var agrCommDevLevel, min, range;
-      agrCommDevLevel = this.filter.get('agrCommDevLevel');
-      min = this.min.agrCommDev;
-      d = d.agrCommDevValue;
-      range = (this.max.agrCommDev - min) / this.categories;
-      if (agrCommDevLevel === 'high') {
-        if (!(d >= min + range * 2)) {
-          op = 0;
-        }
-      }
-      if (agrCommDevLevel === 'medium') {
-        if (!(d >= min + range && d < min + range * 2)) {
-          op = 0;
-        }
-      }
-      if (agrCommDevLevel === 'low') {
-        if (!(d >= min && d < min + range)) {
-          op = 0;
-        }
-      }
-      if (agrCommDevLevel === 'negative') {
-        if (!(d < 0)) {
-          op = 0;
-        }
-      }
-      return op;
-    };
-
     MapView.prototype.setPressureFill = function(op, d) {
       var pressureLevel;
       pressureLevel = this.filter.get('pressureLevel');
@@ -1139,9 +1189,6 @@
       }
       if (this.filter.get('pressure') === true) {
         op = this.setPressureFill(op, d);
-      }
-      if (this.filter.get('agrCommDevLevel') != null) {
-        op = this.setAgrCommDevFill(op, d);
       }
       if (op === .9) {
         this.currentSelectionCount += 1;
@@ -1263,12 +1310,28 @@
       return this.colorPositive = d3.scale.linear().domain(domain).range(range);
     };
 
+    MapView.prototype.setFutureThreatsLinearScaleColour = function() {
+      var domain, range_high, range_low, range_medium, range_negative;
+      domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
+      range_high = this.futureThreatsColorRange['high_agricultural_colour'];
+      range_medium = this.futureThreatsColorRange['medium_agricultural_colour'];
+      range_low = this.futureThreatsColorRange['low_agricultural_colour'];
+      range_negative = this.futureThreatsColorRange['negative_agricultural_colour'];
+      this.high_agricultural_colour = d3.scale.linear().domain(domain).range(range_high);
+      this.medium_agricultural_colour = d3.scale.linear().domain(domain).range(range_medium);
+      this.low_agricultural_colour = d3.scale.linear().domain(domain).range(range_low);
+      return this.negative_agricultural_colour = d3.scale.linear().domain(domain).range(range_negative);
+    };
+
     MapView.prototype.setLinearScaleColour = function() {
       var domain, range, tab;
       tab = this.filter.get('tab');
       if (tab === 'change') {
         this.setNegativeLinearScaleColour(tab);
-        return this.setPositiveLinearScaleColour(tab);
+        this.setPositiveLinearScaleColour(tab);
+      }
+      if (tab === 'future_threats') {
+        return this.setFutureThreatsLinearScaleColour();
       } else {
         domain = [this.min[this.styleValueField], this.max[this.styleValueField]];
         range = this.colorRange[tab];
@@ -1426,6 +1489,26 @@
         scales: this.scales.toJSON(),
         regionName: this.getRegionName()
       }));
+      this.$el.find("[data-toggle=\"popover\"]").popover({
+        trigger: "manual",
+        animation: false,
+        html: true
+      }).on("mouseenter", function() {
+        var _this;
+        _this = this;
+        $(this).popover("show");
+        $('.popover').on("mouseleave", function() {
+          $(_this).popover("hide");
+        });
+      }).on("mouseleave", function() {
+        var _this;
+        _this = this;
+        setTimeout((function() {
+          if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+          }
+        }), 100);
+      });
       return this;
     };
 
@@ -1453,7 +1536,9 @@
       });
     };
 
-    ScaleChooserView.prototype.onClose = function() {};
+    ScaleChooserView.prototype.onClose = function() {
+      return $('.popover[role="tooltip"]').remove();
+    };
 
     return ScaleChooserView;
 
@@ -1543,6 +1628,7 @@
         scenarios: scenarios,
         defaultOption: defaultOption,
         scenarioDescription: scenarioDescription,
+        isFutureTab: this.isFutureTab(),
         pdf: pdf
       }));
       theSelect = this.$el.find('.select-box');
@@ -1572,6 +1658,16 @@
         return 'These scenarios are based on UNEP GEO4';
       } else {
         return 'These scenarios are based on regional scenarios and workshops';
+      }
+    };
+
+    ScenarioSelectorView.prototype.isFutureTab = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        return true;
+      } else {
+        return false;
       }
     };
 
@@ -1630,6 +1726,7 @@
       })(this));
       this.$el.html(this.template({
         lenses: lenses,
+        heading: this.getLensTitle(),
         title: this.getLensTitle(),
         subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
@@ -1669,82 +1766,21 @@
 
     LensSelectorView.prototype.getLensTitle = function() {
       if (this.filter.get('subject') === 'biodiversity') {
-        return "For species";
+        return {
+          title: "For Species",
+          tooltip: "View results for total or a subset of species"
+        };
       } else if (this.filter.get('subject') === 'ecosystem') {
-        return "By provision";
+        return {
+          title: "By provision",
+          tooltip: "View results for total or a subset of ecosystem functions"
+        };
       }
     };
 
     return LensSelectorView;
 
   })(Backbone.View);
-
-}).call(this);
-
-(function() {
-  var _base,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  window.Backbone || (window.Backbone = {});
-
-  (_base = window.Backbone).Views || (_base.Views = {});
-
-  Backbone.Views.LevelSelectorAgrCommDevView = (function(_super) {
-    __extends(LevelSelectorAgrCommDevView, _super);
-
-    function LevelSelectorAgrCommDevView() {
-      return LevelSelectorAgrCommDevView.__super__.constructor.apply(this, arguments);
-    }
-
-    LevelSelectorAgrCommDevView.prototype.template = Handlebars.templates['level_selector_agr_comm_dev'];
-
-    LevelSelectorAgrCommDevView.prototype.events = {
-      'change #agr-comm-select': "setLevel"
-    };
-
-    LevelSelectorAgrCommDevView.prototype.initialize = function(options) {
-      LevelSelectorAgrCommDevView.__super__.initialize.apply(this, arguments);
-      this.config = _.cloneDeep(MacArthur.CONFIG.agrCommDevLevels);
-      this.levelType = 'agrCommDevLevel';
-      if (this.filter.get(this.levelType) == null) {
-        this["default"] = true;
-      }
-      return this.render();
-    };
-
-    LevelSelectorAgrCommDevView.prototype.render = function() {
-      var levels, theSelect;
-      levels = _.map(this.config, (function(_this) {
-        return function(level) {
-          if (_this.filter.get(_this.levelType) === level.selector) {
-            level.selected = true;
-            _this["default"] = false;
-          } else {
-            level.selected = false;
-          }
-          return level;
-        };
-      })(this));
-      this.$el.html(this.template({
-        levels: levels,
-        "default": this["default"],
-        isChangeTab: this.isChangeTab
-      }));
-      theSelect = this.$el.find('.select-box');
-      return setTimeout((function(_this) {
-        return function() {
-          theSelect.customSelect();
-          return _this.$el.find('.customSelectInner').css({
-            'width': '100%'
-          });
-        };
-      })(this), 20);
-    };
-
-    return LevelSelectorAgrCommDevView;
-
-  })(Backbone.Views.BaseSelectorView);
 
 }).call(this);
 
@@ -1824,15 +1860,7 @@
       return this.render();
     };
 
-    PressureOptionView.prototype.render = function() {
-      this.$el.html(this.template({
-        thisView: this,
-        filter: this.filter,
-        pressure: !!this.pressure
-      }));
-      this.attachSubViews();
-      return this;
-    };
+    PressureOptionView.prototype.render = function() {};
 
     PressureOptionView.prototype.setPressure = function(event) {
       this.filter.set('pressure', $(event.target).is(':checked'));
@@ -1880,8 +1908,6 @@
     function PressureSelectorView() {
       return PressureSelectorView.__super__.constructor.apply(this, arguments);
     }
-
-    PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
 
     PressureSelectorView.prototype.events = {
       'change #pressure-select': "setLevel"
@@ -2059,12 +2085,36 @@
         showScenarioGroup: this.showScenarioGroup(),
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
-        showAgrCommDevSelector: this.showAgrCommDevSelector(),
         filter: this.filter,
         resultsNumber: this.resultsNumber
       }));
       this.attachSubViews();
+      this.initialiseTooltips();
+      $('.popover[role="tooltip"]').remove();
       return this;
+    };
+
+    FilterView.prototype.initialiseTooltips = function() {
+      return this.$el.find("[data-toggle=\"popover\"]").popover({
+        trigger: "manual",
+        animation: false,
+        html: true
+      }).on("mouseenter", function() {
+        var _this;
+        _this = this;
+        $(this).popover("show");
+        $('.popover').on("mouseleave", function() {
+          $(_this).popover("hide");
+        });
+      }).on("mouseleave", function() {
+        var _this;
+        _this = this;
+        setTimeout((function() {
+          if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+          }
+        }), 100);
+      });
     };
 
     FilterView.prototype.setSubject = function(event) {
@@ -2112,10 +2162,6 @@
       return false;
     };
 
-    FilterView.prototype.showAgrCommDevSelector = function() {
-      return this.filter.get('tab') === 'future_threats' && (this.filter.get('scenario') != null);
-    };
-
     FilterView.prototype.showOtherSelectors = function() {
       var tab;
       tab = this.filter.get('tab');
@@ -2126,7 +2172,7 @@
         return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       if (tab === 'future_threats') {
-        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null) && (this.filter.get('agrCommDevLevel') != null);
+        return (this.filter.get('subject') != null) && (this.filter.get('scenario') != null);
       }
       return false;
     };

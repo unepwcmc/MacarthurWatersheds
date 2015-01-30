@@ -26,6 +26,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
       scenarios: scenarios
       defaultOption: defaultOption
       scenarioDescription: scenarioDescription
+      isFutureTab: @isFutureTab()
       pdf: pdf
     ))
 
@@ -51,5 +52,9 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
       return 'These scenarios are based on UNEP GEO4'
     else
       return 'These scenarios are based on regional scenarios and workshops'
+
+  isFutureTab: ->
+    tab = @filter.get('tab')
+    if tab == 'future_threats' then yes else no
 
     
