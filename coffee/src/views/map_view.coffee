@@ -117,8 +117,7 @@ class Backbone.Views.MapView extends Backbone.View
                 </td>
                 <td class='map-legend-table-rotate'>
                   <div class='legend-high-low'>
-                    <span>Low</span>
-                    <span>High</span>
+                    <span>Low High</span>
                   </div>
                 </td>
                 <td class='map-legend-table-right-column'>
