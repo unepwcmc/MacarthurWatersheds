@@ -78,9 +78,14 @@ are written in Handlebars.
 ### Compilation
 We're using gulp for compiling coffeescript and handlebars. To run this task,
 do:
-  
-  gulp
 
+```
+gulp
+```
+or leave this running to compile as you go
+```
+gulp watch
+```
 
 ### Tests
 Tests are written in mocha with chai and sinon, and stored in coffee/tests. Run them by opening [/tests.html](http://localhost:8080/tests.html) in your browser

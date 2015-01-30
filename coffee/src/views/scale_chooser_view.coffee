@@ -18,7 +18,27 @@ class Backbone.Views.ScaleChooserView extends Backbone.View
       scales: @scales.toJSON()
       regionName: @getRegionName()
     ))
-    @$el.find("[data-toggle=\"popover\"]").popover({ trigger: "hover" })
+
+    @$el.find("[data-toggle=\"popover\"]").popover(
+      trigger: "manual"
+      animation: false
+      html: true
+    ).on("mouseenter", ->
+      _this = this
+      $(this).popover "show"
+      $('.popover').on("mouseleave", ->
+        $(_this).popover "hide"
+        return
+      )
+      return
+    ).on "mouseleave", ->
+      _this = this
+      setTimeout (->
+        $(_this).popover "hide"  unless $(".popover:hover").length
+        return
+      ), 100
+      return
+
     return @
 
   getRegionName: ->
