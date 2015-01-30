@@ -137,12 +137,6 @@ MacArthur.CONFIG =
     { selector: "high", name: "High" , default: true }
     { selector: "medium", name: "Medium" }
     { selector: "low", name: "Low" }
-  ],
-  agrCommDevLevels: [
-    { selector: "high", name: "High Increase" }
-    { selector: "medium", name: "Medium Increase" }
-    { selector: "low", name: "Low Increase" }
-    { selector: "negative", name: "Decrease" }
   ]
 
 MacArthur.getFilterOptionsWithSelectedSet = (filter, options) ->

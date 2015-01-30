@@ -7,7 +7,17 @@ class Backbone.Views.MapView extends Backbone.View
   colorRange:
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
-    'future_threats': ["#fcbba1", "#67000d"]
+    'futureThreatsColorpleth': [
+                                ['#deebf7', '#9ecae1', '#3182bd'],
+                                ['#e5f5e0', '#a1d99b', '#31a354'],
+                                ['#fee6ce', '#fdae6b', '#e6550d']
+                               ]
+
+  futureThreatsColorRange:
+    'high_agricultural_colour': ["#deebf7", "#3182bd"]
+    'medium_agricultural_colour': ["#efedf5", "#756bb1"]
+    'low_agricultural_colour': ["#fee0d2", "#de2d26"]
+    'negative_agricultural_colour': ["#ffffff", "#000000"]
 
   legendText:
     'change': ['Decrease', 'Increase']
@@ -24,7 +34,6 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:level', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:protectionLevel', @updateQueryLayerStyle)
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
-    @listenTo(@filter, 'change:agrCommDevLevel', @updateQueryLayerStyle)
 
   sortDataBy: (data, field) ->
     _.map(_.sortBy(data, field), (row, i) -> 
@@ -61,14 +70,31 @@ class Backbone.Views.MapView extends Backbone.View
     @map.setView(regionCentre, 5, {animate: false})
     @map.on( 'zoomend', => @queryLayerInteriors.setStyle @baseLineStyle )
 
+  htmlGradientElement: (colorRange) ->
+    colorRange = _.cloneDeep(colorRange)
+    colours = colorRange.join(', ')
+    style = "linear-gradient(to right, #{colours});"
+    return "<div class='map-legend-gradient' style='background: #{style}'>"
+
   getLegendGradientElement: (tab) ->
     if Modernizr.cssgradients
-      colorRange = _.cloneDeep(@colorRange[tab])
-      colours = colorRange.join(', ')
-      style = "linear-gradient(to right, #{colours});"
-      return "<div class='map-legend-gradient' style='background: #{style}'>" 
+      if tab == 'future_threats'
+        html_element = ''
+        for k,v of @futureThreatsColorRange
+          html_element = html_element.concat("#{@htmlGradientElement(v)}</div>")
+        return html_element
+      else
+        @htmlGradientElement(@colorRange[tab])
     else
       return "<div class='map-legend-gradient nogradient #{tab}'>"
+
+  legendGrid: () ->
+    html_element = ''
+    for value in @futureThreatsColorpleth
+      for colour in value
+        html_element = html_element.concat("""<div class='map-legend-grid-square' 
+                                              style=background-color:#{colour};></div>""")
+    return html_element
 
   setLegend: () =>
     if @legend then @unsetLegend()
@@ -77,15 +103,71 @@ class Backbone.Views.MapView extends Backbone.View
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
       title = if tab == 'change' then 'change' else 'importance'
-      div.innerHTML = """
-        <div class='map-legend-text'>
-          <h3 class='legend-title'>Level of #{title}</h3>
-        </div>
-          #{@getLegendGradientElement(tab)}
-          <span>#{@legendText[tab][0]}</span>
-          <span>#{@legendText[tab][1]}</span>          
-        </div>
-      """
+      if tab == 'future_threats'
+        #categories option
+        div.innerHTML = """
+          <div class='map-legend-text'>
+            <h3 class='legend-title'>Level of #{title}</h3>
+          </div>
+          <div class='map-legend-base'>
+            <table class='map-legend-table'>
+              <tr>
+                <td class='map-legend-table-rotate'>
+                  <div><span>Agr. Dev. Level</span></div>
+                </td>
+                <td class='map-legend-table-rotate'>
+                  <div class='legend-high-low'>
+                    <span>Low High</span>
+                  </div>
+                </td>
+                <td class='map-legend-table-right-column'>
+                  <div class='map-legend-grid'>
+                    #{@legendGrid()}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-right-column'>
+                  <div class='legend-high-low'>
+                    <span>Low</span>
+                    <span>High</span>
+                  </div>
+                <td>
+              </tr>
+              <tr>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-right-column'>
+                  <div><span>Level</span></div>
+                <td>
+              </tr>
+            </table>
+          </div>
+        """
+
+        # gradient option
+        # div.innerHTML = """
+        #     <div class='map-legend-y-axis-label'>
+        #       <h3>Agr. Dev. Level</h3>
+        #     </div>
+        #   #{@getLegendGradientElement(tab)}
+        # """
+      else
+        div.innerHTML = """
+          <div class='map-legend-text'>
+            <h3 class='legend-title'>Level of #{title}</h3>
+          </div>
+            #{@getLegendGradientElement(tab)}
+            <span>#{@legendText[tab][0]}</span>
+            <span>#{@legendText[tab][1]}</span>
+          </div>
+        """
       div
     @legend.addTo @map
 
@@ -196,6 +278,49 @@ class Backbone.Views.MapView extends Backbone.View
         @colorPositive(rank)
       else
         @colorNegative(rank)
+    if tab == 'future_threats'
+      d = @querydata[feature].agrCommDevValue
+      @futureThreatsColorpleth = @colorRange.futureThreatsColorpleth
+      min_agr = @min.agrCommDev
+      max_agr = @max.agrCommDev
+      max_val = @max[@styleValueField]
+      min_val = @min[@styleValueField]
+      range_agr = (( max_agr - min_agr ) /3)
+      range_val = (( max_val - min_val ) /3)
+      if rank < min_val + range_val
+        if d < min_agr + range_agr
+          return @futureThreatsColorpleth[0][0]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return @futureThreatsColorpleth[0][1]
+        if d > min_agr + range_agr
+          return @futureThreatsColorpleth[0][2]
+      if rank < min_val + 2 * range_val and rank > min_val + range_val
+        if d < min_agr + range_agr
+          return @futureThreatsColorpleth[1][0]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return @futureThreatsColorpleth[1][1]
+        if d > min_agr + range_agr
+          return @futureThreatsColorpleth[1][2]
+      if rank > min_val + 2 * range_val
+        if d < min_agr + range_agr
+          return @futureThreatsColorpleth[2][0]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return @futureThreatsColorpleth[2][1]
+        if d > min_agr + range_agr
+          return @futureThreatsColorpleth[2][2]
+  # In case of multiple gradients:
+
+  #    d = @querydata[feature].agrCommDevValue
+  #    max = @max.agrCommDev
+  #    if @min.agrCommDev > 0
+  #      min = @min.agrCommDev
+  #    else
+  #      min = 0
+  #    range = (max - min) / @categories
+  #    return @high_agricultural_colour(rank)  if d > min + range * 2
+  #    return @medium_agricultural_colour(rank)  if d >= min + range and d < min + range * 2
+  #    return @low_agricultural_colour(rank)  if d >= min and d < min + range
+  #    @negative_agricultural_colour rank  if d < 0
     else
       @color(rank)
 
@@ -238,25 +363,6 @@ class Backbone.Views.MapView extends Backbone.View
         op = 0
     op
 
-  setAgrCommDevFill: (op, d) =>
-    agrCommDevLevel = @filter.get('agrCommDevLevel')
-    min = @min.agrCommDev
-    d = d.agrCommDevValue
-    range = (@max.agrCommDev - min) / @categories
-    if agrCommDevLevel == 'high'
-      unless d >= min + range * 2
-        op = 0 
-    if agrCommDevLevel == 'medium'
-      unless d >= min + range and d < min + range * 2
-        op = 0  
-    if agrCommDevLevel == 'low'
-      unless d >= min and d < min + range
-        op = 0  
-    if agrCommDevLevel == 'negative'
-      unless d < 0
-        op = 0
-    op
-
   setPressureFill: (op, d) =>
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
@@ -277,8 +383,6 @@ class Backbone.Views.MapView extends Backbone.View
       op = @setProtectionFill op, d
     if @filter.get('pressure') == yes
       op = @setPressureFill op, d
-    if @filter.get('agrCommDevLevel')?
-      op = @setAgrCommDevFill op, d 
     if op == .9 then @currentSelectionCount += 1
     return op
 
@@ -369,11 +473,24 @@ class Backbone.Views.MapView extends Backbone.View
       range = @colorRange[tab][-2..]
       @colorPositive = d3.scale.linear().domain(domain).range(range)
 
+  setFutureThreatsLinearScaleColour: ->
+    domain = [@min[@styleValueField], @max[@styleValueField]]
+    range_high = @futureThreatsColorRange['high_agricultural_colour']
+    range_medium = @futureThreatsColorRange['medium_agricultural_colour']
+    range_low = @futureThreatsColorRange['low_agricultural_colour']
+    range_negative = @futureThreatsColorRange['negative_agricultural_colour']
+    @high_agricultural_colour = d3.scale.linear().domain(domain).range(range_high)
+    @medium_agricultural_colour = d3.scale.linear().domain(domain).range(range_medium)
+    @low_agricultural_colour = d3.scale.linear().domain(domain).range(range_low)
+    @negative_agricultural_colour = d3.scale.linear().domain(domain).range(range_negative)
+
   setLinearScaleColour: ->
     tab = @filter.get('tab')
     if tab == 'change'
       @setNegativeLinearScaleColour tab
       @setPositiveLinearScaleColour tab
+    if tab == 'future_threats'
+      @setFutureThreatsLinearScaleColour()
     else
       domain = [@min[@styleValueField], @max[@styleValueField]]
       range = @colorRange[tab]
