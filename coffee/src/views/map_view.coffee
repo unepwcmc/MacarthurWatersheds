@@ -6,8 +6,8 @@ class Backbone.Views.MapView extends Backbone.View
 
   colorRange:
     'change': ["#FF5C26", "#fff", "#A3D900"]
-    'now': ["#FFDC73", "#FF5C26"]
-    'future_threats': ["#FFDC73", "#FF5C26"]
+    'now': ["#fcbba1", "#67000d"]
+    'future_threats': ["#fcbba1", "#67000d"]
 
   legendText:
     'change': ['Decrease', 'Increase']
@@ -114,7 +114,8 @@ class Backbone.Views.MapView extends Backbone.View
   # This re-styles the map with new data
   updateQueryLayer: =>
     @map.removeLayer @queryLayer
-    @styleValueField = 'rank'  # or value
+    @styleValueField = 'value'  # or value
+    @filterValueField = 'rank'
     q = @filter.get('query')
     unless q? then return
     @resultsNumber.set 'loading', true
@@ -140,13 +141,15 @@ class Backbone.Views.MapView extends Backbone.View
     )
 
   setMinMax: (type) =>
+
+    data_without_lakes = $.grep @data, (e) -> e.lake isnt true
     @max = {
-      'value': @data[@data.length - 1].value
-      'rank': @data.length
-      'agrCommDev': _.max(@data, (o) -> o.comprov_value).comprov_value
+      'value': data_without_lakes[data_without_lakes.length - 1].value
+      'rank': data_without_lakes.length
+      'agrCommDev': _.max(data_without_lakes, (o) -> o.comprov_value).comprov_value
     }
     @min = {
-      'value': @data[0].value
+      'value': data_without_lakes[0].value
       'rank': 0
       'agrCommDev': 0
     }
@@ -181,9 +184,15 @@ class Backbone.Views.MapView extends Backbone.View
     rank = @querydata[feature][@styleValueField]
     isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
     if tab == 'change'
-      if isZero?
-        return '#eee'
-      else if rank > @firstPositiveIndex
+      if @styleValueField == 'value'
+        middle_gradient = 0
+        if rank == 0
+          return '#eee'
+      else
+        middle_gradient = @firstPositiveIndex
+        if isZero?
+          return '#eee'
+      if rank > middle_gradient
         @colorPositive(rank)
       else
         @colorNegative(rank)
@@ -195,24 +204,24 @@ class Backbone.Views.MapView extends Backbone.View
     tab = @filter.get('tab')
     d = @querydata[id]
     if tab == 'change'
-      range = @firstPositiveIndex / @categories
+      range = @firstPositiveFilterIndex / @categories
     else
-      range = (@max[@styleValueField] - @min[@styleValueField]) / @categories
+      range = (@max[@filterValueField] - @min[@filterValueField]) / @categories
     if level == 'all'
       return yes
     if level == 'increase'
-      return d[@styleValueField] >= @firstPositiveIndex
+      return d[@filterValueField] >= @firstPositiveFilterIndex
     if level == 'high' && tab != 'change'
-      if d[@styleValueField] >= @min[@styleValueField] + range * 2
+      if d[@filterValueField] >= @min[@filterValueField] + range * 2
         return yes
     if level == 'low' && tab == 'change'
-      if d[@styleValueField] >= @min[@styleValueField] + range * 2 and d[@styleValueField] < @firstPositiveIndex
+      if d[@filterValueField] >= @min[@filterValueField] + range * 2 and d[@filterValueField] < @firstPositiveFilterIndex
         return yes      
     if level == 'medium'
-      if d[@styleValueField] >= @min[@styleValueField] + range and d[@styleValueField] < @min[@styleValueField] + range * 2
+      if d[@filterValueField] >= @min[@filterValueField] + range and d[@filterValueField] < @min[@filterValueField] + range * 2
         return yes
     if level == 'low' && tab != 'change' or level == 'high' && tab == 'change'
-      if d[@styleValueField] >= @min[@styleValueField] and d[@styleValueField] < @min[@styleValueField] + range
+      if d[@filterValueField] >= @min[@filterValueField] and d[@filterValueField] < @min[@filterValueField] + range
         return yes
     no
 
@@ -336,16 +345,26 @@ class Backbone.Views.MapView extends Backbone.View
         d.index = i
       d.value == 0
     ), (d) -> d.index)
-    @firstPositiveIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
+    if @styleValueField == 'value'
+      @firstPositiveIndex = 0
+      @firstPositiveFilterIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
+    else
+      @firstPositiveIndex = @zeroValueIndexes[0] or firstPositiveNonZeroIndex
 
   setNegativeLinearScaleColour: (tab) ->
-    domain = [@min[@styleValueField], @firstPositiveIndex-1]
-    range = @colorRange[tab][0..2]
+    if @styleValueField == 'value'
+      domain = [@min[@styleValueField], @firstPositiveIndex]
+    else
+      domain = [@min[@styleValueField], @firstPositiveIndex-1]
+    range = @colorRange[tab][0..1]
     @colorNegative = d3.scale.linear().domain(domain).range(range)
 
   setPositiveLinearScaleColour: (tab) ->
-    if @zeroValueIndexes?.length > 0
-      min = @zeroValueIndexes[0]
+    #if @zeroValueIndexes?.length > 0
+      if @styleValueField == 'value'
+        min = 0
+      else
+        min = @zeroValueIndexes[0]
       domain = [min, @max[@styleValueField]]
       range = @colorRange[tab][-2..]
       @colorPositive = d3.scale.linear().domain(domain).range(range)
