@@ -109,8 +109,46 @@ class Backbone.Views.MapView extends Backbone.View
           <div class='map-legend-text'>
             <h3 class='legend-title'>Level of #{title}</h3>
           </div>
-          <div class='map-legend-grid'>
-            #{@legendGrid()}
+          <div class='map-legend-base'>
+            <table class='map-legend-table'>
+              <tr>
+                <td class='map-legend-table-rotate'>
+                  <div><span>Agr. Dev. Level</span></div>
+                </td>
+                <td class='map-legend-table-rotate'>
+                  <div class='legend-high-low'>
+                    <span>Low</span>
+                    <span>High</span>
+                  </div>
+                </td>
+                <td class='map-legend-table-right-column'>
+                  <div class='map-legend-grid'>
+                    #{@legendGrid()}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-right-column'>
+                  <div class='legend-high-low'>
+                    <span>Low</span>
+                    <span>High</span>
+                  </div>
+                <td>
+              </tr>
+              <tr>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-left-column'>
+                </td>
+                <td class='map-legend-table-right-column'>
+                  <div><span>Level</span></div>
+                <td>
+              </tr>
+            </table>
           </div>
         """
 
