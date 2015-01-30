@@ -78,8 +78,13 @@ are written in Handlebars.
 ### Compilation
 We're using gulp for compiling coffeescript and handlebars. To run this task,
 do:
-  
-    gulp
+```
+gulp
+```
+or leave this running to compile as you go
+```
+gulp watch
+```
 
 
 ### Tests
