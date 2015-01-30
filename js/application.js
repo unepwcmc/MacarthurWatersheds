@@ -10,7 +10,7 @@
       }, {
         selector: "change",
         name: "Change",
-        strapline: "Change up to 2050"
+        strapline: "Change between now and 2050"
       }, {
         selector: "future_threats",
         name: "Future Threats",
@@ -38,19 +38,25 @@
     scales: [
       {
         code: "broadscale",
-        name: "Global"
+        name: "Global",
+        tooltip: "Global <a href='/about.html#global-definition' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"
       }, {
         code: "regional",
-        name: "Regional"
+        name: "Regional",
+        tooltip: "<a href='/about.html#regional-definition' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"
       }
     ],
     subjects: [
       {
         selector: "biodiversity",
-        name: "Biodiversity importance"
+        name: "Biodiversity importance",
+        threatsName: "Threats to current Biodiversity",
+        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. For more information <a href='/about.html'>see here</a>."
       }, {
         selector: "ecosystem",
-        name: "Ecosystem function importance"
+        name: "Ecosystem function provision",
+        threatsName: "Threats to current ecosystem function",
+        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. For more information <a href='/about.html'>see here</a>."
       }
     ],
     lenses: {
@@ -76,7 +82,7 @@
       ecosystem: [
         {
           selector: "totef",
-          name: "Total EF provision",
+          name: "Total Ecosystem Function Provision",
           "default": true
         }, {
           selector: "comprov",
@@ -189,13 +195,13 @@
           name: "Increase"
         }, {
           selector: "low",
-          name: "Low"
+          name: "Low Decrease"
         }, {
           selector: "medium",
-          name: "Medium"
+          name: "Medium Decrease"
         }, {
           selector: "high",
-          name: "High"
+          name: "High Decrease"
         }
       ]
     },
@@ -651,6 +657,7 @@
     __extends(BaseSelectorView, _super);
 
     function BaseSelectorView() {
+      this.isBiodiversity = __bind(this.isBiodiversity, this);
       this.isChangeTab = __bind(this.isChangeTab, this);
       this.setDefaultLevel = __bind(this.setDefaultLevel, this);
       return BaseSelectorView.__super__.constructor.apply(this, arguments);
@@ -674,7 +681,8 @@
       })(this));
       this.$el.html(this.template({
         levels: levels,
-        isChangeTab: this.isChangeTab
+        isChangeTab: this.isChangeTab,
+        isBiodiversity: this.isBiodiversity
       }));
       theSelect = this.$el.find('.select-box');
       return setTimeout((function(_this) {
@@ -705,6 +713,12 @@
 
     BaseSelectorView.prototype.isChangeTab = function() {
       return this.filter.get('tab') === 'change';
+    };
+
+    BaseSelectorView.prototype.isBiodiversity = function() {
+      if (this.filter.attributes.subject === 'biodiversity') {
+        return true;
+      }
     };
 
     return BaseSelectorView;
@@ -909,7 +923,7 @@
       if (isLake) {
         return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
       } else {
-        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
+        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
@@ -1475,6 +1489,26 @@
         scales: this.scales.toJSON(),
         regionName: this.getRegionName()
       }));
+      this.$el.find("[data-toggle=\"popover\"]").popover({
+        trigger: "manual",
+        animation: false,
+        html: true
+      }).on("mouseenter", function() {
+        var _this;
+        _this = this;
+        $(this).popover("show");
+        $('.popover').on("mouseleave", function() {
+          $(_this).popover("hide");
+        });
+      }).on("mouseleave", function() {
+        var _this;
+        _this = this;
+        setTimeout((function() {
+          if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+          }
+        }), 100);
+      });
       return this;
     };
 
@@ -1502,7 +1536,9 @@
       });
     };
 
-    ScaleChooserView.prototype.onClose = function() {};
+    ScaleChooserView.prototype.onClose = function() {
+      return $('.popover[role="tooltip"]').remove();
+    };
 
     return ScaleChooserView;
 
@@ -1592,6 +1628,7 @@
         scenarios: scenarios,
         defaultOption: defaultOption,
         scenarioDescription: scenarioDescription,
+        isFutureTab: this.isFutureTab(),
         pdf: pdf
       }));
       theSelect = this.$el.find('.select-box');
@@ -1621,6 +1658,16 @@
         return 'These scenarios are based on UNEP GEO4';
       } else {
         return 'These scenarios are based on regional scenarios and workshops';
+      }
+    };
+
+    ScenarioSelectorView.prototype.isFutureTab = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        return true;
+      } else {
+        return false;
       }
     };
 
@@ -1679,6 +1726,7 @@
       })(this));
       this.$el.html(this.template({
         lenses: lenses,
+        heading: this.getLensTitle(),
         title: this.getLensTitle(),
         subject: subject.charAt(0).toUpperCase() + subject.slice(1)
       }));
@@ -1718,9 +1766,15 @@
 
     LensSelectorView.prototype.getLensTitle = function() {
       if (this.filter.get('subject') === 'biodiversity') {
-        return "For species";
+        return {
+          title: "For Species",
+          tooltip: "View results for total or a subset of species"
+        };
       } else if (this.filter.get('subject') === 'ecosystem') {
-        return "By provision";
+        return {
+          title: "By provision",
+          tooltip: "View results for total or a subset of ecosystem functions"
+        };
       }
     };
 
@@ -1806,15 +1860,7 @@
       return this.render();
     };
 
-    PressureOptionView.prototype.render = function() {
-      this.$el.html(this.template({
-        thisView: this,
-        filter: this.filter,
-        pressure: !!this.pressure
-      }));
-      this.attachSubViews();
-      return this;
-    };
+    PressureOptionView.prototype.render = function() {};
 
     PressureOptionView.prototype.setPressure = function(event) {
       this.filter.set('pressure', $(event.target).is(':checked'));
@@ -1862,8 +1908,6 @@
     function PressureSelectorView() {
       return PressureSelectorView.__super__.constructor.apply(this, arguments);
     }
-
-    PressureSelectorView.prototype.template = Handlebars.templates['pressure_selector'];
 
     PressureSelectorView.prototype.events = {
       'change #pressure-select': "setLevel"
@@ -2045,7 +2089,32 @@
         resultsNumber: this.resultsNumber
       }));
       this.attachSubViews();
+      this.initialiseTooltips();
+      $('.popover[role="tooltip"]').remove();
       return this;
+    };
+
+    FilterView.prototype.initialiseTooltips = function() {
+      return this.$el.find("[data-toggle=\"popover\"]").popover({
+        trigger: "manual",
+        animation: false,
+        html: true
+      }).on("mouseenter", function() {
+        var _this;
+        _this = this;
+        $(this).popover("show");
+        $('.popover').on("mouseleave", function() {
+          $(_this).popover("hide");
+        });
+      }).on("mouseleave", function() {
+        var _this;
+        _this = this;
+        setTimeout((function() {
+          if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+          }
+        }), 100);
+      });
     };
 
     FilterView.prototype.setSubject = function(event) {

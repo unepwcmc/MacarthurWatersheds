@@ -133,7 +133,7 @@ div.subjects {
 
 .region-chooser, .scale-chooser, .spin {
   width: 570px;
-  height: 350px; }
+  height: 400px; }
   .region-chooser header, .scale-chooser header, .spin header {
     padding: 10px 0;
     background: #2A2B33; }
@@ -256,12 +256,16 @@ ul.scales li {
   z-index: 100;
   position: fixed;
   margin: auto;
-  top: 0;
+  top: 70px;
   bottom: 0;
   left: 0;
   right: 0;
   background-color: #000;
-  opacity: 0.1; }
+  opacity: 0.3; }
+
+.nav-right {
+  float: right;
+  margin-left: 20px; }
 
 select option {
   width: 300px; }
@@ -435,91 +439,6 @@ div.match-count {
     .legend .map-legend-gradient.nogradient.future_threats {
       background: url("/imgs/legend_gradient_future_threats.png"); }
 
-div.legend div.map-legend-grid{
-    width: 90px;
-    }
-
-div.legend div.map-legend-grid div.map-legend-grid-square{
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    float: left;} 
-
-div.legend div.map-legend-base h3 {
-  font-family: 'Open Sans', sans-serif;
-  color: #888;
-  font-weight: 600;
-  font-size: 1em;
-  line-height: 1em;
-  text-transform: none;
-  height: 100%;
-  overflow: hidden;
-  padding: 0 0 7px 0;
-  margin: 0; }
-
-div.legend div.map-legend-base td.map-legend-table-rotate{
-  height: 50px;
-  padding: 0px;
-  /*width: 20px !important;*/
-  font-weight: normal;
-}
-
-div.legend div.map-legend-base td.map-legend-table-rotate div {
-  -moz-transform: rotate(-90.0deg);  /* FF3.5+ */
-  -ms-transform: rotate(-90.0deg);  /* IE9+ */
-  -o-transform: rotate(-90.0deg);  /* Opera 10.5 */
-  -webkit-transform: rotate(-90.0deg);  /* Safari 3.1+, Chrome */
-  transform: rotate(-90.0deg);  /* Standard */
-}
-
-div.legend div.map-legend-base td.map-legend-table-rotate div span {
-  font-family: 'Open Sans', sans-serif;
-  color: #888;
-  font-weight: 600;
-  font-size: 1em;
-  line-height: 1em;
-  text-transform: none;
-  height: 100%;
-  overflow: hidden;
-  padding: 0 0 7px 0;
-  margin: 0 -30px; }
-
-
-div.legend div.map-legend-base td.map-legend-table-rotate div.legend-high-low span {
-  font-family: 'Open Sans', sans-serif;
-  color: #888;
-  font-weight: 600;
-  font-size: 1em;
-  line-height: 1em;
-  text-transform: none;
-  height: 100%;
-  overflow: hidden;
-  padding: 0 0 7px 0;
-  margin: 0 -30px; }
-
-
-div.legend div.map-legend-base td.map-legend-table-rotate div.legend-high-low span:last-child {
-      float: right;
-      padding-right: 5px }
-
-
-div.legend div.map-legend-base td.map-legend-table-right-column div span {
-  font-family: 'Open Sans', sans-serif;
-  color: #888;
-  font-weight: 600;
-  font-size: 1em;
-  line-height: 1em;
-  text-transform: none;
-  height: 100%;
-  overflow: hidden;
-  padding: 0 0 7px 0;
-}
-
-div.legend div.map-legend-base td.map-legend-table-right-column div{
-  text-align: center
-}
-
-
 div.legend div.map-legend-text h3 {
   font-family: 'Open Sans', sans-serif;
   color: #888;
@@ -531,10 +450,6 @@ div.legend div.map-legend-text h3 {
   overflow: hidden;
   padding: 0 0 7px 0;
   margin: 0; }
-
-div.legend div.map-legend-base table.map-legend-table td.map-legend-table-left-column{
-  width: 10px;
-}
 
 div.legend div.map-legend-gradient {
   overflow: hidden; }
@@ -604,7 +519,8 @@ div.scale-copy, div.region-copy {
   text-align: center; }
   div.scale-copy p, div.region-copy p {
     font-size: 1em;
-    margin: 0 0 5px 0;
+    margin: 0 0 10px 0;
+    padding: 0 10px;
     color: #929292; }
     div.scale-copy p strong, div.region-copy p strong {
       color: #4dc0dd; }

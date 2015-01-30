@@ -3,13 +3,15 @@
 </div>
 
 <div class="subjects">
-  <h1>What would you like to explore?</h1>
+  <h1>Which results would you like to explore?</h1>
+
   <ul>
     {{# each subjects}}
-    <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}">{{name}}</li>
+      <li data-subject="{{selector}}" class="{{#if active}}active{{/if}}" data-container="body" data-toggle="popover" data-placement="left" data-content="{{tooltip}}">{{#if ../showScenarioGroup}}{{threatsName}}{{else}}{{name}}{{/if}}</li>
     {{/each}}
   </ul>
 </div>
+
 
 {{#if showScenarioGroup}}
   {{#if showScenarioSelector}}

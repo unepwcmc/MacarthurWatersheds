@@ -162,7 +162,7 @@ div.subjects {
 
 .region-chooser, .scale-chooser, .spin {
   width: 570px;
-  height: 350px;
+  height: 400px;
   header {
     padding: 10px 0;
     background: $dark-blue;
@@ -285,12 +285,17 @@ ul.scales li {
   z-index: 100;
   position: fixed;
   margin: auto;
-  top: 0;
+  top: 70px;
   bottom: 0;
   left: 0;
   right: 0;
   background-color: #000;
-  opacity: 0.1;
+  opacity: 0.3;
+}
+
+.nav-right {
+  float: right;
+  margin-left: 20px;
 }
 
 select option {
@@ -566,7 +571,8 @@ div.scale-copy, div.region-copy {
   text-align: center;
   p {
     font-size: 1em;
-    margin: 0 0 5px 0;
+    margin: 0 0 10px 0;
+    padding: 0 10px;
     color: $lighter-grey-text;
     strong {
       color: $blue;

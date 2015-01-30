@@ -8,7 +8,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     "click .subjects li": "setSubject"
 
   attributes:
-    class: "filters" 
+    class: "filters"
 
   initialize: (options) ->
     @filter = options.filter
@@ -30,7 +30,31 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       resultsNumber: @resultsNumber
     ))
     @attachSubViews()
+    @initialiseTooltips()
+    $('.popover[role="tooltip"]').remove() 
+
     return @
+
+  initialiseTooltips: ->
+    @$el.find("[data-toggle=\"popover\"]").popover(
+      trigger: "manual"
+      animation: false
+      html: true
+    ).on("mouseenter", ->
+      _this = this
+      $(this).popover "show"
+      $('.popover').on("mouseleave", ->
+        $(_this).popover "hide"
+        return
+      )
+      return
+    ).on "mouseleave", ->
+      _this = this
+      setTimeout (->
+        $(_this).popover "hide"  unless $(".popover:hover").length
+        return
+      ), 100
+      return
 
   setSubject: (event) =>
     subjectName = $(event.target).attr('data-subject')
@@ -69,4 +93,3 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     if tab == 'future_threats'
       return @filter.get('subject')? and @filter.get('scenario')?
     no
-    
