@@ -14,9 +14,14 @@ class Backbone.Views.LevelSelectorView extends Backbone.Views.BaseSelectorView
     @levelType = 'level'
     unless @filter.get('level')?
       @setDefaultLevel()
-    @render()
+    unless @isFutureTab()
+      @render()
 
   setConfig: =>
     l = MacArthur.CONFIG.levels[@filter.get('tab')] or 
       MacArthur.CONFIG.levels['default']
     @config = _.cloneDeep(l)
+
+  isFutureTab: ->
+    tab = @filter.get('tab')
+    if tab == 'future_threats' then yes else no

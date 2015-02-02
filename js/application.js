@@ -765,7 +765,7 @@
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
       'now': ["#fcbba1", "#67000d"],
-      'futureThreatsColorpleth': [['#deebf7', '#9ecae1', '#3182bd'], ['#e5f5e0', '#a1d99b', '#31a354'], ['#fee6ce', '#fdae6b', '#e6550d']]
+      'futureThreatsColorpleth': [['#fee6ce', '#fdae6b', '#e6550d'], ['#e5f5e0', '#a1d99b', '#31a354'], ['#deebf7', '#9ecae1', '#3182bd']]
     };
 
     MapView.prototype.futureThreatsColorRange = {
@@ -902,7 +902,7 @@
           tab = _this.filter.get('tab');
           title = tab === 'change' ? 'change' : 'importance';
           if (tab === 'future_threats') {
-            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>Level</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
+            div.innerHTML = "<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>Level of Importance</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
           } else {
             div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
           }
@@ -1816,13 +1816,25 @@
       if (this.filter.get('level') == null) {
         this.setDefaultLevel();
       }
-      return this.render();
+      if (!this.isFutureTab()) {
+        return this.render();
+      }
     };
 
     LevelSelectorView.prototype.setConfig = function() {
       var l;
       l = MacArthur.CONFIG.levels[this.filter.get('tab')] || MacArthur.CONFIG.levels['default'];
       return this.config = _.cloneDeep(l);
+    };
+
+    LevelSelectorView.prototype.isFutureTab = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'future_threats') {
+        return true;
+      } else {
+        return false;
+      }
     };
 
     return LevelSelectorView;
