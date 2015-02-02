@@ -8,9 +8,9 @@ class Backbone.Views.MapView extends Backbone.View
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
     'futureThreatsColorpleth': [
-                                ['#deebf7', '#9ecae1', '#3182bd'],
+                                ['#fee6ce', '#fdae6b', '#e6550d'],
                                 ['#e5f5e0', '#a1d99b', '#31a354'],
-                                ['#fee6ce', '#fdae6b', '#e6550d']
+                                ['#deebf7', '#9ecae1', '#3182bd']
                                ]
 
   futureThreatsColorRange:
@@ -106,9 +106,6 @@ class Backbone.Views.MapView extends Backbone.View
       if tab == 'future_threats'
         #categories option
         div.innerHTML = """
-          <div class='map-legend-text'>
-            <h3 class='legend-title'>Level of #{title}</h3>
-          </div>
           <div class='map-legend-base'>
             <table class='map-legend-table'>
               <tr>
@@ -144,7 +141,7 @@ class Backbone.Views.MapView extends Backbone.View
                 <td class='map-legend-table-left-column'>
                 </td>
                 <td class='map-legend-table-right-column'>
-                  <div><span>Level</span></div>
+                  <div><span>Level of Importance</span></div>
                 <td>
               </tr>
             </table>
