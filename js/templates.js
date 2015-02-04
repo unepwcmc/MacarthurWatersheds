@@ -191,7 +191,7 @@ function program6(depth0,data) {
 function program8(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "View results for all watersheds on a subset based on change in the level of ";
+  buffer += "View results for all watersheds or a subset based on change in the level of ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.isBiodiversity), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer;
@@ -531,7 +531,7 @@ function program1(depth0,data) {
     + "</strong> region.</p>\n		<p>Results are based on global and regional scenarios of change.<br>Which results would you like to explore?</p>\n	</div>\n	<div class=\"back\"><a href=\"\"><i class=\"fa fa-angle-left\"></i></a></div>\n	<ul class=\"scales\">\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scales), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n	<div class=\"scale-copy\">\n		<p><strong>Hover over the buttons to find out more about each dataset</strong></p>\n	</div>\n</div>\n";
+  buffer += "\n	</ul>\n	<div class=\"scale-copy\">\n		<p><strong>Hover over the buttons to find out more about each analysis</strong></p>\n	</div>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scenario_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

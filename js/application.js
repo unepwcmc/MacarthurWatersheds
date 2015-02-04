@@ -51,12 +51,12 @@
         selector: "biodiversity",
         name: "Biodiversity importance",
         threatsName: "Threats to current Biodiversity",
-        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
+        tooltip: "Biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
       }, {
         selector: "ecosystem",
         name: "Ecosystem function provision",
         threatsName: "Threats to current ecosystem function",
-        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
+        tooltip: "Ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
       }
     ],
     lenses: {
@@ -923,7 +923,7 @@
       if (isLake) {
         return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
       } else {
-        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
+        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\n<!--Pressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br-->\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
