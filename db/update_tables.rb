@@ -11,6 +11,8 @@ BD_LENS = ['allsp', 'crenvu', 'amphibia', 'mammalia', 'aves', 'crenvu']
 EF_LENS = ['totef', 'comprov', 'wildprov', 'regprov']
 CONSERVATION = ['nocons']
 REGIONS = ['WAN', 'MEK', 'GLR']
+BROADSCALE_SCENARIO = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
+REGIONAL_SCENARIO = ['bas', 's1_2050', 's2_2050', 's3_2050', 's4_2050']
 
 
 
@@ -84,10 +86,8 @@ def self.lens_insert lens,subject
 end
 
 def datapoint
-  broadscale_scenario = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
-  regional_scenario = ['bas', 's1_2050', 's2_2050', 's3_2050', 's4_2050']
-  datapoint_query broadscale_scenario, 'true'
-  datapoint_query regional_scenario, 'false'
+  datapoint_query BROADSCALE_SCENARIO, 'true'
+  datapoint_query REGIONAL_SCENARIO, 'false'
 end
 
 def self.datapoint_query scenario, is_broadscale
@@ -154,6 +154,29 @@ def other_values table_preffix, type, column, table_suffix, is_broadscale
     CartodbQuery.run(sql)
 end
 
+def agriculture_development
+  BROADSCALE_SCENARIO[1..-1].each do |scenario|
+    import_scenario scenario
+  end
+
+  REGIONAL_SCENARIO[1..-1].each do |scenario|
+    import_scenario scenario
+  end
+end
+
+def import_scenario scenario
+  quoted_scenario = "'#{scenario}'"
+  sql = <<-SQL
+        INSERT INTO macarthur_agriculture_development(value,scenario,watershed_id)
+        SELECT #{scenario}, #{quoted_scenario}, w.cartodb_id 
+          FROM macarthur_agdevelopment a 
+          INNER JOIN macarthur_watershed w 
+          ON cell_id = w.name
+      SQL
+  puts sql
+  CartodbQuery.run(sql)
+end
+
 def download_query region, is_broadscale
   cartodb_config = YAML.load_file('../config/cartodb_config.yml')
   api_key = cartodb_config["api_key"]
@@ -188,6 +211,8 @@ ARGV.each do|action|
     datapoint
   elsif action == 'pressure_protection'
     pressure_protection 
+  elsif action ==  'agriculture_development'
+    agriculture_development
   elsif action == 'download'
     download_geometries
   elsif action == 'delete'
@@ -200,6 +225,7 @@ ARGV.each do|action|
     lens
     datapoint
     pressure_protection
+    agriculture_development
     download_geometries
     topojson
   end
