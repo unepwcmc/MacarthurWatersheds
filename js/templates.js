@@ -508,7 +508,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "i\n	    <li>\n	      <div class=\"scale-area scale-area-link scale-link\" data-scale-code=\"";
+  buffer += "\n	    <li>\n	      <div class=\"scale-area scale-area-link scale-link\" data-scale-code=\"";
   if (stack1 = helpers.code) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.code); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
