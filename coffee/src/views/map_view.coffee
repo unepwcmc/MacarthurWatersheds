@@ -225,7 +225,7 @@ class Backbone.Views.MapView extends Backbone.View
     @max = {
       'value': data_without_lakes[data_without_lakes.length - 1].value
       'rank': data_without_lakes.length
-      'agrCommDev': _.max(data_without_lakes, (o) -> o.comprov_value).comprov_value
+      'agrCommDev': _.max(data_without_lakes, (o) -> o.agr_dev_value).agr_dev_value
     }
     @min = {
       'value': data_without_lakes[0].value
@@ -241,7 +241,7 @@ class Backbone.Views.MapView extends Backbone.View
         value: x.value
         protectionPercentage: x.protection_percentage
         pressureIndex: x.pressure_index
-        agrCommDevValue: x.comprov_value or ""
+        agrCommDevValue: x.agr_dev_value or ""
         watershed_name: x.name
         lake: x.lake or no
       }])

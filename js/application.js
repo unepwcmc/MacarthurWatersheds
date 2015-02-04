@@ -333,7 +333,7 @@
 
     QueryBuilder.prototype.includeComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return ", comprov_value ";
+        return ", agr_dev_value ";
       } else {
         return " ";
       }
@@ -341,7 +341,7 @@
 
     QueryBuilder.prototype.buildComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
+        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS agr_dev_value \nFROM macarthur_agriculture_development d \nWHERE " + (this.buildScenarioClause('comprov')) + " ) s \nON s.watershed_id = d.watershed_id ";
       } else {
         return "";
       }
@@ -986,8 +986,8 @@
         'value': data_without_lakes[data_without_lakes.length - 1].value,
         'rank': data_without_lakes.length,
         'agrCommDev': _.max(data_without_lakes, function(o) {
-          return o.comprov_value;
-        }).comprov_value
+          return o.agr_dev_value;
+        }).agr_dev_value
       };
       this.min = {
         'value': data_without_lakes[0].value,
@@ -1006,7 +1006,7 @@
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index,
-              agrCommDevValue: x.comprov_value || "",
+              agrCommDevValue: x.agr_dev_value || "",
               watershed_name: x.name,
               lake: x.lake || false
             }
