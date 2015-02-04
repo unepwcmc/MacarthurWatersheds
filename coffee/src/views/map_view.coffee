@@ -286,25 +286,25 @@ class Backbone.Views.MapView extends Backbone.View
       range_val = (( max_val - min_val ) /3)
       if rank < min_val + range_val
         if d < min_agr + range_agr
-          return @futureThreatsColorpleth[0][0]
+          return @futureThreatsColorpleth[2][0]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return @futureThreatsColorpleth[0][1]
+          return @futureThreatsColorpleth[1][0]
         if d > min_agr + range_agr
-          return @futureThreatsColorpleth[0][2]
+          return @futureThreatsColorpleth[0][0]
       if rank < min_val + 2 * range_val and rank > min_val + range_val
         if d < min_agr + range_agr
-          return @futureThreatsColorpleth[1][0]
+          return @futureThreatsColorpleth[2][1]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
           return @futureThreatsColorpleth[1][1]
         if d > min_agr + range_agr
-          return @futureThreatsColorpleth[1][2]
+          return @futureThreatsColorpleth[0][1]
       if rank > min_val + 2 * range_val
         if d < min_agr + range_agr
-          return @futureThreatsColorpleth[2][0]
-        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return @futureThreatsColorpleth[2][1]
-        if d > min_agr + range_agr
           return @futureThreatsColorpleth[2][2]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return @futureThreatsColorpleth[1][2]
+        if d > min_agr + range_agr
+          return @futureThreatsColorpleth[0][2]
   # In case of multiple gradients:
 
   #    d = @querydata[feature].agrCommDevValue
