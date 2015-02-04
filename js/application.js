@@ -116,16 +116,16 @@
         WAN: [
           {
             selector: "s1_2050",
-            name: "Scenario 1"
+            name: "New Dawn"
           }, {
             selector: "s2_2050",
-            name: "Scenario 2"
+            name: "Andean Autumn"
           }, {
             selector: "s3_2050",
-            name: "Scenario 3"
+            name: "Overcoming Obstacles"
           }, {
             selector: "s4_2050",
-            name: "Scenario 4"
+            name: "Flipping Burgers"
           }
         ],
         GLR: [
@@ -146,16 +146,16 @@
         MEK: [
           {
             selector: "s1_2050",
-            name: "Scenario 1"
+            name: "Land of the Golden Mekong"
           }, {
             selector: "s2_2050",
-            name: "Scenario 2"
+            name: "Buffalo, Buffalo"
           }, {
             selector: "s3_2050",
-            name: "Scenario 3"
+            name: "The DoReKi Dragon"
           }, {
             selector: "s4_2050",
-            name: "Scenario 4"
+            name: "Tigers on a Train"
           }
         ]
       }
@@ -550,8 +550,7 @@
 
     TabView.prototype.events = {
       "click ul.tabs li": "setTab",
-      "click .scale-info a": "goBack",
-      "click i.fa": "hideGoBack"
+      "click .scale-info a": "goBack"
     };
 
     TabView.prototype.initialize = function(options) {
