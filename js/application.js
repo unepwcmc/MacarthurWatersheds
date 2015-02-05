@@ -920,10 +920,17 @@
     };
 
     MapView.prototype.getPopupText = function(w, isLake) {
+      var agr_dev_row, tab;
+      tab = this.filter.get('tab');
       if (isLake) {
         return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
       } else {
-        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
+        if (tab === 'future_threats') {
+          agr_dev_row = "Agr. Dev. Level: " + (this.formatToFirst2NonZeroDecimals(w.agr_dev_value)) + "<br>";
+        } else {
+          agr_dev_row = "";
+        }
+        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 

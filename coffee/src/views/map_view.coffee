@@ -173,13 +173,18 @@ class Backbone.Views.MapView extends Backbone.View
     @legend = no
 
   getPopupText: (w, isLake) ->
+    tab = @filter.get('tab')
     if isLake
       return "<a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>"
     else
+      if tab == 'future_threats'
+        agr_dev_row = """Agr. Dev. Level: #{@formatToFirst2NonZeroDecimals(w.agr_dev_value)}<br>"""
+      else
+        agr_dev_row = """"""
       return """
       Watershed id: #{w.name} <br>
-      Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
-      Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
+      Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
+      #{agr_dev_row}
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
       <a href='data/data_sheets/#{w.name}.pdf' target="_blank">Watershed data sheet</a>
       """
