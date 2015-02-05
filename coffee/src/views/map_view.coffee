@@ -22,7 +22,11 @@ class Backbone.Views.MapView extends Backbone.View
   legendText:
     'change': ['Decrease', 'Increase']
     'now': ["Low", "High"]
-    'future_threats': ["Low", "High"]    
+    'future_threats': ["Low", "High"]
+
+  subjectText:
+    'biodiversity': 'Biodiversity'
+    'ecosystem': 'EF'
 
   initialize: (options) ->
     @filter = options.filter
@@ -102,7 +106,8 @@ class Backbone.Views.MapView extends Backbone.View
     @legend.onAdd = (map) =>
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
-      title = if tab == 'change' then 'change' else 'importance'
+      subject = @filter.get('subject')
+      title = if tab == 'change' then 'Change' else 'Importance'
       if tab == 'future_threats'
         #categories option
         div.innerHTML = """
@@ -141,7 +146,7 @@ class Backbone.Views.MapView extends Backbone.View
                 <td class='map-legend-table-left-column'>
                 </td>
                 <td class='map-legend-table-right-column'>
-                  <div><span>Level of Importance</span></div>
+                  <div><span>#{@subjectText[subject]} Level of Importance</span></div>
                 <td>
               </tr>
             </table>
@@ -158,7 +163,7 @@ class Backbone.Views.MapView extends Backbone.View
       else
         div.innerHTML = """
           <div class='map-legend-text'>
-            <h3 class='legend-title'>Level of #{title}</h3>
+            <h3 class='legend-title'>#{@subjectText[subject]} Level of #{title}</h3>
           </div>
             #{@getLegendGradientElement(tab)}
             <span>#{@legendText[tab][0]}</span>
@@ -174,6 +179,7 @@ class Backbone.Views.MapView extends Backbone.View
 
   getPopupText: (w, isLake) ->
     tab = @filter.get('tab')
+    subject = @filter.get('subject')
     if isLake
       return "<a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>"
     else
@@ -183,7 +189,7 @@ class Backbone.Views.MapView extends Backbone.View
         agr_dev_row = """"""
       return """
       Watershed id: #{w.name} <br>
-      Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
+      #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
       #{agr_dev_row}
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
       <a href='data/data_sheets/#{w.name}.pdf' target="_blank">Watershed data sheet</a>
@@ -192,7 +198,7 @@ class Backbone.Views.MapView extends Backbone.View
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
     w = _.find(@data, (row) -> row.watershed_id == id)
-    popupOptions = {maxWidth: 200}
+    popupOptions = {maxWidth: 230}
     layer.bindPopup(@getPopupText(w, feature.properties.lake), popupOptions)
 
   # This re-styles the map with new data

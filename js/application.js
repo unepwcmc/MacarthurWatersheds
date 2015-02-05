@@ -781,6 +781,11 @@
       'future_threats': ["Low", "High"]
     };
 
+    MapView.prototype.subjectText = {
+      'biodiversity': 'Biodiversity',
+      'ecosystem': 'EF'
+    };
+
     MapView.prototype.initialize = function(options) {
       this.filter = options.filter;
       this.resultsNumber = options.resultsNumber;
@@ -897,14 +902,15 @@
       });
       this.legend.onAdd = (function(_this) {
         return function(map) {
-          var div, tab, title;
+          var div, subject, tab, title;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
-          title = tab === 'change' ? 'change' : 'importance';
+          subject = _this.filter.get('subject');
+          title = tab === 'change' ? 'Change' : 'Importance';
           if (tab === 'future_threats') {
-            div.innerHTML = "<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>Level of Importance</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
+            div.innerHTML = "<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>" + _this.subjectText[subject] + " Level of Importance</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
           } else {
-            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>" + _this.subjectText[subject] + " Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
           }
           return div;
         };
@@ -920,8 +926,9 @@
     };
 
     MapView.prototype.getPopupText = function(w, isLake) {
-      var agr_dev_row, tab;
+      var agr_dev_row, subject, tab;
       tab = this.filter.get('tab');
+      subject = this.filter.get('subject');
       if (isLake) {
         return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
       } else {
@@ -930,7 +937,7 @@
         } else {
           agr_dev_row = "";
         }
-        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
+        return "Watershed id: " + w.name + " <br>\n" + this.subjectText[subject] + " Value: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
@@ -941,7 +948,7 @@
         return row.watershed_id === id;
       });
       popupOptions = {
-        maxWidth: 200
+        maxWidth: 230
       };
       return layer.bindPopup(this.getPopupText(w, feature.properties.lake), popupOptions);
     };

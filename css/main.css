@@ -424,14 +424,14 @@ div.match-count {
   background-color: white;
   padding: 7px; }
   .legend .map-legend-text {
-    width: 160px; }
+    width: 200px; }
     .legend .map-legend-text div:first-child {
       float: left; }
     .legend .map-legend-text div:last-child {
       float: right; }
   .legend .map-legend-gradient {
     height: 20px;
-    width: 160px; }
+    width: 200px; }
     .legend .map-legend-gradient.nogradient.now {
       background: url("/imgs/legend_gradient_now.png"); }
     .legend .map-legend-gradient.nogradient.change {
