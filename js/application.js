@@ -51,12 +51,12 @@
         selector: "biodiversity",
         name: "Biodiversity importance",
         threatsName: "Threats to current Biodiversity",
-        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. For more information <a href='/about.html'>see here</a>."
+        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
       }, {
         selector: "ecosystem",
         name: "Ecosystem function provision",
         threatsName: "Threats to current ecosystem function",
-        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. For more information <a href='/about.html'>see here</a>."
+        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
       }
     ],
     lenses: {
