@@ -8,9 +8,9 @@ class Backbone.Views.MapView extends Backbone.View
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
     'futureThreatsColorpleth': [
-                                ['#fee6ce', '#fdae6b', '#e6550d'],
-                                ['#e5f5e0', '#a1d99b', '#31a354'],
-                                ['#deebf7', '#9ecae1', '#3182bd']
+                                ['#ab5d1c', '#7b6734', '#597545'],
+                                ['#d8c579', '#909375', '#30795e'],
+                                ['#f3f3f3', '#79cabb', '#04846d']
                                ]
 
   futureThreatsColorRange:
@@ -272,7 +272,7 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     tab = @filter.get('tab')
     rank = @querydata[feature][@styleValueField]
-    isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
+    #isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
     if tab == 'change'
       if @styleValueField == 'value'
         middle_gradient = 0
@@ -283,9 +283,9 @@ class Backbone.Views.MapView extends Backbone.View
         if isZero?
           return '#eee'
       if rank > middle_gradient
-        @colorPositive(rank)
-      else
-        @colorNegative(rank)
+        return@colorPositive(rank)
+      if rank < middle_gradient
+        return @colorNegative(rank)
     if tab == 'future_threats'
       d = @querydata[feature].agrCommDevValue
       @futureThreatsColorpleth = @colorRange.futureThreatsColorpleth
@@ -329,7 +329,7 @@ class Backbone.Views.MapView extends Backbone.View
   #    return @medium_agricultural_colour(rank)  if d >= min + range and d < min + range * 2
   #    return @low_agricultural_colour(rank)  if d >= min and d < min + range
   #    @negative_agricultural_colour rank  if d < 0
-    else
+    if tab == 'now'
       @color(rank)
 
   filterFeatureLevel: (id) =>
@@ -473,13 +473,13 @@ class Backbone.Views.MapView extends Backbone.View
 
   setPositiveLinearScaleColour: (tab) ->
     #if @zeroValueIndexes?.length > 0
-      if @styleValueField == 'value'
-        min = 0
-      else
-        min = @zeroValueIndexes[0]
-      domain = [min, @max[@styleValueField]]
-      range = @colorRange[tab][-2..]
-      @colorPositive = d3.scale.linear().domain(domain).range(range)
+    if @styleValueField == 'value'
+      min = 0
+    else
+      min = @zeroValueIndexes[0]
+    domain = [min, @max[@styleValueField]]
+    range = @colorRange[tab][-2..]
+    @colorPositive = d3.scale.linear().domain(domain).range(range)
 
   setFutureThreatsLinearScaleColour: ->
     domain = [@min[@styleValueField], @max[@styleValueField]]

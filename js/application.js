@@ -765,7 +765,7 @@
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
       'now': ["#fcbba1", "#67000d"],
-      'futureThreatsColorpleth': [['#fee6ce', '#fdae6b', '#e6550d'], ['#e5f5e0', '#a1d99b', '#31a354'], ['#deebf7', '#9ecae1', '#3182bd']]
+      'futureThreatsColorpleth': [['#ab5d1c', '#7b6734', '#597545'], ['#d8c579', '#909375', '#30795e'], ['#f3f3f3', '#79cabb', '#04846d']]
     };
 
     MapView.prototype.futureThreatsColorRange = {
@@ -1042,12 +1042,9 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, isZero, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
+      var d, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
-      isZero = _.find(this.zeroValueIndexes, function(i) {
-        return rank === i;
-      });
       if (tab === 'change') {
         if (this.styleValueField === 'value') {
           middle_gradient = 0;
@@ -1056,14 +1053,15 @@
           }
         } else {
           middle_gradient = this.firstPositiveIndex;
-          if (isZero != null) {
+          if (typeof isZero !== "undefined" && isZero !== null) {
             return '#eee';
           }
         }
         if (rank > middle_gradient) {
-          this.colorPositive(rank);
-        } else {
-          this.colorNegative(rank);
+          return this.colorPositive(rank);
+        }
+        if (rank < middle_gradient) {
+          return this.colorNegative(rank);
         }
       }
       if (tab === 'future_threats') {
@@ -1108,7 +1106,8 @@
             return this.futureThreatsColorpleth[0][2];
           }
         }
-      } else {
+      }
+      if (tab === 'now') {
         return this.color(rank);
       }
     };
