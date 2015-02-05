@@ -27,8 +27,22 @@ MacArthur.CONFIG =
     { code: "regional", name: "Regional", tooltip: "<a href='/about.html#regional-definition' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"}
   ,]
   subjects: [
-    { selector: "biodiversity", name: "Biodiversity importance", threatsName: "Threats to current Biodiversity", tooltip: "Biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."}
-    { selector: "ecosystem", name: "Ecosystem function provision", threatsName: "Threats to current ecosystem function", tooltip: "Ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."}
+    {
+      selector: "biodiversity", 
+      name: "Biodiversity importance", 
+      threatsName: "Threats to current Biodiversity", 
+      nowTooltip: "Biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>.",
+      futureTooltip: "Threats to current biodiversity are based on expansion of agriculture under a future scenario and biodiversity is based on baseline biodiversity importance. <a href='/about.html'>More information</a>.",
+      changeTooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
+    },
+    { 
+      selector: "ecosystem", 
+      name: "Ecosystem function provision", 
+      threatsName: "Threats to current ecosystem function", 
+      nowTooltip: "Ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>.",
+      futureTooltip: "threats to current ecosystem function provision are based on expansion of agriculture under a future scenario and ecosystem function provision is based on baseline ecosystem function provision importance. <a href='/about.html'>More information</a>.",
+      changeTooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
+    }
   ],
   lenses: {
     biodiversity: [

@@ -17,10 +17,9 @@ function program1(depth0,data,depth1) {
   stack1 = helpers['if'].call(depth0, (depth1 && depth1.showScenarioGroup), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      <i class=\"fa fa-info-circle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-content=\"";
-  if (stack1 = helpers.tooltip) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.tooltip); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
-    + "\"></i></li>\n    ";
+  stack1 = helpers['if'].call(depth0, (depth1 && depth1.showScenarioGroup), {hash:{},inverse:self.programWithDepth(10, program10, data, depth1),fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\"></i></li>\n    ";
   return buffer;
   }
 function program2(depth0,data) {
@@ -47,14 +46,45 @@ function program6(depth0,data) {
 
 function program8(depth0,data) {
   
+  var stack1;
+  if (stack1 = helpers.futureTooltip) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.futureTooltip); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  return escapeExpression(stack1);
+  }
+
+function program10(depth0,data,depth2) {
+  
+  var stack1;
+  stack1 = helpers['if'].call(depth0, (depth2 && depth2.isNowTab), {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
+  if(stack1 || stack1 === 0) { return stack1; }
+  else { return ''; }
+  }
+function program11(depth0,data) {
+  
+  var stack1;
+  if (stack1 = helpers.nowTooltip) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.nowTooltip); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  return escapeExpression(stack1);
+  }
+
+function program13(depth0,data) {
+  
+  var stack1;
+  if (stack1 = helpers.changeTooltip) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.changeTooltip); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  return escapeExpression(stack1);
+  }
+
+function program15(depth0,data) {
+  
   var buffer = "", stack1;
   buffer += "\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioSelector), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n";
   return buffer;
   }
-function program9(depth0,data) {
+function program16(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n    ";
@@ -66,7 +96,7 @@ function program9(depth0,data) {
   return buffer;
   }
 
-function program11(depth0,data) {
+function program18(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n  ";
@@ -78,7 +108,7 @@ function program11(depth0,data) {
   return buffer;
   }
 
-function program13(depth0,data) {
+function program20(depth0,data) {
   
   var buffer = "", stack1, options;
   buffer += "\n  ";
@@ -109,13 +139,13 @@ function program13(depth0,data) {
   stack2 = helpers.each.call(depth0, (depth0 && depth0.subjects), {hash:{},inverse:self.noop,fn:self.programWithDepth(1, program1, data, depth0),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </ul>\n</div>\n\n\n";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioGroup), {hash:{},inverse:self.program(8, program8, data),fn:self.program(8, program8, data),data:data});
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showScenarioGroup), {hash:{},inverse:self.program(15, program15, data),fn:self.program(15, program15, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showLensSelector), {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showOtherSelectors), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.showOtherSelectors), {hash:{},inverse:self.noop,fn:self.program(20, program20, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n";
   return buffer;
@@ -528,7 +558,7 @@ function program1(depth0,data) {
   if (stack1 = helpers.regionName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.regionName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</strong> region.</p>\n		<p>Results are based on global and regional scenarios of change.<br>Which results would you like to explore?</p>\n	</div>\n	<div class=\"back\"><a href=\"\"><i class=\"fa fa-angle-left\"></i></a></div>\n	<ul class=\"scales\">\n	  ";
+    + "</strong> region.</p>\n		<p>Results are based on global and regional scenarios of change.<br>Which results would you like to explore?</p>\n	</div>\n	<div class=\"back\"><a href=\"\"><i class=\"fa fa-angle-left\"></i></a></div>\n\n	<ul class=\"scales\">\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scales), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	</ul>\n	<div class=\"scale-copy\">\n		<p><strong>Hover over the info buttons to find out more about each analysis</strong></p>\n	</div>\n</div>\n";

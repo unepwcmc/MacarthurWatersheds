@@ -28,6 +28,7 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
       showOtherSelectors: @showOtherSelectors()
       filter: @filter
       resultsNumber: @resultsNumber
+      isNowTab: @isNowTab()
     ))
     @attachSubViews()
     @initialiseTooltips()
@@ -73,6 +74,10 @@ class Backbone.Views.FilterView extends Backbone.Diorama.NestingView
     if tab == 'future_threats'
       return @showOtherSelectors()
     no
+
+  isNowTab: ->
+    tab = @filter.get('tab')
+    if tab == 'now' then yes else no
 
   showScenarioGroup: ->
     tab = @filter.get('tab')
