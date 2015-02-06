@@ -51,12 +51,16 @@
         selector: "biodiversity",
         name: "Biodiversity importance",
         threatsName: "Threats to current Biodiversity",
-        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
+        nowTooltip: "Biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>.",
+        futureTooltip: "Threats to current biodiversity are based on expansion of agriculture under a future scenario and biodiversity is based on baseline biodiversity importance. <a href='/about.html'>More information</a>.",
+        changeTooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
       }, {
         selector: "ecosystem",
         name: "Ecosystem function provision",
         threatsName: "Threats to current ecosystem function",
-        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
+        nowTooltip: "Ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>.",
+        futureTooltip: "threats to current ecosystem function provision are based on expansion of agriculture under a future scenario and ecosystem function provision is based on baseline ecosystem function provision importance. <a href='/about.html'>More information</a>.",
+        changeTooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
       }
     ],
     lenses: {
@@ -116,16 +120,16 @@
         WAN: [
           {
             selector: "s1_2050",
-            name: "Scenario 1"
+            name: "New Dawn"
           }, {
             selector: "s2_2050",
-            name: "Scenario 2"
+            name: "Andean Autumn"
           }, {
             selector: "s3_2050",
-            name: "Scenario 3"
+            name: "Overcoming Obstacles"
           }, {
             selector: "s4_2050",
-            name: "Scenario 4"
+            name: "Flipping Burgers"
           }
         ],
         GLR: [
@@ -146,16 +150,16 @@
         MEK: [
           {
             selector: "s1_2050",
-            name: "Scenario 1"
+            name: "Land of the Golden Mekong"
           }, {
             selector: "s2_2050",
-            name: "Scenario 2"
+            name: "Buffalo, Buffalo"
           }, {
             selector: "s3_2050",
-            name: "Scenario 3"
+            name: "The DoReKi Dragon"
           }, {
             selector: "s4_2050",
-            name: "Scenario 4"
+            name: "Tigers on a Train"
           }
         ]
       }
@@ -333,7 +337,7 @@
 
     QueryBuilder.prototype.includeComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return ", comprov_value ";
+        return ", agr_dev_value ";
       } else {
         return " ";
       }
@@ -341,7 +345,7 @@
 
     QueryBuilder.prototype.buildComprovValueClause = function() {
       if (this.filter.get('tab') === 'future_threats') {
-        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS comprov_value FROM \nmacarthur_datapoint d \nLEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id \nWHERE lens.type = 'comprov' AND metric = 'change' \nAND " + (this.buildScenarioClause('comprov')) + " AND type_data = 'value' ) s \nON s.watershed_id = d.watershed_id ";
+        return "LEFT JOIN (\nSELECT d.watershed_id, d.value AS agr_dev_value \nFROM macarthur_agriculture_development d \nWHERE " + (this.buildScenarioClause('comprov')) + " ) s \nON s.watershed_id = d.watershed_id ";
       } else {
         return "";
       }
@@ -550,8 +554,7 @@
 
     TabView.prototype.events = {
       "click ul.tabs li": "setTab",
-      "click .scale-info a": "goBack",
-      "click i.fa": "hideGoBack"
+      "click .scale-info a": "goBack"
     };
 
     TabView.prototype.initialize = function(options) {
@@ -765,7 +768,7 @@
     MapView.prototype.colorRange = {
       'change': ["#FF5C26", "#fff", "#A3D900"],
       'now': ["#fcbba1", "#67000d"],
-      'futureThreatsColorpleth': [['#fee6ce', '#fdae6b', '#e6550d'], ['#e5f5e0', '#a1d99b', '#31a354'], ['#deebf7', '#9ecae1', '#3182bd']]
+      'futureThreatsColorpleth': [['#ab5d1c', '#7b6734', '#597545'], ['#d8c579', '#909375', '#30795e'], ['#f3f3f3', '#79cabb', '#04846d']]
     };
 
     MapView.prototype.futureThreatsColorRange = {
@@ -779,6 +782,11 @@
       'change': ['Decrease', 'Increase'],
       'now': ["Low", "High"],
       'future_threats': ["Low", "High"]
+    };
+
+    MapView.prototype.subjectText = {
+      'biodiversity': 'Biodiversity',
+      'ecosystem': 'EF'
     };
 
     MapView.prototype.initialize = function(options) {
@@ -897,14 +905,15 @@
       });
       this.legend.onAdd = (function(_this) {
         return function(map) {
-          var div, tab, title;
+          var div, subject, tab, title;
           div = L.DomUtil.create("div", "info legend");
           tab = _this.filter.get('tab');
-          title = tab === 'change' ? 'change' : 'importance';
+          subject = _this.filter.get('subject');
+          title = tab === 'change' ? 'Change' : 'Importance';
           if (tab === 'future_threats') {
-            div.innerHTML = "<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>Level of Importance</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
+            div.innerHTML = "<div class='map-legend-base'>\n  <table class='map-legend-table'>\n    <tr>\n      <td class='map-legend-table-rotate'>\n        <div><span>Agr. Dev. Level</span></div>\n      </td>\n      <td class='map-legend-table-rotate'>\n        <div class='legend-high-low'>\n          <span>Low High</span>\n        </div>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='map-legend-grid'>\n          " + (_this.legendGrid()) + "\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div class='legend-high-low'>\n          <span>Low</span>\n          <span>High</span>\n        </div>\n      <td>\n    </tr>\n    <tr>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-left-column'>\n      </td>\n      <td class='map-legend-table-right-column'>\n        <div><span>" + _this.subjectText[subject] + " Level of Importance</span></div>\n      <td>\n    </tr>\n  </table>\n</div>";
           } else {
-            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
+            div.innerHTML = "<div class='map-legend-text'>\n  <h3 class='legend-title'>" + _this.subjectText[subject] + " Level of " + title + "</h3>\n</div>\n  " + (_this.getLegendGradientElement(tab)) + "\n  <span>" + _this.legendText[tab][0] + "</span>\n  <span>" + _this.legendText[tab][1] + "</span>\n</div>";
           }
           return div;
         };
@@ -920,10 +929,18 @@
     };
 
     MapView.prototype.getPopupText = function(w, isLake) {
+      var agr_dev_row, subject, tab;
+      tab = this.filter.get('tab');
+      subject = this.filter.get('subject');
       if (isLake) {
         return "<a href='data/data_sheets/" + w.name + ".pdf'>Watershed data sheet</a>";
       } else {
-        return "Watershed id: " + w.name + " <br>\nValue: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nPressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br>\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
+        if (tab === 'future_threats') {
+          agr_dev_row = "Agr. Dev. Level: " + (this.formatToFirst2NonZeroDecimals(w.agr_dev_value)) + "<br>";
+        } else {
+          agr_dev_row = "";
+        }
+        return "Watershed id: " + w.name + " <br>\n" + this.subjectText[subject] + " Value: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\n<!--Pressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br-->\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
@@ -934,7 +951,7 @@
         return row.watershed_id === id;
       });
       popupOptions = {
-        maxWidth: 200
+        maxWidth: 230
       };
       return layer.bindPopup(this.getPopupText(w, feature.properties.lake), popupOptions);
     };
@@ -986,8 +1003,8 @@
         'value': data_without_lakes[data_without_lakes.length - 1].value,
         'rank': data_without_lakes.length,
         'agrCommDev': _.max(data_without_lakes, function(o) {
-          return o.comprov_value;
-        }).comprov_value
+          return o.agr_dev_value;
+        }).agr_dev_value
       };
       this.min = {
         'value': data_without_lakes[0].value,
@@ -1006,7 +1023,7 @@
               value: x.value,
               protectionPercentage: x.protection_percentage,
               pressureIndex: x.pressure_index,
-              agrCommDevValue: x.comprov_value || "",
+              agrCommDevValue: x.agr_dev_value || "",
               watershed_name: x.name,
               lake: x.lake || false
             }
@@ -1028,12 +1045,9 @@
     };
 
     MapView.prototype.getColor = function(feature) {
-      var d, isZero, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
+      var d, max_agr, max_val, middle_gradient, min_agr, min_val, range_agr, range_val, rank, tab;
       tab = this.filter.get('tab');
       rank = this.querydata[feature][this.styleValueField];
-      isZero = _.find(this.zeroValueIndexes, function(i) {
-        return rank === i;
-      });
       if (tab === 'change') {
         if (this.styleValueField === 'value') {
           middle_gradient = 0;
@@ -1042,14 +1056,15 @@
           }
         } else {
           middle_gradient = this.firstPositiveIndex;
-          if (isZero != null) {
+          if (typeof isZero !== "undefined" && isZero !== null) {
             return '#eee';
           }
         }
         if (rank > middle_gradient) {
-          this.colorPositive(rank);
-        } else {
-          this.colorNegative(rank);
+          return this.colorPositive(rank);
+        }
+        if (rank < middle_gradient) {
+          return this.colorNegative(rank);
         }
       }
       if (tab === 'future_threats') {
@@ -1063,38 +1078,39 @@
         range_val = (max_val - min_val) / 3;
         if (rank < min_val + range_val) {
           if (d < min_agr + range_agr) {
-            return this.futureThreatsColorpleth[0][0];
+            return this.futureThreatsColorpleth[2][0];
           }
           if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
-            return this.futureThreatsColorpleth[0][1];
+            return this.futureThreatsColorpleth[1][0];
           }
           if (d > min_agr + range_agr) {
-            return this.futureThreatsColorpleth[0][2];
+            return this.futureThreatsColorpleth[0][0];
           }
         }
         if (rank < min_val + 2 * range_val && rank > min_val + range_val) {
           if (d < min_agr + range_agr) {
-            return this.futureThreatsColorpleth[1][0];
+            return this.futureThreatsColorpleth[2][1];
           }
           if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
             return this.futureThreatsColorpleth[1][1];
           }
           if (d > min_agr + range_agr) {
-            return this.futureThreatsColorpleth[1][2];
+            return this.futureThreatsColorpleth[0][1];
           }
         }
         if (rank > min_val + 2 * range_val) {
           if (d < min_agr + range_agr) {
-            return this.futureThreatsColorpleth[2][0];
-          }
-          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
-            return this.futureThreatsColorpleth[2][1];
-          }
-          if (d > min_agr + range_agr) {
             return this.futureThreatsColorpleth[2][2];
           }
+          if (d < min_agr + 2 * range_agr && d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[1][2];
+          }
+          if (d > min_agr + range_agr) {
+            return this.futureThreatsColorpleth[0][2];
+          }
         }
-      } else {
+      }
+      if (tab === 'now') {
         return this.color(rank);
       }
     };
@@ -2098,7 +2114,8 @@
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
         filter: this.filter,
-        resultsNumber: this.resultsNumber
+        resultsNumber: this.resultsNumber,
+        isNowTab: this.isNowTab()
       }));
       this.attachSubViews();
       this.initialiseTooltips();
@@ -2153,6 +2170,16 @@
         return this.showOtherSelectors();
       }
       return false;
+    };
+
+    FilterView.prototype.isNowTab = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'now') {
+        return true;
+      } else {
+        return false;
+      }
     };
 
     FilterView.prototype.showScenarioGroup = function() {

@@ -7,7 +7,6 @@ class Backbone.Views.TabView extends Backbone.Diorama.NestingView
   events:
     "click ul.tabs li": "setTab"
     "click .scale-info a": "goBack"
-    "click i.fa": "hideGoBack"
 
   initialize: (options) ->
     @config = _.cloneDeep(MacArthur.CONFIG.tabs)

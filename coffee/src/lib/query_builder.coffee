@@ -41,7 +41,7 @@ class window.MacArthur.QueryBuilder
 
   includeComprovValueClause: ->
     if @filter.get('tab') == 'future_threats'
-      ", comprov_value "
+      ", agr_dev_value "
     else
       " "
 
@@ -49,11 +49,9 @@ class window.MacArthur.QueryBuilder
     if @filter.get('tab') == 'future_threats'
       """
         LEFT JOIN (
-        SELECT d.watershed_id, d.value AS comprov_value FROM 
-        macarthur_datapoint d 
-        LEFT JOIN macarthur_lens lens ON lens.cartodb_id = d.lens_id 
-        WHERE lens.type = 'comprov' AND metric = 'change' 
-        AND #{@buildScenarioClause('comprov')} AND type_data = 'value' ) s 
+        SELECT d.watershed_id, d.value AS agr_dev_value 
+        FROM macarthur_agriculture_development d 
+        WHERE #{@buildScenarioClause('comprov')} ) s 
         ON s.watershed_id = d.watershed_id 
       """
     else

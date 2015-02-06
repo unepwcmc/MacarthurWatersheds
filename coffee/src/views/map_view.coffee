@@ -8,9 +8,9 @@ class Backbone.Views.MapView extends Backbone.View
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
     'futureThreatsColorpleth': [
-                                ['#fee6ce', '#fdae6b', '#e6550d'],
-                                ['#e5f5e0', '#a1d99b', '#31a354'],
-                                ['#deebf7', '#9ecae1', '#3182bd']
+                                ['#ab5d1c', '#7b6734', '#597545'],
+                                ['#d8c579', '#909375', '#30795e'],
+                                ['#f3f3f3', '#79cabb', '#04846d']
                                ]
 
   futureThreatsColorRange:
@@ -22,7 +22,11 @@ class Backbone.Views.MapView extends Backbone.View
   legendText:
     'change': ['Decrease', 'Increase']
     'now': ["Low", "High"]
-    'future_threats': ["Low", "High"]    
+    'future_threats': ["Low", "High"]
+
+  subjectText:
+    'biodiversity': 'Biodiversity'
+    'ecosystem': 'EF'
 
   initialize: (options) ->
     @filter = options.filter
@@ -102,7 +106,8 @@ class Backbone.Views.MapView extends Backbone.View
     @legend.onAdd = (map) =>
       div = L.DomUtil.create("div", "info legend")
       tab = @filter.get('tab')
-      title = if tab == 'change' then 'change' else 'importance'
+      subject = @filter.get('subject')
+      title = if tab == 'change' then 'Change' else 'Importance'
       if tab == 'future_threats'
         #categories option
         div.innerHTML = """
@@ -141,7 +146,7 @@ class Backbone.Views.MapView extends Backbone.View
                 <td class='map-legend-table-left-column'>
                 </td>
                 <td class='map-legend-table-right-column'>
-                  <div><span>Level of Importance</span></div>
+                  <div><span>#{@subjectText[subject]} Level of Importance</span></div>
                 <td>
               </tr>
             </table>
@@ -158,7 +163,7 @@ class Backbone.Views.MapView extends Backbone.View
       else
         div.innerHTML = """
           <div class='map-legend-text'>
-            <h3 class='legend-title'>Level of #{title}</h3>
+            <h3 class='legend-title'>#{@subjectText[subject]} Level of #{title}</h3>
           </div>
             #{@getLegendGradientElement(tab)}
             <span>#{@legendText[tab][0]}</span>
@@ -173,13 +178,20 @@ class Backbone.Views.MapView extends Backbone.View
     @legend = no
 
   getPopupText: (w, isLake) ->
+    tab = @filter.get('tab')
+    subject = @filter.get('subject')
     if isLake
       return "<a href='data/data_sheets/#{w.name}.pdf'>Watershed data sheet</a>"
     else
+      if tab == 'future_threats'
+        agr_dev_row = """Agr. Dev. Level: #{@formatToFirst2NonZeroDecimals(w.agr_dev_value)}<br>"""
+      else
+        agr_dev_row = """"""
       return """
       Watershed id: #{w.name} <br>
-      Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
-      Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br>
+      #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
+      #{agr_dev_row}
+      <!--Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br-->
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
       <a href='data/data_sheets/#{w.name}.pdf' target="_blank">Watershed data sheet</a>
       """
@@ -187,7 +199,7 @@ class Backbone.Views.MapView extends Backbone.View
   bindPopup: (feature, layer) =>
     id = layer.feature.properties.cartodb_id
     w = _.find(@data, (row) -> row.watershed_id == id)
-    popupOptions = {maxWidth: 200}
+    popupOptions = {maxWidth: 230}
     layer.bindPopup(@getPopupText(w, feature.properties.lake), popupOptions)
 
   # This re-styles the map with new data
@@ -225,7 +237,7 @@ class Backbone.Views.MapView extends Backbone.View
     @max = {
       'value': data_without_lakes[data_without_lakes.length - 1].value
       'rank': data_without_lakes.length
-      'agrCommDev': _.max(data_without_lakes, (o) -> o.comprov_value).comprov_value
+      'agrCommDev': _.max(data_without_lakes, (o) -> o.agr_dev_value).agr_dev_value
     }
     @min = {
       'value': data_without_lakes[0].value
@@ -241,7 +253,7 @@ class Backbone.Views.MapView extends Backbone.View
         value: x.value
         protectionPercentage: x.protection_percentage
         pressureIndex: x.pressure_index
-        agrCommDevValue: x.comprov_value or ""
+        agrCommDevValue: x.agr_dev_value or ""
         watershed_name: x.name
         lake: x.lake or no
       }])
@@ -261,7 +273,7 @@ class Backbone.Views.MapView extends Backbone.View
   getColor: (feature) =>
     tab = @filter.get('tab')
     rank = @querydata[feature][@styleValueField]
-    isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
+    #isZero = _.find(@zeroValueIndexes, (i) -> rank == i)
     if tab == 'change'
       if @styleValueField == 'value'
         middle_gradient = 0
@@ -272,9 +284,9 @@ class Backbone.Views.MapView extends Backbone.View
         if isZero?
           return '#eee'
       if rank > middle_gradient
-        @colorPositive(rank)
-      else
-        @colorNegative(rank)
+        return@colorPositive(rank)
+      if rank < middle_gradient
+        return @colorNegative(rank)
     if tab == 'future_threats'
       d = @querydata[feature].agrCommDevValue
       @futureThreatsColorpleth = @colorRange.futureThreatsColorpleth
@@ -286,25 +298,25 @@ class Backbone.Views.MapView extends Backbone.View
       range_val = (( max_val - min_val ) /3)
       if rank < min_val + range_val
         if d < min_agr + range_agr
-          return @futureThreatsColorpleth[0][0]
+          return @futureThreatsColorpleth[2][0]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return @futureThreatsColorpleth[0][1]
+          return @futureThreatsColorpleth[1][0]
         if d > min_agr + range_agr
-          return @futureThreatsColorpleth[0][2]
+          return @futureThreatsColorpleth[0][0]
       if rank < min_val + 2 * range_val and rank > min_val + range_val
         if d < min_agr + range_agr
-          return @futureThreatsColorpleth[1][0]
+          return @futureThreatsColorpleth[2][1]
         if d < min_agr + 2 * range_agr and d > min_agr + range_agr
           return @futureThreatsColorpleth[1][1]
         if d > min_agr + range_agr
-          return @futureThreatsColorpleth[1][2]
+          return @futureThreatsColorpleth[0][1]
       if rank > min_val + 2 * range_val
         if d < min_agr + range_agr
-          return @futureThreatsColorpleth[2][0]
-        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
-          return @futureThreatsColorpleth[2][1]
-        if d > min_agr + range_agr
           return @futureThreatsColorpleth[2][2]
+        if d < min_agr + 2 * range_agr and d > min_agr + range_agr
+          return @futureThreatsColorpleth[1][2]
+        if d > min_agr + range_agr
+          return @futureThreatsColorpleth[0][2]
   # In case of multiple gradients:
 
   #    d = @querydata[feature].agrCommDevValue
@@ -318,7 +330,7 @@ class Backbone.Views.MapView extends Backbone.View
   #    return @medium_agricultural_colour(rank)  if d >= min + range and d < min + range * 2
   #    return @low_agricultural_colour(rank)  if d >= min and d < min + range
   #    @negative_agricultural_colour rank  if d < 0
-    else
+    if tab == 'now'
       @color(rank)
 
   filterFeatureLevel: (id) =>
@@ -462,13 +474,13 @@ class Backbone.Views.MapView extends Backbone.View
 
   setPositiveLinearScaleColour: (tab) ->
     #if @zeroValueIndexes?.length > 0
-      if @styleValueField == 'value'
-        min = 0
-      else
-        min = @zeroValueIndexes[0]
-      domain = [min, @max[@styleValueField]]
-      range = @colorRange[tab][-2..]
-      @colorPositive = d3.scale.linear().domain(domain).range(range)
+    if @styleValueField == 'value'
+      min = 0
+    else
+      min = @zeroValueIndexes[0]
+    domain = [min, @max[@styleValueField]]
+    range = @colorRange[tab][-2..]
+    @colorPositive = d3.scale.linear().domain(domain).range(range)
 
   setFutureThreatsLinearScaleColour: ->
     domain = [@min[@styleValueField], @max[@styleValueField]]

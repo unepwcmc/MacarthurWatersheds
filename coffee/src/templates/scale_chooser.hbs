@@ -5,14 +5,16 @@
 		<p>Results are based on global and regional scenarios of change.<br>Which results would you like to explore?</p>
 	</div>
 	<div class="back"><a href=""><i class="fa fa-angle-left"></i></a></div>
+
 	<ul class="scales">
 	  {{#each scales}}
 	    <li>
-	      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{tooltip}}">{{name}}</div>
+	      <div class="scale-area scale-area-link scale-link" data-scale-code="{{code}}">{{name}}</div>
+	      <i class="fa fa-info-circle" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{tooltip}}"></i>
 	    </li>
 	  {{/each}}
 	</ul>
 	<div class="scale-copy">
-		<p><strong>Hover over the buttons to find out more about each dataset</strong></p>
+		<p><strong>Hover over the info buttons to find out more about each analysis</strong></p>
 	</div>
 </div>
