@@ -29,3 +29,4 @@ set :scm_username, "unepwcmc-read"
 
 set :deploy_to, "/home/ubuntu/#{application}"
 set :normalize_asset_timestamps, false
+set :linked_dirs, %w{data/datasheets}
