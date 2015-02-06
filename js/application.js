@@ -51,12 +51,16 @@
         selector: "biodiversity",
         name: "Biodiversity importance",
         threatsName: "Threats to current Biodiversity",
-        tooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
+        nowTooltip: "Biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>.",
+        futureTooltip: "Threats to current biodiversity are based on expansion of agriculture under a future scenario and biodiversity is based on baseline biodiversity importance. <a href='/about.html'>More information</a>.",
+        changeTooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
       }, {
         selector: "ecosystem",
         name: "Ecosystem function provision",
         threatsName: "Threats to current ecosystem function",
-        tooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
+        nowTooltip: "Ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>.",
+        futureTooltip: "threats to current ecosystem function provision are based on expansion of agriculture under a future scenario and ecosystem function provision is based on baseline ecosystem function provision importance. <a href='/about.html'>More information</a>.",
+        changeTooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
       }
     ],
     lenses: {
@@ -116,16 +120,16 @@
         WAN: [
           {
             selector: "s1_2050",
-            name: "Scenario 1"
+            name: "New Dawn"
           }, {
             selector: "s2_2050",
-            name: "Scenario 2"
+            name: "Andean Autumn"
           }, {
             selector: "s3_2050",
-            name: "Scenario 3"
+            name: "Overcoming Obstacles"
           }, {
             selector: "s4_2050",
-            name: "Scenario 4"
+            name: "Flipping Burgers"
           }
         ],
         GLR: [
@@ -146,16 +150,16 @@
         MEK: [
           {
             selector: "s1_2050",
-            name: "Scenario 1"
+            name: "Land of the Golden Mekong"
           }, {
             selector: "s2_2050",
-            name: "Scenario 2"
+            name: "Buffalo, Buffalo"
           }, {
             selector: "s3_2050",
-            name: "Scenario 3"
+            name: "The DoReKi Dragon"
           }, {
             selector: "s4_2050",
-            name: "Scenario 4"
+            name: "Tigers on a Train"
           }
         ]
       }
@@ -550,8 +554,7 @@
 
     TabView.prototype.events = {
       "click ul.tabs li": "setTab",
-      "click .scale-info a": "goBack",
-      "click i.fa": "hideGoBack"
+      "click .scale-info a": "goBack"
     };
 
     TabView.prototype.initialize = function(options) {
@@ -937,7 +940,7 @@
         } else {
           agr_dev_row = "";
         }
-        return "Watershed id: " + w.name + " <br>\n" + this.subjectText[subject] + " Value: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
+        return "Watershed id: " + w.name + " <br>\n" + this.subjectText[subject] + " Value: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\n<!--Pressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br-->\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
@@ -2111,7 +2114,8 @@
         showScenarioSelector: this.showScenarioSelector(),
         showOtherSelectors: this.showOtherSelectors(),
         filter: this.filter,
-        resultsNumber: this.resultsNumber
+        resultsNumber: this.resultsNumber,
+        isNowTab: this.isNowTab()
       }));
       this.attachSubViews();
       this.initialiseTooltips();
@@ -2166,6 +2170,16 @@
         return this.showOtherSelectors();
       }
       return false;
+    };
+
+    FilterView.prototype.isNowTab = function() {
+      var tab;
+      tab = this.filter.get('tab');
+      if (tab === 'now') {
+        return true;
+      } else {
+        return false;
+      }
     };
 
     FilterView.prototype.showScenarioGroup = function() {

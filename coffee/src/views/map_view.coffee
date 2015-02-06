@@ -191,6 +191,7 @@ class Backbone.Views.MapView extends Backbone.View
       Watershed id: #{w.name} <br>
       #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
       #{agr_dev_row}
+      <!--Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br-->
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
       <a href='data/data_sheets/#{w.name}.pdf' target="_blank">Watershed data sheet</a>
       """
