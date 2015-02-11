@@ -156,20 +156,20 @@ end
 
 def agriculture_development
   BROADSCALE_SCENARIO[1..-1].each do |scenario|
-    import_scenario scenario
+    import_scenario scenario, 'global'
   end
 
   REGIONAL_SCENARIO[1..-1].each do |scenario|
-    import_scenario scenario
+    import_scenario scenario, 'regional'
   end
 end
 
-def import_scenario scenario
+def import_scenario scenario, scale
   quoted_scenario = "'#{scenario}'"
   sql = <<-SQL
         INSERT INTO macarthur_agriculture_development(value,scenario,watershed_id)
         SELECT #{scenario}, #{quoted_scenario}, w.cartodb_id 
-          FROM macarthur_agdevelopment a 
+          FROM macarthur_agdevelopment_#{scale} a 
           INNER JOIN macarthur_watershed w 
           ON cell_id = w.name
       SQL
