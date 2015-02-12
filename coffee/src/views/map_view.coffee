@@ -8,9 +8,9 @@ class Backbone.Views.MapView extends Backbone.View
     'change': ["#FF5C26", "#fff", "#A3D900"]
     'now': ["#fcbba1", "#67000d"]
     'futureThreatsColorpleth': [
-                                ['#ab5d1c', '#7b6734', '#597545'],
-                                ['#d8c579', '#909375', '#30795e'],
-                                ['#f3f3f3', '#79cabb', '#04846d']
+                                ['#E64C00', '#7a5259', '#730000'],
+                                ['#FF9f6b', '#B87461', '#a82a00'],
+                                ['#FFF7E6', '#bed5ed', '#7ab6f5']
                                ]
 
   futureThreatsColorRange:
