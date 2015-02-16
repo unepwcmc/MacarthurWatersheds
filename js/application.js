@@ -39,11 +39,11 @@
       {
         code: "broadscale",
         name: "Global",
-        tooltip: "Global <a href='/about.html#global-definition' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"
+        tooltip: "Global <a href='/data/global_geo4_scenarios.pdf' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"
       }, {
         code: "regional",
         name: "Regional",
-        tooltip: "<a href='/about.html#regional-definition' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"
+        tooltip: "<a href='/data/regionally_developed_scenarios.pdf' target='_blank'>Regionally developed</a> scenarios were used to analyse a subset of three countries in each region"
       }
     ],
     subjects: [
