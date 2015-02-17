@@ -189,7 +189,8 @@ class Backbone.Views.MapView extends Backbone.View
         agr_dev_row = """"""
       return """
       Watershed id: #{w.name} <br>
-      #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
+      #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
+      Region: Max. #{@formatToFirst2NonZeroDecimals(@max['value'])} / Min. #{@formatToFirst2NonZeroDecimals(@min['value'])} <br>
       #{agr_dev_row}
       <!--Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br-->
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>

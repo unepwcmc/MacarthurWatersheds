@@ -940,7 +940,7 @@
         } else {
           agr_dev_row = "";
         }
-        return "Watershed id: " + w.name + " <br>\n" + this.subjectText[subject] + " Value: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " (Maximum: " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + ")<br>\n" + agr_dev_row + "\n<!--Pressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br-->\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
+        return "Watershed id: " + w.name + " <br>\n" + this.subjectText[subject] + " Value: " + (this.formatToFirst2NonZeroDecimals(w.value)) + " <br>\nRegion: Max. " + (this.formatToFirst2NonZeroDecimals(this.max['value'])) + " / Min. " + (this.formatToFirst2NonZeroDecimals(this.min['value'])) + " <br>\n" + agr_dev_row + "\n<!--Pressure Index: " + (this.formatToFirst2NonZeroDecimals(w.pressure_index)) + " <br-->\nProtection Percentage: " + (w.protection_percentage.toFixed(0)) + " <br>\n<a href='data/data_sheets/" + w.name + ".pdf' target=\"_blank\">Watershed data sheet</a>";
       }
     };
 
