@@ -10,7 +10,7 @@ class Backbone.Views.MapView extends Backbone.View
     'futureThreatsColorpleth': [
                                 ['#E64C00', '#7a5259', '#730000'],
                                 ['#FF9f6b', '#B87461', '#a82a00'],
-                                ['#FFF7E6', '#bed5ed', '#7ab6f5']
+                                ['#D9E0AD', '#B8C99D', '#74B274']
                                ]
 
   futureThreatsColorRange:
@@ -109,49 +109,52 @@ class Backbone.Views.MapView extends Backbone.View
       subject = @filter.get('subject')
       title = if tab == 'change' then 'Change' else 'Importance'
       if tab == 'future_threats'
+        div.innerHTML = """<img src='imgs/legend_grid_#{subject}.png'>"""
+
         #categories option
-        div.innerHTML = """
-          <div class='map-legend-base'>
-            <table class='map-legend-table'>
-              <tr>
-                <td class='map-legend-table-rotate'>
-                  <div><span>Agr. Dev. Level</span></div>
-                </td>
-                <td class='map-legend-table-rotate'>
-                  <div class='legend-high-low'>
-                    <span>Low High</span>
-                  </div>
-                </td>
-                <td class='map-legend-table-right-column'>
-                  <div class='map-legend-grid'>
-                    #{@legendGrid()}
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class='map-legend-table-left-column'>
-                </td>
-                <td class='map-legend-table-left-column'>
-                </td>
-                <td class='map-legend-table-right-column'>
-                  <div class='legend-high-low'>
-                    <span>Low</span>
-                    <span>High</span>
-                  </div>
-                <td>
-              </tr>
-              <tr>
-                <td class='map-legend-table-left-column'>
-                </td>
-                <td class='map-legend-table-left-column'>
-                </td>
-                <td class='map-legend-table-right-column'>
-                  <div><span>#{@subjectText[subject]} Level of Importance</span></div>
-                <td>
-              </tr>
-            </table>
-          </div>
-        """
+      #  div.innerHTML = """
+      #    <div class='map-legend-base'>
+      #      <table class='map-legend-table'>
+      #        <tr>
+      #          <td class='map-legend-table-rotate-agr'>
+      #            <div><span>Agr. Dev. Level</span></div>
+      #          </td>
+      #          <td class='map-legend-table-rotate-lowhigh'>
+      #            <div class='legend-high-low'>
+      #              <span>Low</span>
+      #              <span>High</span>
+      #            </div>
+      #          </td>
+      #          <td class='map-legend-table-right-column'>
+      #            <div class='map-legend-grid'>
+      #              #{@legendGrid()}
+      #            </div>
+      #          </td>
+      #        </tr>
+      #        <tr>
+      #          <td class='map-legend-table-left-column'>
+      #          </td>
+      #          <td class='map-legend-table-left-column'>
+      #          </td>
+      #          <td class='map-legend-table-right-column'>
+      #            <div class='legend-high-low'>
+      #              <span>Low</span>
+      #              <span>High</span>
+      #            </div>
+      #          <td>
+      #        </tr>
+      #        <tr>
+      #          <td class='map-legend-table-left-column'>
+      #          </td>
+      #          <td class='map-legend-table-left-column'>
+      #          </td>
+      #          <td class='map-legend-table-right-column'>
+      #            <div><span>#{@subjectText[subject]} Level of Importance</span></div>
+      #          <td>
+      #        </tr>
+      #      </table>
+      #    </div>
+      #  """
 
         # gradient option
         # div.innerHTML = """
@@ -189,7 +192,8 @@ class Backbone.Views.MapView extends Backbone.View
         agr_dev_row = """"""
       return """
       Watershed id: #{w.name} <br>
-      #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} (Maximum: #{@formatToFirst2NonZeroDecimals(@max['value'])})<br>
+      #{@subjectText[subject]} Value: #{@formatToFirst2NonZeroDecimals(w.value)} <br>
+      Region: Max. #{@formatToFirst2NonZeroDecimals(@max['value'])} / Min. #{@formatToFirst2NonZeroDecimals(@min['value'])} <br>
       #{agr_dev_row}
       <!--Pressure Index: #{@formatToFirst2NonZeroDecimals(w.pressure_index)} <br-->
       Protection Percentage: #{w.protection_percentage.toFixed(0)} <br>
