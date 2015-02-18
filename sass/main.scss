@@ -519,7 +519,7 @@ div.legend div.map-legend-gradient {
 }
 }
 
-div.legend td.map-legend-table-rotate div {
+div.legend td.map-legend-table-rotate-agr div {
  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083); /* IE6,IE7 */
  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
  -moz-transform: rotate(-90.0deg); /* FF3.5+ */
@@ -529,7 +529,20 @@ div.legend td.map-legend-table-rotate div {
  transform: rotate(-90.0deg);
 }
 
-div.legend td.map-legend-table-rotate{
+
+div.legend td.map-legend-table-rotate-lowhigh div {
+ filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083); /* IE6,IE7 */
+ -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+ -moz-transform: rotate(-90.0deg); /* FF3.5+ */
+ -ms-transform: rotate(-90.0deg); /* IE9+ */
+ -o-transform: rotate(-90.0deg); /* Opera 10.5 */
+ -webkit-transform: rotate(-90.0deg); /* Safari 3.1+, Chrome */
+ transform: rotate(-90.0deg);
+}
+
+
+
+div.legend td.map-legend-table-rotate-agr{
  max-width: 20px;
  padding-top: 80px;
 }
@@ -540,16 +553,16 @@ div.legend td.map-legend-table-right-column{
 }
 
 div.legend td.map-legend-table-right-column div.map-legend-grid{
- width: 90px;
- height: 90px;
+ width: 135px;
+ height: 135px;
 }
 
 div.legend td.map-legend-table-right-column div.map-legend-grid div{
- width: 30px;
- height: 30px;
+ width: 45px;
+ height: 45px;
  float: left;}
 
-div.legend td.map-legend-table-rotate div span{
+div.legend td.map-legend-table-rotate-lowhigh div span{
  font-family: 'Open Sans', sans-serif;
  color: #000;
  opacity: 0.3;
@@ -558,9 +571,9 @@ div.legend td.map-legend-table-rotate div span{
  text-transform: uppercase;
  line-height: 20px;
  padding: 0 5px;
- white-space: nowrap; }
+ white-space: nowrap;   }
 
-div.legend td.map-legend-table-rotate div.legend-high-low span{
+ div.legend td.map-legend-table-rotate-agr div span{
  font-family: 'Open Sans', sans-serif;
  color: #000;
  opacity: 0.3;
@@ -569,7 +582,23 @@ div.legend td.map-legend-table-rotate div.legend-high-low span{
  text-transform: uppercase;
  line-height: 20px;
  padding: 0 5px;
- text-align: center }
+ white-space: nowrap;   }
+
+div.legend td.map-legend-table-rotate-lowhigh div.legend-high-low span{
+ font-family: 'Open Sans', sans-serif;
+ color: #000;
+ opacity: 0.3;
+ font-weight: 700;
+ line-height: 1em;
+ text-transform: uppercase;
+ line-height: 20px;
+ padding: 0 5px;
+ text-align: left;
+  &:last-child {
+    float: right;
+    text-align: right;
+
+  } }
 
 
 
