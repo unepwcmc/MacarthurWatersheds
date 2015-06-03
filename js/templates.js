@@ -491,7 +491,7 @@ function program1(depth0,data) {
   buffer += "<header><h1>Welcome to the Watershed exploration tool</h1></header>\n<div class=\"region-copy\"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in three regions.<p><p><strong>Select a region to start exploring</strong></p></div>\n<ul class=\"regions\">\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.regions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n";
+  buffer += "\n</ul>\n<div id=\"main-logo\">\n  <a href=\"http://unep-wcmc.org/\"><img class=\"unep_wcmc_img\" src=\"css/images/unep_logo_black.png\"></img></a>\n  <a href=\"http://www.macfound.org/\"><img class=\"macarth_img\" src=\"css/images/macarth_logo.png\"></img></a>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["results_number"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -561,7 +561,7 @@ function program1(depth0,data) {
     + "</strong> region.</p>\n		<p>Results are based on global and regional scenarios of change.<br>Which results would you like to explore?</p>\n	</div>\n	<div class=\"back\"><a href=\"\"><i class=\"fa fa-angle-left\"></i></a></div>\n\n	<ul class=\"scales\">\n	  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.scales), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</ul>\n	<div class=\"scale-copy\">\n		<p><strong>Hover over the info buttons to find out more about each analysis</strong></p>\n	</div>\n</div>\n";
+  buffer += "\n	</ul>\n	<div class=\"scale-copy\">\n		<p><strong>Hover over the info buttons to find out more about each analysis</strong></p>\n	</div>\n</div>\n<div id=\"main-logo\">\n	<a href=\"http://unep-wcmc.org/\"><img class=\"unep_wcmc_img\" src=\"css/images/unep_logo_black.png\"></img></a>\n	<a href=\"http://www.macfound.org/\"><img class=\"macarth_img\" src=\"css/images/macarth_logo.png\"></img></a>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["scenario_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
