@@ -133,7 +133,7 @@ div.subjects {
 
 .region-chooser, .scale-chooser, .spin {
   width: 570px;
-  height: 400px; }
+  height: 440px; }
   .region-chooser header, .scale-chooser header, .spin header {
     padding: 10px 0;
     background: #2A2B33; }
@@ -146,6 +146,21 @@ div.subjects {
     font-size: 1.25em;
     font-weight: 700;
     letter-spacing: 0.05em; }
+
+.region-chooser {
+  height: 500px; }
+
+.scale-chooser {
+  height: 440px; }
+
+.region-chooser #main-logo, .scale-chooser #main-logo {
+  padding-left: 34%;
+  padding-top: 35px; }
+  .region-chooser #main-logo .macarth_img, .scale-chooser #main-logo .macarth_img {
+    padding-left: 5%;
+    height: 50px; }
+  .region-chooser #main-logo .unep_wcmc_img, .scale-chooser #main-logo .unep_wcmc_img {
+    height: 50px; }
 
 .modal {
   z-index: 101;
@@ -622,7 +637,7 @@ div.scale-copy, div.region-copy {
       margin: 0; }
 
 div.scales {
-  margin: 80px 0; }
+  margin: 80px 0 0 0; }
 
 div.tab-strapline p i {
   padding-right: 5px; }
