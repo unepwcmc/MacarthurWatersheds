@@ -23,4 +23,3 @@ class Backbone.Views.RegionChooserView extends Backbone.View
     Backbone.appRouter.navigate("region:" + regionCode, {trigger: true})
 
   onClose: ->
-    
