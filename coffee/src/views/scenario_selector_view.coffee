@@ -18,7 +18,7 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
     options = {name: 'scenario', scale: scale, region: region}
     scenarios = MacArthur.getFilterOptionsWithSelectedSet(@filter, options)
     conf = MacArthur.CONFIG
-    pdf = conf.scenariosPdfs[scale][region] or conf.scenariosPdfs[scale]
+    pdf = conf.scenariosPdfs[scale]
     scenarioDescription = @getScenarioDescription()
     defaultOption = if @filter.get('scenario')? then no else yes
     @$el.html(@template(
@@ -56,5 +56,3 @@ class Backbone.Views.ScenarioSelectorView extends Backbone.View
   isFutureTab: ->
     tab = @filter.get('tab')
     if tab == 'future_threats' then yes else no
-
-    
