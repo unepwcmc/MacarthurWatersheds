@@ -1,4 +1,5 @@
 set :application, "Macarthur"
+set :user, "ubuntu"
 set :repository,  "https://github.com/unepwcmc/MacarthurWatersheds.git"
 
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory $

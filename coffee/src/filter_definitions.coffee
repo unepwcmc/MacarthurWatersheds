@@ -10,7 +10,7 @@ MacArthur.CONFIG =
       selector: "change"
       name: "Change"
       strapline: "Change between now and 2050"
-    },{ 
+    },{
       selector: "future_threats"
       name: "Future Threats"
       strapline: "Future threats from agricultural development"
@@ -28,17 +28,17 @@ MacArthur.CONFIG =
   ,]
   subjects: [
     {
-      selector: "biodiversity", 
-      name: "Biodiversity importance", 
-      threatsName: "Threats to current Biodiversity", 
+      selector: "biodiversity",
+      name: "Biodiversity importance",
+      threatsName: "Threats to current Biodiversity",
       nowTooltip: "Biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>.",
       futureTooltip: "Threats to current biodiversity are based on expansion of agriculture under a future scenario and biodiversity is based on baseline biodiversity importance. <a href='/about.html'>More information</a>.",
       changeTooltip: "Change in biodiversity importance is based on IUCN species ranges for amphibians, mammals, and birds in combination with their habitat affiliations and modelled land cover. <a href='/about.html'>More information</a>."
     },
-    { 
-      selector: "ecosystem", 
-      name: "Ecosystem function provision", 
-      threatsName: "Threats to current ecosystem function", 
+    {
+      selector: "ecosystem",
+      name: "Ecosystem function provision",
+      threatsName: "Threats to current ecosystem function",
       nowTooltip: "Ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>.",
       futureTooltip: "threats to current ecosystem function provision are based on expansion of agriculture under a future scenario and ecosystem function provision is based on baseline ecosystem function provision importance. <a href='/about.html'>More information</a>.",
       changeTooltip: "Change in ecosystem function provision is based on a landscape functions approach and modelled land cover. <a href='/about.html'>More information</a>."
@@ -59,7 +59,7 @@ MacArthur.CONFIG =
       { selector: "regprov", name: "Regulating functions provision" }
     ]
   },
-  scenarios: 
+  scenarios:
     broadscale: [
       { selector: "mf2050", name: "Markets first" }
       { selector: "susf2050", name: "Sustainability first" }
@@ -123,10 +123,7 @@ MacArthur.CONFIG =
       ]
   scenariosPdfs:
     broadscale: "http://www.unep.org/geo/geo4.asp"
-    regional:
-      WAN: ""
-      GLR: "http://cgspace.cgiar.org/handle/10568/34864"
-      MEK: ""
+    regional: "/data/regionally_developed_scenarios.pdf"
   levels: {
     default: [
       { selector: "all", name: "All", default: true }
@@ -155,8 +152,8 @@ MacArthur.CONFIG =
 
 MacArthur.getFilterOptionsWithSelectedSet = (filter, options) ->
   collection_name = options.plural or "#{options.name}s"
-  option = MacArthur.CONFIG[collection_name][options.scale]?[options.region] or 
-    MacArthur.CONFIG[collection_name][options.scale] or 
+  option = MacArthur.CONFIG[collection_name][options.scale]?[options.region] or
+    MacArthur.CONFIG[collection_name][options.scale] or
     MacArthur.CONFIG[collection_name]
   _.map(option, (element) ->
     if filter.get(options.name) is element.selector

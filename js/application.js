@@ -166,11 +166,7 @@
     },
     scenariosPdfs: {
       broadscale: "http://www.unep.org/geo/geo4.asp",
-      regional: {
-        WAN: "",
-        GLR: "http://cgspace.cgiar.org/handle/10568/34864",
-        MEK: ""
-      }
+      regional: "/data/regionally_developed_scenarios.pdf"
     },
     levels: {
       "default": [
@@ -1636,7 +1632,7 @@
       };
       scenarios = MacArthur.getFilterOptionsWithSelectedSet(this.filter, options);
       conf = MacArthur.CONFIG;
-      pdf = conf.scenariosPdfs[scale][region] || conf.scenariosPdfs[scale];
+      pdf = conf.scenariosPdfs[scale];
       scenarioDescription = this.getScenarioDescription();
       defaultOption = this.filter.get('scenario') != null ? false : true;
       this.$el.html(this.template({
