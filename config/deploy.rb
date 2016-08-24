@@ -16,7 +16,7 @@ set :ssh_options, {
   forward_agent: true,
 }
 
-set :linked_dirs, %w{data/datasheets}
+set :linked_dirs, %w{data/data_sheets}
 
 set :keep_releases, 5
 
