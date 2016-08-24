@@ -1,0 +1,339 @@
+# Logfile created on 2016-08-24 14:01:29 +0100 by logger.rb/41954
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-08-24 14:01:29 +0100 cap production deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [c2ac4081] Running /usr/bin/env mkdir -p /tmp/watersheds/ as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [c2ac4081] Command: /usr/bin/env mkdir -p /tmp/watersheds/
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-08-24 14:01:37 +0100 cap production config:setup
+  INFO ---------------------------------------------------------------------------
+  INFO [ce698e38] Running sudo mkdir -p /etc/nginx/sites-available as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [ce698e38] Command: sudo mkdir -p /etc/nginx/sites-available
+  INFO [ce698e38] Finished in 3.905 seconds with exit status 0 (successful).
+ DEBUG Uploading /tmp/vhost_config 0.0%
+  INFO Uploading /tmp/vhost_config 100.0%
+  INFO [24a42f09] Running sudo mv /tmp/vhost_config /etc/nginx/sites-available/watersheds as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [24a42f09] Command: sudo mv /tmp/vhost_config /etc/nginx/sites-available/watersheds
+  INFO [24a42f09] Finished in 0.053 seconds with exit status 0 (successful).
+  INFO [93aa2132] Running sudo ln -s /etc/nginx/sites-available/watersheds /etc/nginx/sites-enabled/watersheds as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [93aa2132] Command: sudo ln -s /etc/nginx/sites-available/watersheds /etc/nginx/sites-enabled/watersheds
+  INFO [93aa2132] Finished in 0.046 seconds with exit status 0 (successful).
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-08-24 14:02:37 +0100 cap production deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [dc35ef9d] Running /usr/bin/env mkdir -p /tmp/watersheds/ as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [dc35ef9d] Command: /usr/bin/env mkdir -p /tmp/watersheds/
+  INFO [dc35ef9d] Finished in 0.647 seconds with exit status 0 (successful).
+ DEBUG Uploading /tmp/watersheds/git-ssh.sh 0.0%
+  INFO Uploading /tmp/watersheds/git-ssh.sh 100.0%
+  INFO [d9a9672d] Running /usr/bin/env chmod +rx /tmp/watersheds/git-ssh.sh as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [d9a9672d] Command: /usr/bin/env chmod +rx /tmp/watersheds/git-ssh.sh
+  INFO [d9a9672d] Finished in 0.038 seconds with exit status 0 (successful).
+  INFO [e1b7604b] Running /usr/bin/env git ls-remote --heads git@github.com:unepwcmc/MacarthurWatersheds.git as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [e1b7604b] Command: ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/tmp/watersheds/git-ssh.sh" ; /usr/bin/env git ls-remote --heads git@github.com:unepwcmc/MacarthurWatersheds.git )
+ DEBUG [e1b7604b] 	ee7c704fef7286f23a6e30544b5847c58d1609fa	refs/heads/Deploy
+f8ae1bdb14ee0459bbcfbd03cdcb7f40ffc7ea23	refs/heads/LinodeDeploy
+98b71a74b5e6924aacf3b58dce553d3a56b52721	refs/heads/add_links
+aa8facd58ee9c130c8cc1d6be7b9da7c5ac83f25	refs/heads/add_logo
+6b8c8a0ee342466e38236bcde921dae848248417	refs/heads/cartodb
+40a16ad82ea2b3b13c2b3fe3cb75f6ef92357b03	refs/heads/changes
+a55dc567645a3f842c62207cbf4478b636b7afa3	refs/heads/copy-additions
+75036d952ca228cacf4d367ba59345d4fbb088ec	refs/heads/d3
+16093616436ec8c29d12cf16ccd4eb93282a157c	refs/heads/d3-scales
+f67a9e1fb63c9155130a7cc3ccfa03e22ff007ca	refs/heads/dbtest
+87ff5c075b6cf72bd0ad60ddc5df46063455f054	refs/heads/decio
+4e5485c04fcccd72972d4531045f0551480b72d4	refs/heads/edits-styling
+91760e3cef0c5058d81254072ff56369d229f461	refs/heads/extend
+fa08e87d62c12eb1d907dd15d61226f196e883f3	refs/heads/future_threats
+c0c9540948c9a60a4b70534c69ca3f466dcd5264	refs/heads/last_tweaks
+8e3c60e5370e281b3029b8ba5c00dc96f7d4caff	refs/heads/map-full-screen
+62242e5b8ca04870992b63ae643172bb74639861	refs/heads/master
+a9de366cab3e65cbc27ac178bdf0f437c4e136b5	refs/heads/name_change
+f5fc5bb58a36cc1f24d1a53cc6b06b23bef9e311	refs/heads/new_colour_gradient
+c262c6c45380d883e072050ab79d5590244fd5c8	refs/heads/new_data_import
+33ae6f800a9cd91156cbd0a4a7087ac7104c18aa	refs/heads/post_deploy_changes
+62242e5b8ca04870992b63ae643172bb74639861	refs/heads/production
+124c299773187dfa542656f8ef4a95b947d3d71b	refs/heads/query_builder
+fd58259fc948a1b88a847319489166b3b5270350	refs/heads/reset-results
+4da472278f1df13841e6c1151f3b19895989dc2d	refs/heads/scale
+9f1e91ec0061146e136169df96a6cd7c7eb9869a	refs/heads/third-tab
+2bad58ebe477ecebd15f388c83c2d989aa0235e9	refs/heads/third-tab-refactor
+2d22346c80c4decf7099dc67f918a47c6d58a446	refs/heads/tooltips
+ DEBUG [e1b7604b] 	de2cf6fb86d2a4277af136e663f5c6a02617bd82	refs/heads/transitions
+eb047653f9f7e14b5e52244d0768c964a3d5f2e2	refs/heads/tweaks
+f971573080ef6b4833efac261ebdd3087f06a598	refs/heads/ui_improvements
+  INFO [e1b7604b] Finished in 1.079 seconds with exit status 0 (successful).
+  INFO [3045eda6] Running /usr/bin/env mkdir -p /home/wcmc/Macarthur/shared /home/wcmc/Macarthur/releases as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [3045eda6] Command: /usr/bin/env mkdir -p /home/wcmc/Macarthur/shared /home/wcmc/Macarthur/releases
+  INFO [3045eda6] Finished in 0.033 seconds with exit status 0 (successful).
+  INFO [6afd3315] Running /usr/bin/env mkdir -p /home/wcmc/Macarthur/shared/data/datasheets as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [6afd3315] Command: /usr/bin/env mkdir -p /home/wcmc/Macarthur/shared/data/datasheets
+  INFO [6afd3315] Finished in 0.032 seconds with exit status 0 (successful).
+ DEBUG [ecbfd422] Running [ -f /home/wcmc/Macarthur/current/REVISION ] as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [ecbfd422] Command: [ -f /home/wcmc/Macarthur/current/REVISION ]
+ DEBUG [ecbfd422] Finished in 0.032 seconds with exit status 1 (failed).
+ DEBUG [41c2da06] Running [ -f /home/wcmc/Macarthur/repo/HEAD ] as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [41c2da06] Command: [ -f /home/wcmc/Macarthur/repo/HEAD ]
+ DEBUG [41c2da06] Finished in 0.031 seconds with exit status 1 (failed).
+ DEBUG [51b029ae] Running if test ! -d /home/wcmc/Macarthur; then echo "Directory does not exist '/home/wcmc/Macarthur'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [51b029ae] Command: if test ! -d /home/wcmc/Macarthur; then echo "Directory does not exist '/home/wcmc/Macarthur'" 1>&2; false; fi
+ DEBUG [51b029ae] Finished in 0.031 seconds with exit status 0 (successful).
+  INFO [cc68270f] Running /usr/bin/env git clone --mirror git@github.com:unepwcmc/MacarthurWatersheds.git /home/wcmc/Macarthur/repo as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [cc68270f] Command: cd /home/wcmc/Macarthur && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/tmp/watersheds/git-ssh.sh" ; /usr/bin/env git clone --mirror git@github.com:unepwcmc/MacarthurWatersheds.git /home/wcmc/Macarthur/repo )
+ DEBUG [cc68270f] 	Cloning into bare repository '/home/wcmc/Macarthur/repo'...
+ DEBUG [cc68270f] 	remote: Counting objects: 4546, done.[K
+ DEBUG [cc68270f] 	remote: Compressing objects:   9% (1/11)   [Kremote: Compressing objects:  18% (2/11)   [Kremote: Compressing objects:  27% (3/11)   [Kremote: Compressing objects:  36% (4/11)   [Kremote: Compressing objects:  45% (5/11)   [Kremote: Compressing objects:  54% (6/11)   [Kremote: Compressing objects:  63% (7/11)   [Kremote: Compressing objects:  72% (8/11)   [Kremote: Compressing objects:  81% (9/11)   [Kremote: Compressing objects:  90% (10/11)   [Kremote: Compressing objects: 100% (11/11)   [Kremote: Compressing objects: 100% (11/11), done.[K
+ DEBUG [cc68270f] 	Receiving objects:   0% (1/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   1% (46/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   2% (91/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   3% (137/4546)   Receiving objects:   4% (182/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   5% (228/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   6% (273/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   7% (319/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   8% (364/4546)   
+ DEBUG [cc68270f] 	Receiving objects:   9% (410/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  10% (455/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  11% (501/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  12% (546/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  13% (591/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  14% (637/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  15% (682/4546)   
+ DEBUG [cc68270f] 	Receiving objects:  16% (728/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  17% (773/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  18% (819/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  19% (864/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  20% (910/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  21% (955/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  22% (1001/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  23% (1046/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  24% (1092/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  25% (1137/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  26% (1182/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  27% (1228/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  28% (1273/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  29% (1319/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  30% (1364/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  31% (1410/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  32% (1455/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  33% (1501/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  34% (1546/4546), 2.40 MiB | 4.77 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  34% (1551/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  35% (1592/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  36% (1637/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  37% (1683/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  38% (1728/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  39% (1773/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  40% (1819/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  41% (1864/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  42% (1910/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  43% (1955/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  44% (2001/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  45% (2046/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  46% (2092/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  47% (2137/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  48% (2183/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  49% (2228/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  50% (2273/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  51% (2319/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  52% (2364/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  53% (2410/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  54% (2455/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  55% (2501/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  56% (2546/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  57% (2592/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  58% (2637/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  59% (2683/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  60% (2728/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  61% (2774/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  62% (2819/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  63% (2864/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  64% (2910/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  65% (2955/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  66% (3001/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  67% (3046/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  68% (3092/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  69% (3137/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  70% (3183/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  71% (3228/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  72% (3274/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  73% (3319/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  74% (3365/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  75% (3410/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  76% (3455/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  77% (3501/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  78% (3546/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  79% (3592/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  80% (3637/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	remote: Total 4546 (delta 1), reused 0 (delta 0), pack-reused 4533[K
+ DEBUG [cc68270f] 	Receiving objects:  81% (3683/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  82% (3728/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  83% (3774/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  84% (3819/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  85% (3865/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  86% (3910/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  87% (3956/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  88% (4001/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  89% (4046/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  90% (4092/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  91% (4137/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  92% (4183/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  93% (4228/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  94% (4274/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  95% (4319/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  96% (4365/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  97% (4410/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  98% (4456/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects:  99% (4501/4546), 10.52 MiB | 10.49 MiB/s   
+ DEBUG [cc68270f] 	Receiving objects: 100% (4546/4546), 10.52 MiB | 10.49 MiB/s   Receiving objects: 100% (4546/4546), 13.06 MiB | 10.49 MiB/s, done.
+ DEBUG [cc68270f] 	Resolving deltas:   0% (0/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   1% (29/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   2% (57/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   4% (123/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   5% (142/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   7% (205/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   8% (239/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:   9% (255/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  10% (300/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  12% (355/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  13% (389/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  14% (406/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  15% (444/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  16% (462/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  17% (483/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  18% (521/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  19% (541/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  20% (582/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  21% (609/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  22% (634/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  23% (657/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  24% (682/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  26% (744/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  27% (767/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  28% (791/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  29% (819/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  30% (866/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  31% (877/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  32% (926/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  33% (940/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  34% (961/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  35% (990/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  36% (1027/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  37% (1065/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  38% (1092/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  39% (1119/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  40% (1133/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  41% (1158/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  42% (1187/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  43% (1238/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  44% (1242/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  45% (1270/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  46% (1315/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  47% (1342/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  48% (1360/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  49% (1404/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  50% (1413/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  52% (1485/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  53% (1497/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  54% (1527/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  55% (1560/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  56% (1587/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  57% (1621/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  60% (1706/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  62% (1774/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  63% (1801/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  64% (1812/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  65% (1835/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  69% (1956/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  73% (2075/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  74% (2092/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  75% (2117/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  77% (2183/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  79% (2250/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  81% (2292/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  82% (2319/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  83% (2352/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  84% (2395/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  85% (2406/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  86% (2442/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  87% (2461/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  88% (2487/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  89% (2514/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  90% (2542/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  91% (2572/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  92% (2597/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  93% (2648/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  94% (2654/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  95% (2682/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  96% (2714/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  97% (2740/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  98% (2769/2822)   
+ DEBUG [cc68270f] 	Resolving deltas:  99% (2796/2822)   
+ DEBUG [cc68270f] 	Resolving deltas: 100% (2822/2822)   
+ DEBUG [cc68270f] 	Resolving deltas: 100% (2822/2822), done.
+ DEBUG [cc68270f] 	Checking connectivity... 
+ DEBUG [cc68270f] 	done.
+  INFO [cc68270f] Finished in 2.795 seconds with exit status 0 (successful).
+ DEBUG [e2719c34] Running if test ! -d /home/wcmc/Macarthur/repo; then echo "Directory does not exist '/home/wcmc/Macarthur/repo'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [e2719c34] Command: if test ! -d /home/wcmc/Macarthur/repo; then echo "Directory does not exist '/home/wcmc/Macarthur/repo'" 1>&2; false; fi
+ DEBUG [e2719c34] Finished in 0.032 seconds with exit status 0 (successful).
+  INFO [549e74e9] Running /usr/bin/env git remote update --prune as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [549e74e9] Command: cd /home/wcmc/Macarthur/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/tmp/watersheds/git-ssh.sh" ; /usr/bin/env git remote update --prune )
+ DEBUG [549e74e9] 	Fetching origin
+  INFO [549e74e9] Finished in 1.140 seconds with exit status 0 (successful).
+ DEBUG [01826717] Running if test ! -d /home/wcmc/Macarthur/repo; then echo "Directory does not exist '/home/wcmc/Macarthur/repo'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [01826717] Command: if test ! -d /home/wcmc/Macarthur/repo; then echo "Directory does not exist '/home/wcmc/Macarthur/repo'" 1>&2; false; fi
+ DEBUG [01826717] Finished in 0.036 seconds with exit status 0 (successful).
+  INFO [d13ea08e] Running /usr/bin/env mkdir -p /home/wcmc/Macarthur/releases/20160824130239 as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [d13ea08e] Command: cd /home/wcmc/Macarthur/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/tmp/watersheds/git-ssh.sh" ; /usr/bin/env mkdir -p /home/wcmc/Macarthur/releases/20160824130239 )
+  INFO [d13ea08e] Finished in 0.033 seconds with exit status 0 (successful).
+  INFO [331a27f1] Running /usr/bin/env git archive LinodeDeploy | tar -x -f - -C /home/wcmc/Macarthur/releases/20160824130239 as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [331a27f1] Command: cd /home/wcmc/Macarthur/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/tmp/watersheds/git-ssh.sh" ; /usr/bin/env git archive LinodeDeploy | tar -x -f - -C /home/wcmc/Macarthur/releases/20160824130239 )
+  INFO [331a27f1] Finished in 0.223 seconds with exit status 0 (successful).
+ DEBUG [898fac5d] Running if test ! -d /home/wcmc/Macarthur/repo; then echo "Directory does not exist '/home/wcmc/Macarthur/repo'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [898fac5d] Command: if test ! -d /home/wcmc/Macarthur/repo; then echo "Directory does not exist '/home/wcmc/Macarthur/repo'" 1>&2; false; fi
+ DEBUG [898fac5d] Finished in 0.030 seconds with exit status 0 (successful).
+ DEBUG [c6702bcd] Running /usr/bin/env git rev-list --max-count=1 LinodeDeploy as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [c6702bcd] Command: cd /home/wcmc/Macarthur/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/tmp/watersheds/git-ssh.sh" ; /usr/bin/env git rev-list --max-count=1 LinodeDeploy )
+ DEBUG [c6702bcd] 	f8ae1bdb14ee0459bbcfbd03cdcb7f40ffc7ea23
+ DEBUG [c6702bcd] Finished in 0.035 seconds with exit status 0 (successful).
+ DEBUG [07a53f19] Running if test ! -d /home/wcmc/Macarthur/releases/20160824130239; then echo "Directory does not exist '/home/wcmc/Macarthur/releases/20160824130239'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [07a53f19] Command: if test ! -d /home/wcmc/Macarthur/releases/20160824130239; then echo "Directory does not exist '/home/wcmc/Macarthur/releases/20160824130239'" 1>&2; false; fi
+ DEBUG [07a53f19] Finished in 0.029 seconds with exit status 0 (successful).
+  INFO [94cc328d] Running /usr/bin/env echo "f8ae1bdb14ee0459bbcfbd03cdcb7f40ffc7ea23" >> REVISION as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [94cc328d] Command: cd /home/wcmc/Macarthur/releases/20160824130239 && /usr/bin/env echo "f8ae1bdb14ee0459bbcfbd03cdcb7f40ffc7ea23" >> REVISION
+  INFO [94cc328d] Finished in 0.032 seconds with exit status 0 (successful).
+  INFO [1848fe51] Running /usr/bin/env mkdir -p /home/wcmc/Macarthur/releases/20160824130239/data as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [1848fe51] Command: /usr/bin/env mkdir -p /home/wcmc/Macarthur/releases/20160824130239/data
+  INFO [1848fe51] Finished in 0.031 seconds with exit status 0 (successful).
+ DEBUG [ba63d27f] Running [ -L /home/wcmc/Macarthur/releases/20160824130239/data/datasheets ] as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [ba63d27f] Command: [ -L /home/wcmc/Macarthur/releases/20160824130239/data/datasheets ]
+ DEBUG [ba63d27f] Finished in 0.035 seconds with exit status 1 (failed).
+ DEBUG [a4002fa6] Running [ -d /home/wcmc/Macarthur/releases/20160824130239/data/datasheets ] as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [a4002fa6] Command: [ -d /home/wcmc/Macarthur/releases/20160824130239/data/datasheets ]
+ DEBUG [a4002fa6] Finished in 0.029 seconds with exit status 1 (failed).
+  INFO [15ff79e7] Running /usr/bin/env ln -s /home/wcmc/Macarthur/shared/data/datasheets /home/wcmc/Macarthur/releases/20160824130239/data/datasheets as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [15ff79e7] Command: /usr/bin/env ln -s /home/wcmc/Macarthur/shared/data/datasheets /home/wcmc/Macarthur/releases/20160824130239/data/datasheets
+  INFO [15ff79e7] Finished in 0.032 seconds with exit status 0 (successful).
+  INFO [395de10e] Running /usr/bin/env ln -s /home/wcmc/Macarthur/releases/20160824130239 /home/wcmc/Macarthur/releases/current as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [395de10e] Command: /usr/bin/env ln -s /home/wcmc/Macarthur/releases/20160824130239 /home/wcmc/Macarthur/releases/current
+  INFO [395de10e] Finished in 0.032 seconds with exit status 0 (successful).
+  INFO [3af4f8f4] Running /usr/bin/env mv /home/wcmc/Macarthur/releases/current /home/wcmc/Macarthur as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [3af4f8f4] Command: /usr/bin/env mv /home/wcmc/Macarthur/releases/current /home/wcmc/Macarthur
+  INFO [3af4f8f4] Finished in 0.033 seconds with exit status 0 (successful).
+ DEBUG [47e57c45] Running if test ! -d /home/wcmc/Macarthur/releases/20160824130239; then echo "Directory does not exist '/home/wcmc/Macarthur/releases/20160824130239'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [47e57c45] Command: if test ! -d /home/wcmc/Macarthur/releases/20160824130239; then echo "Directory does not exist '/home/wcmc/Macarthur/releases/20160824130239'" 1>&2; false; fi
+ DEBUG [47e57c45] Finished in 0.029 seconds with exit status 0 (successful).
+  INFO [9cbf9e6d] Running /usr/bin/env passenger-config restart-app /home/wcmc/Macarthur --ignore-app-not-running as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [9cbf9e6d] Command: cd /home/wcmc/Macarthur/releases/20160824130239 && /usr/bin/env passenger-config restart-app /home/wcmc/Macarthur --ignore-app-not-running
+ DEBUG [9cbf9e6d] 	There are no Phusion Passenger-served applications running whose paths begin with '/home/wcmc/Macarthur'.
+  INFO [9cbf9e6d] Finished in 0.339 seconds with exit status 0 (successful).
+ DEBUG [2dfee1de] Running /usr/bin/env ls -xtr /home/wcmc/Macarthur/releases as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [2dfee1de] Command: /usr/bin/env ls -xtr /home/wcmc/Macarthur/releases
+ DEBUG [2dfee1de] 	20160824130239
+ DEBUG [2dfee1de] Finished in 0.035 seconds with exit status 0 (successful).
+ DEBUG [2f1a6814] Running if test ! -d /home/wcmc/Macarthur/releases; then echo "Directory does not exist '/home/wcmc/Macarthur/releases'" 1>&2; false; fi as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [2f1a6814] Command: if test ! -d /home/wcmc/Macarthur/releases; then echo "Directory does not exist '/home/wcmc/Macarthur/releases'" 1>&2; false; fi
+ DEBUG [2f1a6814] Finished in 0.030 seconds with exit status 0 (successful).
+  INFO [bb9a3b87] Running /usr/bin/env echo "Branch LinodeDeploy (at f8ae1bdb14ee0459bbcfbd03cdcb7f40ffc7ea23) deployed as release 20160824130239 by stuart" >> /home/wcmc/Macarthur/revisions.log as wcmc@web-production.linode.unep-wcmc.org
+ DEBUG [bb9a3b87] Command: cd /home/wcmc/Macarthur/releases && /usr/bin/env echo "Branch LinodeDeploy (at f8ae1bdb14ee0459bbcfbd03cdcb7f40ffc7ea23) deployed as release 20160824130239 by stuart" >> /home/wcmc/Macarthur/revisions.log
+  INFO [bb9a3b87] Finished in 0.031 seconds with exit status 0 (successful).
