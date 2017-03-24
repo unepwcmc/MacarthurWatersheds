@@ -154,13 +154,13 @@ div.subjects {
   height: 440px; }
 
 .region-chooser #main-logo, .scale-chooser #main-logo {
-  padding-left: 34%;
+  padding-left: 30%;
   padding-top: 35px; }
   .region-chooser #main-logo .macarth_img, .scale-chooser #main-logo .macarth_img {
     padding-left: 5%;
     height: 50px; }
   .region-chooser #main-logo .unep_wcmc_img, .scale-chooser #main-logo .unep_wcmc_img {
-    height: 50px; }
+    height: 40px; }
 
 .modal {
   z-index: 101;
