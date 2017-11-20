@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-require '../src/cartodb/cartodb_query.rb'
+require_relative '../src/cartodb/cartodb_query.rb'
 require 'open-uri'
 
-
+PREFIX = "macarthur" # Allows us to build macarthur_region tables or other tables for testing like macarthur_test_region
 
 SUBJECT = ['bd', 'ef']
 TYPE_DATA = ['value']
@@ -19,32 +19,32 @@ REGIONAL_SCENARIO = ['bas', 's1_2050', 's2_2050', 's3_2050', 's4_2050']
 def self.geometry_data
  REGIONS.each do |region|
     sql = <<-SQL
-      INSERT INTO macarthur_region(code)
+      INSERT INTO #{PREFIX}_region(code)
       VALUES ('#{region}')
       SQL
     puts sql
     CartodbQuery.run(sql)
-    sql = <<-SQL 
-      INSERT INTO macarthur_watershed(the_geom, name,region_id, is_broadscale)
+    sql = <<-SQL
+      INSERT INTO #{PREFIX}_watershed(the_geom, name,region_id, is_broadscale)
       SELECT ws.the_geom, ws_id, mr.cartodb_id, true
-      FROM #{region} ws, macarthur_region mr
+      FROM #{region} ws, #{PREFIX}_region mr
       WHERE mr.code = '#{region}'
     SQL
     puts sql
     CartodbQuery.run(sql)
-    sql = <<-SQL 
-      INSERT INTO macarthur_watershed(the_geom, name, region_id, is_broadscale)
+    sql = <<-SQL
+      INSERT INTO #{PREFIX}_watershed(the_geom, name, region_id, is_broadscale)
       SELECT ws.the_geom, cell_id, mr.cartodb_id, false
-      FROM regional_ws_#{region} ws, macarthur_region mr
+      FROM regional_ws_#{region} ws, #{PREFIX}_region mr
       WHERE mr.code = '#{region}'
     SQL
     puts sql
     CartodbQuery.run(sql)
   end
-  sql = <<-SQL 
-      UPDATE macarthur_watershed w
+  sql = <<-SQL
+      UPDATE #{PREFIX}_watershed w
       SET lake = true
-      FROM macarthur_original_lakes l
+      FROM #{PREFIX}_original_lakes l
       WHERE w.name = l.cell_id AND l.lake = '1'
     SQL
     puts sql
@@ -79,7 +79,7 @@ end
 
 def self.lens_insert lens,subject
   sql = <<-SQL
-    INSERT INTO macarthur_lens(name, type)
+    INSERT INTO #{PREFIX}_lens(name, type)
     VALUES ('#{subject}', '#{lens}')
   SQL
   CartodbQuery.run(sql)
@@ -106,14 +106,14 @@ def self.datapoint_query scenario, is_broadscale
                   column = "#{subject}_#{td}_#{met}_#{scen}_#{cons}_#{lens}"
                   cons_boolean = cons == 'cons' ? 'true' : 'false'
                   sql = <<-SQL
-                    INSERT INTO macarthur_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value) \
+                    INSERT INTO #{PREFIX}_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value) \
                     SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision) \
-                    FROM macarthur_#{subject}_original_data_#{table_suffix} od \
+                    FROM #{PREFIX}_#{subject}_original_data_#{table_suffix} od \
                     LEFT JOIN
-                    macarthur_watershed ws \
+                    #{PREFIX}_watershed ws \
                     ON od.field_name = ws.name \
                     AND ws.is_broadscale = #{is_broadscale} \
-                    left join macarthur_lens ls 
+                    left join #{PREFIX}_lens ls
                     on ls.name = '#{subject}' AND type = '#{lens}'
                   SQL
                   puts column
@@ -142,11 +142,11 @@ def pressure_protection
 end
 
 def other_values table_preffix, type, column, table_suffix, is_broadscale
-    sql = <<-SQL 
-      INSERT INTO macarthur_#{table_preffix}(watershed_id, #{type})
+    sql = <<-SQL
+      INSERT INTO #{PREFIX}_#{table_preffix}(watershed_id, #{type})
       SELECT w.cartodb_id, cast(#{column} as double precision)
-      FROM macarthur_original_#{table_preffix}_#{table_suffix} p
-      LEFT JOIN macarthur_watershed w
+      FROM #{PREFIX}_original_#{table_preffix}_#{table_suffix} p
+      LEFT JOIN #{PREFIX}_watershed w
       ON p.field_name = w.name
       WHERE is_broadscale = #{is_broadscale}
     SQL
@@ -167,10 +167,10 @@ end
 def import_scenario scenario, scale
   quoted_scenario = "'#{scenario}'"
   sql = <<-SQL
-        INSERT INTO macarthur_agriculture_development(value,scenario,watershed_id)
-        SELECT #{scenario}, #{quoted_scenario}, w.cartodb_id 
-          FROM macarthur_agdevelopment_#{scale} a 
-          INNER JOIN macarthur_watershed w 
+        INSERT INTO #{PREFIX}_agriculture_development(value,scenario,watershed_id)
+        SELECT #{scenario}, #{quoted_scenario}, w.cartodb_id
+          FROM #{PREFIX}_agdevelopment_#{scale} a
+          INNER JOIN #{PREFIX}_watershed w
           ON cell_id = w.name
       SQL
   puts sql
@@ -181,14 +181,14 @@ def download_query region, is_broadscale
   cartodb_config = YAML.load_file('../config/cartodb_config.yml')
   api_key = cartodb_config["api_key"]
   host = cartodb_config["host"]
-  "#{host}/api/v2/sql?q=SELECT w.* FROM macarthur_watershed w LEFT JOIN macarthur_region r ON w.region_id = r.cartodb_id WHERE r.code = '#{region}' AND is_broadscale = #{is_broadscale} &format=geojson&api_key=#{api_key}"
+  "#{host}/api/v2/sql?q=SELECT w.* FROM #{PREFIX}_watershed w LEFT JOIN #{PREFIX}_region r ON w.region_id = r.cartodb_id WHERE r.code = '#{region}' AND is_broadscale = #{is_broadscale} &format=geojson&api_key=#{api_key}"
 end
 
 def delete_all_data
   tables = ['region', 'pressure', 'lens', 'protection', 'watershed', 'datapoint']
   tables.each do |table|
     sql = <<-SQL
-      DELETE FROM macarthur_#{table}
+      DELETE FROM #{PREFIX}_#{table}
     SQL
     CartodbQuery.run(sql)
   end
@@ -198,7 +198,7 @@ def topojson
   REGIONS.each do |region|
     ['broadscale', 'regional'].each do |scale|
       system "topojson -o ../data/#{region}_#{scale}.topo.json -p -q 20000 -- ../data/json/#{region}_#{scale}.geojson"
-    end 
+    end
   end
 end
 
@@ -210,15 +210,15 @@ ARGV.each do|action|
   elsif action == 'datapoint'
     datapoint
   elsif action == 'pressure_protection'
-    pressure_protection 
+    pressure_protection
   elsif action ==  'agriculture_development'
     agriculture_development
   elsif action == 'download'
     download_geometries
   elsif action == 'delete'
-    delete_all_data 
+    delete_all_data
   elsif action == 'topojson'
-    topojson 
+    topojson
   elsif action == 'all'
     delete_all_data
     geometry_data

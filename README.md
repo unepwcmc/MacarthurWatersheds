@@ -20,7 +20,7 @@ We have all the data stored in [CartoDB](https://www.cartodb.com). So you need t
 You will also need to create a YAML file with the account and the api-key in config directory. You can see an exemple in config/cartodb_config_example.yml
 
 
-###Creating Tables
+### Creating Tables
 
 You will need to create the tables manually as CartoDB currently does not display tables created using their API.
 The tables to create are:
@@ -49,6 +49,54 @@ You should run:
 ```
 This will also regenerate the topojson files, but the node env must be set.
 
+## Creating and Updating the data
+
+1. You will need to create the following four empty tables in CartoDB manually, as Carto currently does not display tables created using their API.
+
+```
+macarthur_region (3 regions)
+macarthur_watershed (watershed geometries)
+macarthur_datapoint (watershed data)
+macarthur_lens (name and type)
+```
+
+2. Upload the raw watershed data to Carto in the following two tables...
+
+```
+macarthur_bd_original_data (BD columns)
+macarthur_ef_original_data (EF columns)
+```
+
+3. Run the migrations script to format the schema of the above tables by passing in their name without the prefix. See the 'Testing the Import' section for more information on the prefix and how to run these scripts on test data.
+
+```sh
+ruby ./db/migrations.rb region watershed datapoint lens
+```
+
+4. Run the import script to populate the four tables using the original data. This will also regenerate the topojson files, but the node env must be set.
+
+```sh
+ruby ./db/update_tables.rb all # Look at the file to see which other arguments can be passed to run isolated sections of the script
+```
+
+5. Done!
+
+## Exporting/Backing up Carto
+
+There is a script to download everything related to the Macarthur watershed datasets from Cartodb in the `db` folder called `download.rb`. This contains an array of the table names to download, and just iterates through this downloading each via the API in csv format. The csvs will be exported to `data/exports`.
+
+To run...
+
+```
+ruby ./db/download.rb
+```
+
+Carto uses an invisible column called, `the_geom_webmercator`. This will appear in the exports but not in the tables on the interface. You can safely remove this column if you wish.
+
+## Testing the Import
+
+There is a constant in the import scripts called `PREFIX = "macarthur"`. This is responsible for building the table names by concatenating them with an underscore between them like `macarthur_regions`. If you wish to test the import without overwriting the original tables, you can follow the import process with a different prefix like `macarthur_test` to create tables like `macarthur_test_region`
+
 ## Exporting watershed geometries
 These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data), but presently one needs to regenerate them every time the data changes on cartodb:
 
@@ -68,7 +116,7 @@ start with:
 
     npm start
 
-Then, just hit [http://localhost:8080](http://localhost:8080) 
+Then, just hit [http://localhost:8080](http://localhost:8080)
 
 ## Client side code
 The application is written in Coffescript, and stores in the `coffee/src`
@@ -90,8 +138,7 @@ gulp watch
 ### Tests
 Tests are written in mocha with chai and sinon, and stored in coffee/tests. Run them by opening [/tests.html](http://localhost:8080/tests.html) in your browser
 
-
-###Deployment###
+### Deployment
 
 The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/config, like this:
 
@@ -105,7 +152,7 @@ The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/
     git merge master
     gulp minify
   ```
-  
+
 Then run cap deploy.
 
 

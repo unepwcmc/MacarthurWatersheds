@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
-require '../src/cartodb/cartodb_query.rb'
+require_relative '../src/cartodb/cartodb_query.rb'
 
+PREFIX = "macarthur"
 
 def self.change_table table_name, columns
   add_column = ""
@@ -11,9 +12,9 @@ def self.change_table table_name, columns
   add_column = add_column[0..-3]
 
   sql = <<-SQL
-    ALTER TABLE macarthur_#{table_name} DROP COLUMN name;
-    ALTER TABLE macarthur_#{table_name} DROP COLUMN description;
-    ALTER TABLE macarthur_#{table_name} #{add_column}
+    ALTER TABLE #{PREFIX}_#{table_name} DROP COLUMN name;
+    ALTER TABLE #{PREFIX}_#{table_name} DROP COLUMN description;
+    ALTER TABLE #{PREFIX}_#{table_name} #{add_column}
   SQL
   CartodbQuery.run(sql)
 end
@@ -21,7 +22,7 @@ end
 
 
 tables_columns = {"region" => {"code" => "varchar"},
-                  "lens" => {"name" => "varchar", 
+                  "lens" => {"name" => "varchar",
                             "type" => "varchar"
                             },
                   "watershed" => {"region_id" => "int",
@@ -34,7 +35,7 @@ tables_columns = {"region" => {"code" => "varchar"},
                                   "metric" => "varchar",
                                   "scenario" => "varchar",
                                   "value" => "double precision",
-                                  "conservation" => "boolean"                                  
+                                  "conservation" => "boolean"
                                   },
                   "protection" => {"watershed_id" => "int",
                                    "percentage" => "double precision"
