@@ -51,21 +51,38 @@ This will also regenerate the topojson files, but the node env must be set.
 
 ## Creating and Updating the data
 
-1. You will need to create the following four empty tables in CartoDB manually, as Carto currently does not display tables created using their API.
+0. You will need the following tables:
+
+```
+```
+
+1. You will need to create the following empty tables in CartoDB manually, as Carto currently does not display tables created using their API. (Assuming your prefix is macarthur)
 
 ```
 macarthur_region (3 regions)
 macarthur_watershed (watershed geometries)
 macarthur_datapoint (watershed data)
 macarthur_lens (name and type)
+macarthur_pressure
+
+macarthur_protection
+macarthur_original_lakes
 ```
 
-2. Upload the raw watershed data to Carto in the following two tables...
+2. Upload the raw watershed data to Carto in the following tables... (This should be provided by the Science team)
 
 ```
-macarthur_bd_original_data (BD columns)
-macarthur_ef_original_data (EF columns)
+macarthur_bd_original_data_broadscale
+macarthur_bd_original_data_regional
+macarthur_ef_original_data_broadscale
+macarthur_ef_original_data_regional
+
+macarthur_original_lakes
+
+macarthur_original_pressure_broadscale
 ```
+
+Make sure to uncheck the _Let CARTO automatically guess data types and content on import_ checkbox on import.
 
 3. Run the migrations script to format the schema of the above tables by passing in their name without the prefix. See the 'Testing the Import' section for more information on the prefix and how to run these scripts on test data.
 

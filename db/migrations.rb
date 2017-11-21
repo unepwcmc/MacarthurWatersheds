@@ -2,7 +2,7 @@
 
 require_relative '../src/cartodb/cartodb_query.rb'
 
-PREFIX = "macarthur"
+PREFIX = "macarthur_test"
 
 def self.change_table table_name, columns
   add_column = ""

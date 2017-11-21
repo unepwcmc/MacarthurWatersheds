@@ -2,7 +2,7 @@
 require_relative '../src/cartodb/cartodb_query.rb'
 require 'open-uri'
 
-PREFIX = "macarthur" # Allows us to build macarthur_region tables or other tables for testing like macarthur_test_region
+PREFIX = "macarthur_test" # Allows us to build macarthur_region tables or other tables for testing like macarthur_test_region
 
 SUBJECT = ['bd', 'ef']
 TYPE_DATA = ['value']
@@ -47,7 +47,9 @@ def self.geometry_data
       FROM #{PREFIX}_original_lakes l
       WHERE w.name = l.cell_id AND l.lake = '1'
     SQL
+    puts "___________________________________"
     puts sql
+    puts "___________________________________"
     CartodbQuery.run(sql)
 end
 
@@ -230,3 +232,5 @@ ARGV.each do|action|
     topojson
   end
 end
+
+puts "Update complete! 🎉"
