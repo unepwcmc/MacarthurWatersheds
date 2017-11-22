@@ -2,74 +2,39 @@
 
 Mapping Watershed data
 
-# Development
+# Stack
 The application is a client side JS application, with no server component.
 CartoDB is used for persistence.
 
 ## Installation
-You will need node.js and NPM installed for the compilation and bower. Install
-libs with:
+You will need node.js and NPM installed for the compilation and bower. Install libs with:
 
-    npm install
-    npm install -g gulp bower
+```sh
+npm install
+npm install -g gulp bower
+```
 
 ## DB Configuration
 
-We have all the data stored in [CartoDB](https://www.cartodb.com). So you need to open an account there.
+All the data is stored in [CartoDB](https://www.cartodb.com). Our login details for carto can be found in the organisation LastPass account.
 
-You will also need to create a YAML file with the account and the api-key in config directory. You can see an exemple in config/cartodb_config_example.yml
+You will also need to create a YAML file with the account name and the api-key in config directory. You can see an exemple in `config/cartodb_config_example.yml`
 
-
-### Creating Tables
-
-You will need to create the tables manually as CartoDB currently does not display tables created using their API.
-The tables to create are:
-
-	macarthur_region(3 regions)
-	macarthur_watershed(watershed geometries)
-	macarthur_datapoint(watershed data)
-	macarthur_lens(name and type)
-
-You will also need to upload to cartodb the watershed raw data creating two tables:
-
-	macarthur_bd_original_data(BD columns)
-	macarthur_ef_original_data(EF columns)
-
-## Changing schema
-We have created a tool to change the schema of the above tables.
-You will need to run:
-
-	ruby migrations.rb [table_name_without_prefix]
-
-## Importing data
-We have created a script that populates the tables using the original data.
-You should run:
-```sh
-  ruby ./db/update_tables.rb
-```
-This will also regenerate the topojson files, but the node env must be set.
-
-## Creating and Updating the data
-
-0. You will need the following tables:
-
-```
-```
+## Creating or Updating the data
 
 1. You will need to create the following empty tables in CartoDB manually, as Carto currently does not display tables created using their API. (Assuming your prefix is macarthur)
 
 ```
-macarthur_region (3 regions)
-macarthur_watershed (watershed geometries)
-macarthur_datapoint (watershed data)
-macarthur_lens (name and type)
+macarthur_region          (3 regions)
+macarthur_watershed       (watershed geometries)
+macarthur_datapoint       (watershed data)
+macarthur_lens            (name and type)
 macarthur_pressure
-
 macarthur_protection
-macarthur_original_lakes
+macarthur_agriculture_development
 ```
 
-2. Upload the raw watershed data to Carto in the following tables... (This should be provided by the Science team)
+2. Upload the raw watershed csv data to carto in the following tables... (These csv's should be provided by the Science team)
 
 ```
 macarthur_bd_original_data_broadscale
@@ -78,16 +43,20 @@ macarthur_ef_original_data_broadscale
 macarthur_ef_original_data_regional
 
 macarthur_original_lakes
-
 macarthur_original_pressure_broadscale
+macarthur_original_pressure_broadscale
+macarthur_original_protection_regional
+macarthur_original_protection_regional
+macarthur_original_agdevelopment_global
+macarthur_original_agdevelopment_regional
 ```
 
-Make sure to uncheck the _Let CARTO automatically guess data types and content on import_ checkbox on import.
+Make sure to uncheck the _Let CARTO automatically guess data types and content on import_ checkbox on import as carto may error at trying to guess the datatypes.
 
-3. Run the migrations script to format the schema of the above tables by passing in their name without the prefix. See the 'Testing the Import' section for more information on the prefix and how to run these scripts on test data.
+3. Run the migrations script. This will add all the necessary columns to the blank tables you created, and set them to the correct datatypes, ready for the import process. Pass in the names of the tables you want to migrate without the prefix. See the 'Testing the Import' section for more information on the prefix and how to run these scripts on test data.
 
 ```sh
-ruby ./db/migrations.rb region watershed datapoint lens
+ruby ./db/migrations.rb region watershed datapoint lens pressure protection agriculture_development
 ```
 
 4. Run the import script to populate the four tables using the original data. This will also regenerate the topojson files, but the node env must be set.
@@ -96,7 +65,7 @@ ruby ./db/migrations.rb region watershed datapoint lens
 ruby ./db/update_tables.rb all # Look at the file to see which other arguments can be passed to run isolated sections of the script
 ```
 
-5. Done!
+5. Done! Your data has been imported and the JSON files have been downloaded.
 
 ## Exporting/Backing up Carto
 

@@ -47,9 +47,7 @@ def self.geometry_data
       FROM #{PREFIX}_original_lakes l
       WHERE w.name = l.cell_id AND l.lake = '1'
     SQL
-    puts "___________________________________"
     puts sql
-    puts "___________________________________"
     CartodbQuery.run(sql)
 end
 
@@ -62,7 +60,7 @@ def self.download_geometries
       puts query
       encoded_url = URI::encode(query)
       geojson_geometry = open(encoded_url).read
-      File.open("../data/json/#{region}_#{scale}.geojson", 'w+') do |file|
+      File.open("./data/json/#{region}_#{scale}.geojson", 'w+') do |file|
         puts file.write(geojson_geometry)
       end
     end
@@ -180,9 +178,10 @@ def import_scenario scenario, scale
 end
 
 def download_query region, is_broadscale
-  cartodb_config = YAML.load_file('../config/cartodb_config.yml')
+  cartodb_config = YAML::load(File.open('config/cartodb_config.yml'))
   api_key = cartodb_config["api_key"]
   host = cartodb_config["host"]
+
   "#{host}/api/v2/sql?q=SELECT w.* FROM #{PREFIX}_watershed w LEFT JOIN #{PREFIX}_region r ON w.region_id = r.cartodb_id WHERE r.code = '#{region}' AND is_broadscale = #{is_broadscale} &format=geojson&api_key=#{api_key}"
 end
 
@@ -199,7 +198,7 @@ end
 def topojson
   REGIONS.each do |region|
     ['broadscale', 'regional'].each do |scale|
-      system "topojson -o ../data/#{region}_#{scale}.topo.json -p -q 20000 -- ../data/json/#{region}_#{scale}.geojson"
+      system "topojson -o ./data/#{region}_#{scale}.topo.json -p -q 20000 -- ./data/json/#{region}_#{scale}.geojson"
     end
   end
 end
