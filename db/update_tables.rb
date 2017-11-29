@@ -17,11 +17,11 @@ REGIONAL_SCENARIO = ['bas', 's1_2050', 's2_2050', 's3_2050', 's4_2050']
 
 
 def self.geometry_data
- REGIONS.each do |region|
+  REGIONS.each do |region|
     sql = <<-SQL
       INSERT INTO #{PREFIX}_region(code)
       VALUES ('#{region}')
-      SQL
+    SQL
     puts sql
     CartodbQuery.run(sql)
     sql = <<-SQL
@@ -46,9 +46,9 @@ def self.geometry_data
       SET lake = true
       FROM #{PREFIX}_original_lakes l
       WHERE w.name = l.cell_id AND l.lake = '1'
-    SQL
-    puts sql
-    CartodbQuery.run(sql)
+  SQL
+  puts sql
+  CartodbQuery.run(sql)
 end
 
 def self.download_geometries
@@ -93,7 +93,7 @@ end
 def self.datapoint_query scenario, is_broadscale
   table_suffix = is_broadscale == 'true' ? 'broadscale' : 'regional'
   begin
-   column = ""
+    column = ""
     SUBJECT.each do |subject|
       lens = subject == 'bd' ? BD_LENS : EF_LENS
       TYPE_DATA.each do |td|
@@ -102,19 +102,19 @@ def self.datapoint_query scenario, is_broadscale
             puts scen
             unless scen == 'bas' && met == 'change'
               CONSERVATION.each do |cons|
-                lens.each do |lens|
-                  column = "#{subject}_#{td}_#{met}_#{scen}_#{cons}_#{lens}"
+                lens.each do |this_lens|
+                  column = "#{subject}_#{td}_#{met}_#{scen}_#{cons}_#{this_lens}"
                   cons_boolean = cons == 'cons' ? 'true' : 'false'
                   sql = <<-SQL
                     INSERT INTO #{PREFIX}_datapoint(watershed_id, type_data, metric, lens_id, scenario, conservation, value) \
                     SELECT ws.cartodb_id, '#{td}', '#{met}', ls.cartodb_id, '#{scen}', #{cons_boolean}, cast(od.#{column} as double precision) \
                     FROM #{PREFIX}_#{subject}_original_data_#{table_suffix} od \
                     LEFT JOIN
-                    #{PREFIX}_watershed ws \
+                  #{PREFIX}_watershed ws \
                     ON od.field_name = ws.name \
                     AND ws.is_broadscale = #{is_broadscale} \
                     left join #{PREFIX}_lens ls
-                    on ls.name = '#{subject}' AND type = '#{lens}'
+                    on ls.name = '#{subject}' AND type = '#{this_lens}'
                   SQL
                   puts column
                   puts sql
@@ -126,7 +126,7 @@ def self.datapoint_query scenario, is_broadscale
         end
       end
     end
- end
+  end
 end
 
 def pressure_protection
@@ -142,16 +142,16 @@ def pressure_protection
 end
 
 def other_values table_preffix, type, column, table_suffix, is_broadscale
-    sql = <<-SQL
+  sql = <<-SQL
       INSERT INTO #{PREFIX}_#{table_preffix}(watershed_id, #{type})
       SELECT w.cartodb_id, cast(#{column} as double precision)
       FROM #{PREFIX}_original_#{table_preffix}_#{table_suffix} p
       LEFT JOIN #{PREFIX}_watershed w
       ON p.field_name = w.name
       WHERE is_broadscale = #{is_broadscale}
-    SQL
-    puts sql
-    CartodbQuery.run(sql)
+  SQL
+  puts sql
+  CartodbQuery.run(sql)
 end
 
 def agriculture_development
@@ -172,7 +172,7 @@ def import_scenario scenario, scale
           FROM #{PREFIX}_agdevelopment_#{scale} a
           INNER JOIN #{PREFIX}_watershed w
           ON cell_id = w.name
-      SQL
+  SQL
   puts sql
   CartodbQuery.run(sql)
 end

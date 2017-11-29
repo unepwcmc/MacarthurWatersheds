@@ -67,9 +67,9 @@ ruby ./db/update_tables.rb all # Look at the file to see which other arguments c
 
 5. Done! Your data has been imported and the JSON files have been downloaded.
 
-## Exporting/Backing up Carto
+## Exporting / Backing up Carto
 
-There is a script to download everything related to the Macarthur watershed datasets from Cartodb in the `db` folder called `download.rb`. This contains an array of the table names to download, and just iterates through this downloading each via the API in csv format. The csvs will be exported to `data/exports`.
+There is a script to download everything related to the Macarthur watershed datasets from Cartodb in the `db` folder called `download.rb`. This contains an array of the table names to download along with the prefix, and just iterates through this downloading each via the API in csv format. The csvs will be exported to `data/exports`.
 
 To run...
 
@@ -79,7 +79,7 @@ ruby ./db/download.rb
 
 Carto uses an invisible column called, `the_geom_webmercator`. This will appear in the exports but not in the tables on the interface. You can safely remove this column if you wish.
 
-## Testing the Import
+## Prefix / Testing the Import
 
 There is a constant in the import scripts called `PREFIX = "macarthur"`. This is responsible for building the table names by concatenating them with an underscore between them like `macarthur_regions`. If you wish to test the import without overwriting the original tables, you can follow the import process with a different prefix like `macarthur_test` to create tables like `macarthur_test_region`
 
@@ -89,18 +89,19 @@ These are currently saved in [data](https://github.com/unepwcmc/MacarthurWatersh
   * export one geojson file per watershed from the [macarthur_watershed table](https://carbon-tool.cartodb.com/tables/macarthur_watershed/table) into [data/json](https://github.com/unepwcmc/MacarthurWatersheds/tree/master/data/json) and name them with the corresponding watershed code.
   * if not installed: `npm install -g topojson`
   * then:
-  ```sh
-    ruby ./db/update_tables.rb topojson
 
-  ```
-
+```sh
+ruby ./db/update_tables.rb topojson
+```
 
 ## Serving files
 Althought we don't actually have a 'server' component, you still need to serve
 files over http in development. We're using the npm lib 'serv', which you can
 start with:
 
-    npm start
+```
+npm start
+```
 
 Then, just hit [http://localhost:8080](http://localhost:8080)
 
@@ -116,7 +117,9 @@ do:
 ```
 gulp
 ```
+
 or leave this running to compile as you go
+
 ```
 gulp watch
 ```
@@ -139,7 +142,7 @@ The app is deployed to a EC2 ubuntu instance. You will need to add to your .ssh/
     gulp minify
   ```
 
-Then run cap deploy.
+Then run `cap deploy`.
 
 
 ### d3.js dependency
