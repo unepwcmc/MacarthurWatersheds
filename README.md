@@ -20,9 +20,10 @@ All the data is stored in [CartoDB](https://www.cartodb.com). Our login details 
 
 You will also need to create a YAML file with the account name and the api-key in config directory. You can see an exemple in `config/cartodb_config_example.yml`
 
-## Creating or Updating the data
 
-1. You will need to create the following empty tables in CartoDB manually, as Carto currently does not display tables created using their API. (Assuming your prefix is macarthur)
+## Creating the data from scratch
+
+1. You will need to create the following empty tables in CartoDB manually, as Carto currently does not display tables created using their API. (Assuming your prefix is macarthur). If you are updating the data, these tables will already be created and the `update_tables` script will take care of deleting th
 
 ```
 macarthur_region          (3 regions)
@@ -66,6 +67,20 @@ ruby ./db/update_tables.rb all # Look at the file to see which other arguments c
 ```
 
 5. Done! Your data has been imported and the JSON files have been downloaded.
+
+## Updating the existing data
+
+1. Read through the _Creating the data from scratch_ section above, and the _Exporting/Backing up Carto_ section below.
+
+2. Ensure that all the tables in the section above exist.
+
+3. Take a backup of the current data by running `ruby ./db/download.rb`. You can read more about this in the section below.
+
+4. Run `ruby ./db/clear_tables.rb` to remove the existing data from the tables which hold the original/uploaded data.
+
+5. Run `ruby ./db/update_tables.rb` to clear the seven main tables, and populate them with the new data.
+
+6. Done! Your data has been imported and the JSON files have been downloaded.
 
 ## Exporting/Backing up Carto
 
