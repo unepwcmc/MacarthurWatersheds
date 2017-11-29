@@ -8,34 +8,36 @@ API_KEY = cartodb_config["api_key"]
 HOST    = cartodb_config["host"]
 PREFIX  = "macarthur"
 
+# Table names without prefix
+
 table_names = [
-  "#{PREFIX}_bd_original_data_broadscale",
-  "#{PREFIX}_bd_original_data_regional",
-  "#{PREFIX}_ef_original_data_broadscale",
-  "#{PREFIX}_ef_original_data_regional",
+  "bd_original_data_broadscale",
+  "bd_original_data_regional",
+  "ef_original_data_broadscale",
+  "ef_original_data_regional",
 
-  "#{PREFIX}_original_lakes",
-  "#{PREFIX}_original_pressure_broadscale",
-  "#{PREFIX}_original_pressure_regional",
-  "#{PREFIX}_original_protection_broadscale",
-  "#{PREFIX}_original_protection_regional",
-  "#{PREFIX}_agdevelopment_global",
-  "#{PREFIX}_agdevelopment_regional"
+  "original_lakes",
+  "original_pressure_broadscale",
+  "original_pressure_regional",
+  "original_protection_broadscale",
+  "original_protection_regional",
+  "agdevelopment_global",
+  "agdevelopment_regional"
 
-  # "#{PREFIX}_agdevelopment_regional_cons",
-  # "#{PREFIX}_agdevelopment_broadscale_cons",
-  # "#{PREFIX}_bd_original_data_regional_old",
-  # "#{PREFIX}_original_protection_regional_old",
-  # "#{PREFIX}_original_pressure_regional_old",
-  # "#{PREFIX}_ef_original_data_regional_old",
+  # "agdevelopment_regional_cons",
+  # "agdevelopment_broadscale_cons",
+  # "bd_original_data_regional_old",
+  # "original_protection_regional_old",
+  # "original_pressure_regional_old",
+  # "ef_original_data_regional_old",
 ]
 
 table_names.each do |table_name|
-  puts "Clearing data from #{PREFIX}_#{table_name}..."
+  puts "Emptying data from #{PREFIX}_#{table_name}..."
   sql = <<-SQL
-    DELETE FROM #{PREFIX}_#{table}
+    DELETE FROM #{PREFIX}_#{table_name}
   SQL
   CartodbQuery.run(sql)
 end
 
-puts "Data clear complete!"
+puts "🤘 Data clear complete!"
