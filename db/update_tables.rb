@@ -186,7 +186,7 @@ def download_query region, is_broadscale
 end
 
 def delete_all_data
-  tables = ['region', 'pressure', 'lens', 'protection', 'watershed', 'datapoint']
+  tables = ['region', 'pressure', 'lens', 'protection', 'watershed', 'datapoint', 'agriculture_development']
   tables.each do |table|
     sql = <<-SQL
       DELETE FROM #{PREFIX}_#{table}
