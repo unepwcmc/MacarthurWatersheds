@@ -23,7 +23,7 @@ You will also need to create a YAML file with the account name and the api-key i
 
 ## Creating the data from scratch
 
-1. You will need to create the following empty tables in CartoDB manually, as Carto currently does not display tables created using their API. (Assuming your prefix is macarthur). If you are updating the data, these tables will already be created and the `update_tables` script will take care of deleting th
+1. You will need to create the following empty tables in CartoDB manually, as Carto currently does not display tables created using their API. (Assuming your prefix is macarthur).
 
 ```
 macarthur_region          (3 regions)
@@ -78,9 +78,26 @@ ruby ./db/update_tables.rb all # Look at the file to see which other arguments c
 
 4. Run `ruby ./db/clear_tables.rb` to remove the existing data from the tables which hold the original/uploaded data.
 
-5. Run `ruby ./db/update_tables.rb` to clear the seven main tables, and populate them with the new data.
+5. Upload the raw watershed data to the following tables in Carto. This data will come from the Science team.
 
-6. Done! Your data has been imported and the JSON files have been downloaded.
+```
+macarthur_bd_original_data_broadscale
+macarthur_bd_original_data_regional
+macarthur_ef_original_data_broadscale
+macarthur_ef_original_data_regional
+
+macarthur_original_lakes
+macarthur_original_pressure_broadscale
+macarthur_original_pressure_regional
+macarthur_original_protection_broadscale
+macarthur_original_protection_regional
+macarthur_original_agdevelopment_global
+macarthur_original_agdevelopment_regional
+```
+
+6. Run `ruby ./db/update_tables.rb` to clear the seven main tables, and populate them with the new data.
+
+7. Done! Your data has been imported and the JSON files have been downloaded.
 
 ## Exporting/Backing up Carto
 
