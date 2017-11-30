@@ -48,8 +48,9 @@ macarthur_original_pressure_broadscale
 macarthur_original_pressure_regional
 macarthur_original_protection_broadscale
 macarthur_original_protection_regional
-macarthur_original_agdevelopment_global
-macarthur_original_agdevelopment_regional
+
+macarthur_agdevelopment_global
+macarthur_agdevelopment_regional
 ```
 
 Make sure to uncheck the _Let CARTO automatically guess data types and content on import_ checkbox on import as carto may error at trying to guess the datatypes.
@@ -60,13 +61,22 @@ Make sure to uncheck the _Let CARTO automatically guess data types and content o
 ruby ./db/migrations.rb region watershed datapoint lens pressure protection agriculture_development
 ```
 
-4. Run the import script to populate the four tables using the original data. This will also regenerate the topojson files, but the node env must be set.
+4. Upload the shapefile to the following tables...
+
+```
+regional_ws_glr
+regional_ws_wan
+regional_ws_mek
+regional_ws_lvb
+```
+
+5. Run the import script to populate the four tables using the original data. This will also regenerate the topojson files, but the node env must be set.
 
 ```sh
 ruby ./db/update_tables.rb all # Look at the file to see which other arguments can be passed to run isolated sections of the script
 ```
 
-5. Done! Your data has been imported and the JSON files have been downloaded.
+6. Done! Your data has been imported and the JSON files have been downloaded.
 
 ## Updating the existing data
 
@@ -76,9 +86,9 @@ ruby ./db/update_tables.rb all # Look at the file to see which other arguments c
 
 3. Take a backup of the current data by running `ruby ./db/download.rb`. You can read more about this in the section below.
 
-4. Run `ruby ./db/clear_tables.rb` to remove the existing data from the tables which hold the original/uploaded data.
+4. Delete or rename the tables below as we'll need to create new tables with the same name when we upload our new data.
 
-5. Upload the raw watershed data to the following tables in Carto. This data will come from the Science team.
+5. Upload the raw watershed data to the following tables in Carto. This data will come from the Science team but you may need to remove the `carto_id` column for carto to accept the upload.
 
 ```
 macarthur_bd_original_data_broadscale
@@ -91,13 +101,23 @@ macarthur_original_pressure_broadscale
 macarthur_original_pressure_regional
 macarthur_original_protection_broadscale
 macarthur_original_protection_regional
-macarthur_original_agdevelopment_global
-macarthur_original_agdevelopment_regional
+
+macarthur_agdevelopment_global
+macarthur_agdevelopment_regional
 ```
 
-6. Run `ruby ./db/update_tables.rb` to clear the seven main tables, and populate them with the new data.
+6. Upload any updated shapefiles to the following tables...
 
-7. Done! Your data has been imported and the JSON files have been downloaded.
+```
+regional_ws_glr
+regional_ws_wan
+regional_ws_mek
+regional_ws_lvb
+```
+
+7. Run `ruby ./db/update_tables.rb all` to clear the seven main tables, and populate them with the new data.
+
+8. Done! Your data has been imported and the JSON files have been downloaded.
 
 ## Exporting/Backing up Carto
 

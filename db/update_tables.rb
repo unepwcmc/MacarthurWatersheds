@@ -2,7 +2,7 @@
 require_relative '../src/cartodb/cartodb_query.rb'
 require 'open-uri'
 
-PREFIX = "macarthur_test" # Allows us to build macarthur_region tables or other tables for testing like macarthur_test_region
+PREFIX = "macarthur" # Allows us to build macarthur_region tables or other tables for testing like macarthur_test_region
 
 SUBJECT = ['bd', 'ef']
 TYPE_DATA = ['value']
@@ -10,7 +10,7 @@ METRIC = ['imp', 'change']
 BD_LENS = ['allsp', 'crenvu', 'amphibia', 'mammalia', 'aves', 'crenvu']
 EF_LENS = ['totef', 'comprov', 'wildprov', 'regprov']
 CONSERVATION = ['nocons']
-REGIONS = ['WAN', 'MEK', 'GLR']
+REGIONS = ['WAN', 'MEK', 'GLR', 'LVB']
 BROADSCALE_SCENARIO = ['bas', 'mf2050', 'secf2050', 'polf2050', 'susf2050']
 REGIONAL_SCENARIO = ['bas', 's1_2050', 's2_2050', 's3_2050', 's4_2050']
 
@@ -24,14 +24,18 @@ def self.geometry_data
     SQL
     puts sql
     CartodbQuery.run(sql)
-    sql = <<-SQL
-      INSERT INTO #{PREFIX}_watershed(the_geom, name,region_id, is_broadscale)
-      SELECT ws.the_geom, ws_id, mr.cartodb_id, true
-      FROM #{region} ws, #{PREFIX}_region mr
-      WHERE mr.code = '#{region}'
-    SQL
-    puts sql
-    CartodbQuery.run(sql)
+
+    unless region == 'LVB' # LVB has no broadscale values
+      sql = <<-SQL
+        INSERT INTO #{PREFIX}_watershed(the_geom, name,region_id, is_broadscale)
+        SELECT ws.the_geom, ws_id, mr.cartodb_id, true
+        FROM #{region} ws, #{PREFIX}_region mr
+        WHERE mr.code = '#{region}'
+      SQL
+      puts sql
+      CartodbQuery.run(sql)
+    end
+
     sql = <<-SQL
       INSERT INTO #{PREFIX}_watershed(the_geom, name, region_id, is_broadscale)
       SELECT ws.the_geom, cell_id, mr.cartodb_id, false
@@ -41,6 +45,7 @@ def self.geometry_data
     puts sql
     CartodbQuery.run(sql)
   end
+
   sql = <<-SQL
       UPDATE #{PREFIX}_watershed w
       SET lake = true
