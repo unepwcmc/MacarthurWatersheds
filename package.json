@@ -16,5 +16,8 @@
   "scripts": {
     "postinstall": "bower install",
     "start": "serv --port 3000"
+  },
+  "dependencies": {
+    "topojson-server": "^3.0.0"
   }
 }

@@ -203,7 +203,8 @@ end
 def topojson
   REGIONS.each do |region|
     ['broadscale', 'regional'].each do |scale|
-      system "topojson -o ./data/#{region}_#{scale}.topo.json -p -q 20000 -- ./data/json/#{region}_#{scale}.geojson"
+      puts "Generating #{region}_#{scale}.topo.json..."
+      system "geo2topo -q 2000 ./data/json/#{region}_#{scale}.geojson > ./data/#{region}_#{scale}.topo.json"
     end
   end
 end
