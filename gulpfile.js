@@ -29,9 +29,9 @@ var paths = {
     'css/leaflet.css',
   ],
   application: [
-    'coffee/src/filter_definitions.coffee', 
-    'coffee/src/models/filter.coffee', 
-    'coffee/src/models/results_number.coffee', 
+    'coffee/src/filter_definitions.coffee',
+    'coffee/src/models/filter.coffee',
+    'coffee/src/models/results_number.coffee',
     'coffee/src/lib/map_builder.coffee',
     'coffee/src/lib/query_builder.coffee',
     'coffee/src/collections/region_collection.coffee',
@@ -120,5 +120,5 @@ gulp.task('watch', function() {
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['application', 'templates', 'tests', 'watch', 'sass']);
+gulp.task('default', ['application', 'templates', 'tests', 'sass']);
 gulp.task('minify', ['minify-js', 'minify-css']);

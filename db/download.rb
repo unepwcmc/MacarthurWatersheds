@@ -48,7 +48,7 @@ end
 
 # Create the exports directory if it doesn't exist
 
-Dir.mkdir("exports") unless File.exists?("exports")
+Dir.mkdir("data/exports") unless File.exists?("data/exports")
 
 table_names.each do |table_name|
   puts "Downloading #{PREFIX}_#{table_name}..."

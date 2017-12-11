@@ -468,7 +468,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n    <li>\n      <div class=\"region-area\" data-region-code=\"";
+  buffer += "\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.display), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <li>\n        <div class=\"region-area\" data-region-code=\"";
   if (stack1 = helpers.code) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.code); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
@@ -476,7 +485,7 @@ function program1(depth0,data) {
   if (stack1 = helpers.code) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.code); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + ".png);\"></div>\n      <div class=\"region-area region-area-link region-link\" data-region-code=\"";
+    + ".png);\"></div>\n        <div class=\"region-area region-area-link region-link\" data-region-code=\"";
   if (stack1 = helpers.code) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.code); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
@@ -484,14 +493,14 @@ function program1(depth0,data) {
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</div>\n    </li>\n  ";
+    + "</div>\n      </li>\n    ";
   return buffer;
   }
 
-  buffer += "<header><h1>Welcome to the Watershed exploration tool</h1></header>\n<div class=\"region-copy\"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in three regions.<p><p><strong>Select a region to start exploring</strong></p></div>\n<ul class=\"regions\">\n  ";
+  buffer += "<header><h1>Welcome to the Watershed exploration tool</h1></header>\n<div class=\"region-copy\"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in three regions.</p><p><strong>Select a region to start exploring</strong></p></div>\n<ul class=\"regions\">\n  ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.regions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n<div id=\"main-logo\">\n  <a href=\"http://unep-wcmc.org/\"><img class=\"unep_wcmc_img\" src=\"css/images/unep_logo_black.png\"></img></a>\n  <a href=\"http://www.macfound.org/\"><img class=\"macarth_img\" src=\"css/images/macarth_logo.png\"></img></a>\n</div>\n";
+  buffer += "\n</ul>\n\n<ul class=\"regions\">\n  <li class=\"centered\">\n    <a class=\"btn region-area region-area-link region-link\" href=\"/#region:LVB/scale:regional\">Lake Victoria Basin</a>\n  </li>\n</ul>\n\n<div id=\"main-logo\">\n  <a href=\"http://unep-wcmc.org/\"><img class=\"unep_wcmc_img\" src=\"css/images/unep_logo_black.png\"></img></a>\n  <a href=\"http://www.macfound.org/\"><img class=\"macarth_img\" src=\"css/images/macarth_logo.png\"></img></a>\n</div>\n";
   return buffer;
   });
 this["Handlebars"] = this["Handlebars"] || {};this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};this["Handlebars"]["templates"]["results_number"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

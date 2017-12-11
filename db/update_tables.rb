@@ -25,7 +25,7 @@ def self.geometry_data
     puts sql
     CartodbQuery.run(sql)
 
-    unless region == 'LVB' # LVB has no broadscale values
+    unless region == "LVB"
       sql = <<-SQL
         INSERT INTO #{PREFIX}_watershed(the_geom, name,region_id, is_broadscale)
         SELECT ws.the_geom, ws_id, mr.cartodb_id, true
@@ -147,6 +147,9 @@ def pressure_protection
 end
 
 def other_values table_preffix, type, column, table_suffix, is_broadscale
+  # protection, percentage, percent_wdpa_filter, broadscale, true
+  # pressure, value, value, broadscale, true
+
   sql = <<-SQL
       INSERT INTO #{PREFIX}_#{table_preffix}(watershed_id, #{type})
       SELECT w.cartodb_id, cast(#{column} as double precision)
