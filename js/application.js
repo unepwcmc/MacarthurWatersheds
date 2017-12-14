@@ -910,7 +910,7 @@
         value = _ref[_i];
         for (_j = 0, _len1 = value.length; _j < _len1; _j++) {
           colour = value[_j];
-          html_element = html_element.concat("<div class='map-legend-grid-square' \nstyle=background-color:" + colour + ";></div>");
+          html_element = html_element.concat("<div class='map-legend-grid-square'\nstyle=background-color:" + colour + ";></div>");
         }
       }
       return html_element;

@@ -40,7 +40,7 @@ class Backbone.Views.MapView extends Backbone.View
     @listenTo(@filter, 'change:pressureLevel', @updateQueryLayerStyle)
 
   sortDataBy: (data, field) ->
-    _.map(_.sortBy(data, field), (row, i) -> 
+    _.map(_.sortBy(data, field), (row, i) ->
       row.rank = i
       row
     )
@@ -96,7 +96,7 @@ class Backbone.Views.MapView extends Backbone.View
     html_element = ''
     for value in @futureThreatsColorpleth
       for colour in value
-        html_element = html_element.concat("""<div class='map-legend-grid-square' 
+        html_element = html_element.concat("""<div class='map-legend-grid-square'
                                               style=background-color:#{colour};></div>""")
     return html_element
 
@@ -270,7 +270,7 @@ class Backbone.Views.MapView extends Backbone.View
       #TODO: there might be some unnecessary calls here:
       @setLinearScaleColour()
       @queryLayer.setStyle @queryPolyStyle
- 
+
   resetQueryLayerStyle: =>
     @queryLayer.setStyle @basePolyStyle
 
@@ -354,7 +354,7 @@ class Backbone.Views.MapView extends Backbone.View
         return yes
     if level == 'low' && tab == 'change'
       if d[@filterValueField] >= @min[@filterValueField] + range * 2 and d[@filterValueField] < @firstPositiveFilterIndex
-        return yes      
+        return yes
     if level == 'medium'
       if d[@filterValueField] >= @min[@filterValueField] + range and d[@filterValueField] < @min[@filterValueField] + range * 2
         return yes
@@ -367,12 +367,12 @@ class Backbone.Views.MapView extends Backbone.View
     protectionLevel = @filter.get('protectionLevel')
     if protectionLevel == 'high'
       unless d.protectionPercentage >= 66 and d.protectionPercentage <= 100
-        op = 0 
+        op = 0
     if protectionLevel == 'medium'
-      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66 
-        op = 0  
+      unless d.protectionPercentage >= 33 and d.protectionPercentage < 66
+        op = 0
     if protectionLevel == 'low'
-      unless d.protectionPercentage < 33 
+      unless d.protectionPercentage < 33
         op = 0
     op
 
@@ -380,12 +380,12 @@ class Backbone.Views.MapView extends Backbone.View
     pressureLevel = @filter.get('pressureLevel')
     if pressureLevel == 'high'
       unless d.pressureIndex >= .66
-        op = 0 
+        op = 0
     if pressureLevel == 'medium'
       unless d.pressureIndex >= .33 and d.pressureIndex < .66
-        op = 0  
+        op = 0
     if pressureLevel == 'low'
-      unless d.pressureIndex < .33 
+      unless d.pressureIndex < .33
         op = 0
     op
 
