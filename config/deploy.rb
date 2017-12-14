@@ -1,10 +1,8 @@
 # config valid only for current version of Capistrano
-lock '3.5.0'
+lock '3.8.1'
 
 set :application, 'Macarthur'
 set :repo_url, 'git@github.com:unepwcmc/MacarthurWatersheds.git'
-
-set :branch, 'LinodeDeploy'
 
 set :deploy_user, 'wcmc'
 set :deploy_to, "/home/#{fetch(:deploy_user)}/#{fetch(:application)}"
