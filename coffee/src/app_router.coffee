@@ -1,7 +1,6 @@
 window.Backbone ||= {}
 window.Backbone.Router ||= {}
 
-
 class Backbone.Router.AppRouter extends Backbone.Router
 
   routes: {
@@ -51,7 +50,7 @@ class Backbone.Router.AppRouter extends Backbone.Router
     geom = @geoms["#{regionCode}_#{scaleCode}"]
     if geom
       init(geom)
-    else 
+    else
       $.getJSON("../../../data/#{regionCode}_#{scaleCode}.topo.json", (geo) =>
         init(geo)
         @geoms["#{regionCode}_#{scaleCode}"] = geo

@@ -18,10 +18,10 @@ MacArthur.CONFIG =
   ],
   regions: [
     # latLngBounds(southWest, northEast)
-    { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ], centre: [-4, -61], display: true }
-    { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ], centre: [-3, 43], display: true }
-    { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [21, 110], display: true }
-    { code: "LVB", name: "Lake Victoria Basin", bounds: [ [-8,30],  [10,40] ], centre: [0, 40], display: false }
+    { code: "WAN", name: "Andes", bounds: [ [-22,-57], [14,-83] ], centre: [-4, -61], topRow: true }
+    { code: "GLR", name: "African Great Lakes", bounds: [ [-18,30], [10,40] ], centre: [-3, 43], topRow: true }
+    { code: "MEK", name: "Mekong", bounds: [ [6,110], [35,90] ], centre: [21, 110], topRow: true }
+    { code: "LVB", name: "Lake Victoria Basin", bounds: [ [-8,30],  [10,40] ], centre: [0, 40], topRow: false }
   ]
   scales: [
     { code: "broadscale", name: "Global", tooltip: "Global <a href='/data/global_geo4_scenarios.pdf' target='_blank'>GEO-4</a> scenarios were used to analyse full MacArthur regions"}

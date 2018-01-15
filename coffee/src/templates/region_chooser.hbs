@@ -1,8 +1,8 @@
 <header><h1>Welcome to the Watershed exploration tool</h1></header>
-<div class="region-copy"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in three regions.</p><p><strong>Select a region to start exploring</strong></p></div>
+<div class="region-copy"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in four regions.</p><p><strong>Select a region to start exploring</strong></p></div>
 <ul class="regions">
   {{#each regions}}
-    {{#if display}}
+    {{#if topRow}}
       <li>
         <div class="region-area" data-region-code="{{code}}" style="background-image: url(/imgs/{{code}}.png);"></div>
         <div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div>
@@ -12,9 +12,14 @@
 </ul>
 
 <ul class="regions">
-  <li class="centered">
-    <a class="btn region-area region-area-link region-link" href="/#region:LVB/scale:regional">Lake Victoria Basin</a>
-  </li>
+  {{#each regions}}
+    {{#unless topRow}}
+      <li class="centered">
+        <div class="region-area" data-region-code="{{code}}" style="background-image: url(/imgs/{{code}}.png);"></div>
+        <div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div>
+      </li>
+    {{/unless}}
+  {{/each}}
 </ul>
 
 <div id="main-logo">
