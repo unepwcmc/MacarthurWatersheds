@@ -9,13 +9,6 @@ class CartodbQuery
 
     encoded_url = URI::encode("#{host}/api/v2/sql?q=#{sql}&api_key=#{api_key}")
 
-    puts encoded_url
-
-    #begin
-      result = open(encoded_url).read
-    #rescue OpenURI::HTTPError => error
-      #response = error.io
-      #puts response.status
-    #end
+    open(encoded_url).read
   end
 end
