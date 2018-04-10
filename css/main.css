@@ -148,7 +148,7 @@ div.subjects {
     letter-spacing: 0.05em; }
 
 .region-chooser {
-  height: 500px; }
+  height: 700px; }
 
 .scale-chooser {
   height: 440px; }
@@ -193,6 +193,10 @@ ul.regions {
     ul.regions li:last-child {
       margin-bottom: 0;
       margin-right: 0; }
+    ul.regions li.centered {
+      float: none;
+      margin: auto;
+      text-align: center; }
     ul.regions li div.region-area {
       background-repeat: no-repeat;
       background-size: 60%;
@@ -365,6 +369,9 @@ ul.tabs {
     ul.tabs li:last-child {
       border-left: none;
       width: 50%; }
+    ul.tabs li.centered {
+      float: none;
+      margin: auto; }
     ul.tabs li:hover, ul.tabs li.active {
       background: #131418;
       color: #4dc0dd;
@@ -692,3 +699,21 @@ div.step-count {
 
 .for-checkbox {
   cursor: pointer; }
+
+.btn {
+  text-decoration: none;
+  padding: 10px 10px;
+  font-size: 0.75em;
+  word-spacing: 0.025em;
+  text-transform: uppercase;
+  font-weight: 600;
+  width: 100%;
+  background: #4dc0dd;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  border-radius: 5px; }

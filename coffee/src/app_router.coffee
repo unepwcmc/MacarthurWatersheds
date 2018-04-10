@@ -1,7 +1,6 @@
 window.Backbone ||= {}
 window.Backbone.Router ||= {}
 
-
 class Backbone.Router.AppRouter extends Backbone.Router
 
   routes: {
@@ -26,11 +25,16 @@ class Backbone.Router.AppRouter extends Backbone.Router
     regionChooserView = new Backbone.Views.RegionChooserView({regions: @regions})
     @modalContainer.showModal(regionChooserView)
 
+
   showScaleChooser: (regionCode) =>
     @sidePanel.$el.removeClass('active')
     @modalContainer.hideModal()
-    scaleChooserView = new Backbone.Views.ScaleChooserView({scales: @scales})
-    @modalContainer.showModal(scaleChooserView)
+
+    if regionCode == "LVB"
+      this.showSidePanel("LVB", "regional")
+    else
+      scaleChooserView = new Backbone.Views.ScaleChooserView({scales: @scales})
+      @modalContainer.showModal(scaleChooserView)
 
   showSidePanel: (regionCode, scaleCode) =>
     @modalContainer.hideModal()
@@ -51,7 +55,7 @@ class Backbone.Router.AppRouter extends Backbone.Router
     geom = @geoms["#{regionCode}_#{scaleCode}"]
     if geom
       init(geom)
-    else 
+    else
       $.getJSON("../../../data/#{regionCode}_#{scaleCode}.topo.json", (geo) =>
         init(geo)
         @geoms["#{regionCode}_#{scaleCode}"] = geo

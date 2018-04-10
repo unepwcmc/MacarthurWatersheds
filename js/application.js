@@ -22,17 +22,26 @@
         code: "WAN",
         name: "Andes",
         bounds: [[-22, -57], [14, -83]],
-        centre: [-4, -61]
+        centre: [-4, -61],
+        topRow: true
       }, {
         code: "GLR",
         name: "African Great Lakes",
         bounds: [[-18, 30], [10, 40]],
-        centre: [-3, 43]
+        centre: [-3, 43],
+        topRow: true
       }, {
         code: "MEK",
         name: "Mekong",
         bounds: [[6, 110], [35, 90]],
-        centre: [21, 110]
+        centre: [21, 110],
+        topRow: true
+      }, {
+        code: "LVB",
+        name: "Lake Victoria Basin",
+        bounds: [[-8, 30], [10, 40]],
+        centre: [0, 40],
+        topRow: false
       }
     ],
     scales: [
@@ -160,6 +169,21 @@
           }, {
             selector: "s4_2050",
             name: "Tigers on a Train"
+          }
+        ],
+        LVB: [
+          {
+            selector: "s1_2050",
+            name: "Sleeping Lions"
+          }, {
+            selector: "s2_2050",
+            name: "Lone Leopards"
+          }, {
+            selector: "s3_2050",
+            name: "Herd of Zebra"
+          }, {
+            selector: "s4_2050",
+            name: "Industrious Ants"
           }
         ]
       }
@@ -886,7 +910,7 @@
         value = _ref[_i];
         for (_j = 0, _len1 = value.length; _j < _len1; _j++) {
           colour = value[_j];
-          html_element = html_element.concat("<div class='map-legend-grid-square' \nstyle=background-color:" + colour + ";></div>");
+          html_element = html_element.concat("<div class='map-legend-grid-square'\nstyle=background-color:" + colour + ";></div>");
         }
       }
       return html_element;
@@ -2342,10 +2366,14 @@
       var scaleChooserView;
       this.sidePanel.$el.removeClass('active');
       this.modalContainer.hideModal();
-      scaleChooserView = new Backbone.Views.ScaleChooserView({
-        scales: this.scales
-      });
-      return this.modalContainer.showModal(scaleChooserView);
+      if (regionCode === "LVB") {
+        return this.showSidePanel("LVB", "regional");
+      } else {
+        scaleChooserView = new Backbone.Views.ScaleChooserView({
+          scales: this.scales
+        });
+        return this.modalContainer.showModal(scaleChooserView);
+      }
     };
 
     AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {

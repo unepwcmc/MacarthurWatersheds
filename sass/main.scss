@@ -180,7 +180,7 @@ div.subjects {
 }
 
 .region-chooser {
-  height: 500px;
+  height: 700px;
 }
 
 .scale-chooser {
@@ -234,6 +234,11 @@ ul.regions {
     &:last-child {
       margin-bottom: 0;
       margin-right: 0;
+    }
+    &.centered {
+      float: none;
+      margin: auto;
+      text-align: center;
     }
     div.region-area {
       background-repeat: no-repeat;
@@ -408,6 +413,10 @@ ul.tabs {
     &:last-child {
       border-left: none;
       width: 50%;
+    }
+    &.centered {
+      float: none;
+      margin: auto;
     }
 
     &:hover, &.active {
@@ -768,4 +777,20 @@ div.step-count {
 
 .for-checkbox {
   cursor: pointer;
+}
+
+.btn {
+  text-decoration: none;
+  padding: 10px 10px;
+  font-size: 0.75em;
+  word-spacing: 0.025em;
+  text-transform: uppercase;
+  font-weight: 600;
+  width: 100%;
+  background: $blue;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  @include border-radius(5px);
 }

@@ -1,20 +1,25 @@
 {
   "name": "",
   "devDependencies": {
-    "gulp-coffee": "~1.4.1",
-    "gulp-concat": "~2.1.7",
-    "gulp-uglify": "~0.2.1",
-    "gulp-handlebars": "~1.0.2",
-    "gulp-declare": "~0.1.0",
-    "gulp-plumber": "~0.5.6",
-    "gulp-sass": "^0.7.1",
-    "gulp-minify-css": "~0.3.0",
-    "gulp": "",
     "bower": "",
+    "gulp": "",
+    "gulp-coffee": "^1.4.3",
+    "gulp-concat": "~2.1.7",
+    "gulp-declare": "~0.1.0",
+    "gulp-handlebars": "~1.0.2",
+    "gulp-minify-css": "~0.3.0",
+    "gulp-plumber": "~0.5.6",
+    "gulp-sass": "",
+    "gulp-uglify": "~0.2.1",
     "serv": ""
   },
   "scripts": {
     "postinstall": "bower install",
     "start": "serv --port 3000"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "node-sass": "^4.7.2",
+    "topojson-server": "^3.0.0"
   }
 }

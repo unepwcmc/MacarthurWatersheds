@@ -1,13 +1,27 @@
 <header><h1>Welcome to the Watershed exploration tool</h1></header>
-<div class="region-copy"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in three regions.<p><p><strong>Select a region to start exploring</strong></p></div>
+<div class="region-copy"><p>The watershed exploration tool allows watersheds to be compared for their biodiversity importance and ecosystem function provision for now and for future scenarios of change (2050) in four regions.</p><p><strong>Select a region to start exploring</strong></p></div>
 <ul class="regions">
   {{#each regions}}
-    <li>
-      <div class="region-area" data-region-code="{{code}}" style="background-image: url(/imgs/{{code}}.png);"></div>
-      <div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div>
-    </li>
+    {{#if topRow}}
+      <li>
+        <div class="region-area" data-region-code="{{code}}" style="background-image: url(/imgs/{{code}}.png);"></div>
+        <div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div>
+      </li>
+    {{/if}}
   {{/each}}
 </ul>
+
+<ul class="regions">
+  {{#each regions}}
+    {{#unless topRow}}
+      <li class="centered">
+        <div class="region-area" data-region-code="{{code}}" style="background-image: url(/imgs/{{code}}.png);"></div>
+        <div class="region-area region-area-link region-link" data-region-code="{{code}}">{{name}}</div>
+      </li>
+    {{/unless}}
+  {{/each}}
+</ul>
+
 <div id="main-logo">
   <a href="http://unep-wcmc.org/"><img class="unep_wcmc_img" src="css/images/unep_logo_black.png"></img></a>
   <a href="http://www.macfound.org/"><img class="macarth_img" src="css/images/macarth_logo.png"></img></a>

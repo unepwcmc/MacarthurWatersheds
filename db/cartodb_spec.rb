@@ -1,5 +1,5 @@
 require 'rspec'
-require '../src/cartodb/cartodb_query.rb'
+require_relative '../src/cartodb/cartodb_query.rb'
 require 'json'
 
 describe 'On MacArthur region' do
