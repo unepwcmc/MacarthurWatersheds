@@ -2366,10 +2366,14 @@
       var scaleChooserView;
       this.sidePanel.$el.removeClass('active');
       this.modalContainer.hideModal();
-      scaleChooserView = new Backbone.Views.ScaleChooserView({
-        scales: this.scales
-      });
-      return this.modalContainer.showModal(scaleChooserView);
+      if (regionCode === "LVB") {
+        return this.showSidePanel("LVB", "regional");
+      } else {
+        scaleChooserView = new Backbone.Views.ScaleChooserView({
+          scales: this.scales
+        });
+        return this.modalContainer.showModal(scaleChooserView);
+      }
     };
 
     AppRouter.prototype.showSidePanel = function(regionCode, scaleCode) {

@@ -25,11 +25,16 @@ class Backbone.Router.AppRouter extends Backbone.Router
     regionChooserView = new Backbone.Views.RegionChooserView({regions: @regions})
     @modalContainer.showModal(regionChooserView)
 
+
   showScaleChooser: (regionCode) =>
     @sidePanel.$el.removeClass('active')
     @modalContainer.hideModal()
-    scaleChooserView = new Backbone.Views.ScaleChooserView({scales: @scales})
-    @modalContainer.showModal(scaleChooserView)
+
+    if regionCode == "LVB"
+      this.showSidePanel("LVB", "regional")
+    else
+      scaleChooserView = new Backbone.Views.ScaleChooserView({scales: @scales})
+      @modalContainer.showModal(scaleChooserView)
 
   showSidePanel: (regionCode, scaleCode) =>
     @modalContainer.hideModal()
