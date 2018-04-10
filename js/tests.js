@@ -1,20 +1,4 @@
 (function() {
-  suite('Main Controller');
-
-  test('The application starts by showing the choose region view and a map', function() {
-    var controller, showMapActionStub;
-    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
-    controller = new Backbone.Controllers.MainController();
-    try {
-      return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
-    } finally {
-      showMapActionStub.restore();
-    }
-  });
-
-}).call(this);
-
-(function() {
   suite("Query Builder integration");
 
   test("When a filter model has its attributes changed, the 'query' attribute is updated and change:query event is fired", function() {
@@ -33,6 +17,22 @@
     assert.notEqual(updatedQuery, oldQuery, "Expected filter.query to be modified");
     assert.strictEqual(updatedQuery, newQuery, "Expected filter.query set to the result of QueryBuilder.buildQuery");
     return assert.isTrue(changeQuerySpy.calledOnce, "Expected filter to fire a change:query event once, but fired " + changeQuerySpy.callCount + " times");
+  });
+
+}).call(this);
+
+(function() {
+  suite('Main Controller');
+
+  test('The application starts by showing the choose region view and a map', function() {
+    var controller, showMapActionStub;
+    showMapActionStub = sinon.stub(Backbone.Controllers.MainController.prototype, "showMap", function() {});
+    controller = new Backbone.Controllers.MainController();
+    try {
+      return assert.isTrue(showMapActionStub.calledOnce, "Expected the showMap action to be called");
+    } finally {
+      showMapActionStub.restore();
+    }
   });
 
 }).call(this);
