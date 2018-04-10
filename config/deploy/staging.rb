@@ -6,7 +6,7 @@ set :application, "watersheds"
 set :server_name, "watersheds.web-staging.linode.unep-wcmc.org"
 set :sudo_user, "wcmc"
 set :app_port, "80"
-set :branch, "refine_import"
+set :branch, "master"
 
 
 # server-based syntax
